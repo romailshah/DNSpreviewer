@@ -5,8 +5,21 @@ const ID_RE = /^[a-z0-9]{6,16}$/;
 
 export const config = {
   matcher: [
-    // Run on every request except Next internals and static assets served from the apex.
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    // Match (almost) every request — the function decides based on the host
+    // header whether to rewrite (preview subdomain) or pass through (apex).
+    //
+    // Why we DON'T exclude `_next/static|_next/image|favicon.ico` here:
+    // For the apex domain those are served by Next.js's own handlers, and
+    // running middleware for them is a 1-call no-op (`NextResponse.next()`).
+    // For preview subdomains, the upstream site's HTML references the SAME
+    // `/_next/static/...` paths (lots of upstreams are Next.js apps too),
+    // and excluding them would let Next.js's static handler intercept and
+    // 404 them instead of forwarding to the proxy. So: match everything.
+    //
+    // We DO exclude `/api/proxy/` to avoid the middleware firing again on
+    // the rewritten internal path (cheap safety; the function also handles
+    // this case defensively).
+    "/((?!api/proxy/).*)",
   ],
 };
 
