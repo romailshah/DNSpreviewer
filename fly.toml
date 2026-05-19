@@ -1,0 +1,62 @@
+# Fly.io app configuration for DNS Previewer
+# Docs: https://fly.io/docs/reference/configuration/
+#
+# The `app` name must be globally unique across Fly. If "dnspreviewer" is
+# taken at `fly launch` time, change it here (e.g. "dnspreviewer-app").
+
+app            = "dnspreviewer"
+primary_region = "iad"   # US-East (Virginia). Change to one closer to your users
+                         # if you like — e.g. "lhr" (London), "fra" (Frankfurt),
+                         # "sin" (Singapore), "syd" (Sydney). Full list:
+                         # https://fly.io/docs/reference/regions/
+
+# ─── Build ──────────────────────────────────────────────────────────────────
+[build]
+  dockerfile = "Dockerfile"
+
+# ─── Non-secret env (visible in `fly config show`) ──────────────────────────
+# Secrets like AUTH_SECRET are set with `fly secrets set` instead.
+[env]
+  NODE_ENV             = "production"
+  PORT                 = "3000"
+  HOSTNAME             = "0.0.0.0"
+  ROOT_DOMAIN          = "dnspreviewer.com"
+  DATABASE_PATH        = "/data/dnspreviewer.db"
+  SESSION_TTL_MINUTES  = "15"
+  RATE_LIMIT_PER_HOUR  = "10"
+  MAX_REWRITE_MB       = "4"
+  # BLOCKED_HOSTS    = ""   # add abuse-targets later if needed
+
+# ─── Persistent SQLite volume ───────────────────────────────────────────────
+# Create with: `fly volume create dnspreviewer_data --size 1 --region iad`
+# (1 GiB is wildly more than enough for now; you can grow it later.)
+[[mounts]]
+  source      = "dnspreviewer_data"
+  destination = "/data"
+
+# ─── HTTP service (the public-facing port) ──────────────────────────────────
+# Fly terminates HTTPS for you and forwards plain HTTP to internal_port=3000.
+# `auto_stop_machines = "stop"` + `min_machines_running = 0` lets the machine
+# sleep when idle (saves money on the hobby plan). First request after sleep
+# is delayed by ~2s — fine for a brand-new product.
+[http_service]
+  internal_port       = 3000
+  force_https         = true
+  auto_stop_machines  = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes           = ["app"]
+
+  [http_service.concurrency]
+    type       = "requests"
+    soft_limit = 200
+    hard_limit = 250
+
+# ─── VM size ────────────────────────────────────────────────────────────────
+# shared-cpu-1x with 512MB RAM is plenty for low-to-moderate traffic and
+# fits comfortably within Fly's hobby plan credit. Scale up later if needed.
+[[vm]]
+  size      = "shared-cpu-1x"
+  memory    = "512mb"
+  cpu_kind  = "shared"
+  cpus      = 1

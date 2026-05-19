@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "Preview your website before switching over DNS",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

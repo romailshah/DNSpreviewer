@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Produces a self-contained .next/standalone/ build with minimal node_modules,
+  // which is what the Dockerfile copies into the final image.
+  output: "standalone",
   // Critical for the proxy: upstream sites (esp. WordPress) use trailing-slash URLs
   // like /about/. We need Next to pass through to our handler without auto-stripping
   // the slash, otherwise we ping-pong with upstream's canonical redirect.

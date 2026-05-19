@@ -1,0 +1,37 @@
+# Keep the docker build context small & deterministic.
+
+# Local dev state
+node_modules
+.next
+.next/standalone
+.next/static
+tsconfig.tsbuildinfo
+
+# Local secrets / databases (must NEVER ship in an image)
+.env
+.env.local
+.env.*.local
+data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# VCS / IDE / OS
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+.claude
+
+# Docs that don't need to be inside the image
+README.md
+DEPLOYMENT.md
+*.log
+
+# Build artifacts from other deploy targets
+.vercel
+dist
