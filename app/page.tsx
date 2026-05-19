@@ -5,6 +5,77 @@ import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
 import { ROOT_DOMAIN } from "@/lib/env";
 
+/**
+ * Schema.org JSON-LD for the homepage.
+ *
+ * Two entities in one @graph block so search engines have a clear picture
+ * of what this site IS:
+ *  1. WebSite — the site as a thing (canonical name, URL, publisher).
+ *     Required to be eligible for the Sitelinks Search Box and other
+ *     site-level rich features.
+ *  2. SoftwareApplication — the product. The `offers.price = 0` field is
+ *     specifically how Google understands "this is a free SaaS tool",
+ *     making it eligible for free-product callouts.
+ *
+ * Test with: https://search.google.com/test/rich-results?url=https://dnspreviewer.com
+ */
+function homepageJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://dnspreviewer.com/#website",
+        url: "https://dnspreviewer.com/",
+        name: "DNS Previewer",
+        description:
+          "Preview your website on a new server before switching DNS. 100% free — password protection, no-expiry links, wildcard support.",
+        inLanguage: "en-US",
+        publisher: { "@id": "https://dnspreviewer.com/#organization" },
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://dnspreviewer.com/#organization",
+        name: "DNS Previewer",
+        url: "https://dnspreviewer.com/",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://dnspreviewer.com/apple-icon",
+          width: 180,
+          height: 180,
+        },
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://dnspreviewer.com/#software",
+        name: "DNS Previewer",
+        url: "https://dnspreviewer.com/",
+        description:
+          "Free tool to preview your website on a new server before switching DNS — wildcard subdomain reverse proxy with password protection, no-expiry links, and HTML/CSS URL rewriting.",
+        applicationCategory: "DeveloperApplication",
+        applicationSubCategory: "DNS / Web Hosting Migration",
+        operatingSystem: "Any (web-based)",
+        browserRequirements: "Modern browser with JavaScript enabled.",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+        },
+        featureList: [
+          "Wildcard subdomain previews",
+          "Password-protected previews",
+          "No-expiry links (signed-in users)",
+          "Reverse proxy with HTML/CSS URL rewriting",
+          "HTTPS, HTTP, or both with auto-fallback",
+          "Free dashboard",
+        ],
+        creator: { "@id": "https://dnspreviewer.com/#organization" },
+      },
+    ],
+  };
+}
+
 export default async function HomePage() {
   const user = await currentUser();
   return (
@@ -18,6 +89,12 @@ export default async function HomePage() {
         <BigCTA />
       </main>
       <SiteFooter />
+      {/* JSON-LD for Google rich results — literal <script> so crawlers see
+          it without waiting for hydration. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd()) }}
+      />
     </>
   );
 }

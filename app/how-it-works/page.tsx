@@ -18,6 +18,60 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Schema.org HowTo for the "how to preview a site before DNS switch" flow.
+ *
+ * Eligible for Google's HowTo rich result (a numbered-steps block right in
+ * the SERP) when the user-facing copy on the page mirrors the schema's
+ * step list. We keep the wording aligned with the on-page <ol> below.
+ *
+ * Test with: https://search.google.com/test/rich-results?url=https://dnspreviewer.com/how-it-works
+ */
+function howToJsonLd() {
+  const base = "https://dnspreviewer.com/how-it-works";
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to preview a website on a new server before switching DNS",
+    description:
+      "Test a website running on a new server before pointing your domain at it — using a wildcard subdomain reverse proxy that streams your target server back to your browser under a temporary URL.",
+    totalTime: "PT1M",
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "USD",
+      value: "0",
+    },
+    supply: [
+      { "@type": "HowToSupply", name: "The domain you're migrating (e.g. example.com)" },
+      { "@type": "HowToSupply", name: "The new server's IP or hostname" },
+    ],
+    tool: [{ "@type": "HowToTool", name: "DNS Previewer (web-based, free)" }],
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Provide your domain and the new server",
+        text: "Enter the domain you're migrating (e.g. example.com) and the new server's IP or hostname. DNS Previewer's hero form on the homepage handles this in one step.",
+        url: `${base}#step-1`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Receive a private preview subdomain",
+        text: "A short subdomain like a7xk2p.dnspreviewer.com is generated. Behind the scenes, a reverse proxy is opened that fetches your target server with the correct Host header and TLS SNI for your domain.",
+        url: `${base}#step-2`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Browse the preview to verify the migration",
+        text: "Open the preview URL in any browser. Your new server responds as if DNS had already been switched. Internal links and CSS URLs pointing at your domain are auto-rewritten to keep working inside the preview. When you're confident, flip DNS for real.",
+        url: `${base}#step-3`,
+      },
+    ],
+  };
+}
+
 export default function HowItWorks() {
   return (
     <>
@@ -84,6 +138,11 @@ export default function HowItWorks() {
         </p>
       </main>
       <SiteFooter />
+      {/* JSON-LD HowTo schema for Google rich results. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd()) }}
+      />
     </>
   );
 }
