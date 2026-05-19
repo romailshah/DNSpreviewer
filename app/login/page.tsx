@@ -2,7 +2,14 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AuthForm } from "@/components/AuthForm";
 
-export const metadata = { title: "Log in — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Log in",
+  description: "Log in to your DNS Previewer account to manage saved previews.",
+  alternates: { canonical: "https://dnspreviewer.com/login" },
+  robots: { index: false, follow: true },
+};
 
 export default function LoginPage() {
   return (

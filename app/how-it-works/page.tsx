@@ -2,7 +2,21 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import Link from "next/link";
 
-export const metadata = { title: "How it works — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "How DNS Previewer works",
+  description:
+    "How DNS Previewer lets you test a website on a new server before flipping DNS — wildcard subdomains, reverse proxy, HTML/CSS URL rewriting, password protection, and what's supported vs not.",
+  alternates: { canonical: "https://dnspreviewer.com/how-it-works" },
+  openGraph: {
+    title: "How DNS Previewer works",
+    description:
+      "Test a website on a new server before flipping DNS — how the wildcard subdomain proxy works under the hood.",
+    url: "https://dnspreviewer.com/how-it-works",
+    type: "article",
+  },
+};
 
 export default function HowItWorks() {
   return (

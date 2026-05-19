@@ -28,7 +28,34 @@ function deriveOrigin(req: NextRequest, id: string): { host: string; scheme: "ht
   return { host, scheme };
 }
 
+/**
+ * Critical: every preview-subdomain response MUST be `noindex` so Google never
+ * indexes the third-party content we're proxying under our own domain. Doing
+ * this for ALL paths from this route (proxy, expired, unlock, error) keeps
+ * the contract simple and impossible to forget at a single call site.
+ */
+function withNoindex(res: Response): Response {
+  try {
+    res.headers.set("x-robots-tag", "noindex, nofollow, noarchive");
+    return res;
+  } catch {
+    // Some Response objects (e.g. from Response.redirect) have immutable headers
+    // depending on the runtime. Fall back to cloning into a new Response.
+    const headers = new Headers(res.headers);
+    headers.set("x-robots-tag", "noindex, nofollow, noarchive");
+    return new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    });
+  }
+}
+
 async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
+  return withNoindex(await innerHandle(req, ctx));
+}
+
+async function innerHandle(req: NextRequest, ctx: Ctx): Promise<Response> {
   const { id, path = [] } = await ctx.params;
   const session = getSession(id);
   if (!session) {

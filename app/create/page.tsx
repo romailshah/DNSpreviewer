@@ -3,8 +3,15 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { CreateForm } from "@/components/CreateForm";
 import { currentUser } from "@/lib/auth";
 
-export const metadata = {
-  title: "Create a preview — DNS Previewer",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create a preview",
+  description: "Create a DNS preview link for your website on a new server.",
+  alternates: { canonical: "https://dnspreviewer.com/" },
+  // Noindex because the form is also on the homepage — avoids duplicate
+  // content. Canonical points search engines back to /.
+  robots: { index: false, follow: true },
 };
 
 export default async function CreatePage() {

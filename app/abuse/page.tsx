@@ -1,7 +1,20 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const metadata = { title: "Report abuse — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Report abuse",
+  description:
+    "Report a DNS Previewer preview being used for phishing, impersonation, or abuse. We respond fast and kill sessions on confirmed reports.",
+  alternates: { canonical: "https://dnspreviewer.com/abuse" },
+  openGraph: {
+    title: "DNS Previewer — Report abuse",
+    description: "Report a preview being misused. We take action fast.",
+    url: "https://dnspreviewer.com/abuse",
+    type: "article",
+  },
+};
 
 export default function AbusePage() {
   return (

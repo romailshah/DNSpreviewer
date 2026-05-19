@@ -2,7 +2,20 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AuthForm } from "@/components/AuthForm";
 
-export const metadata = { title: "Sign up — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign up — it's free forever",
+  description:
+    "Create a free DNS Previewer account to unlock password-protected previews, no-expiry links, and a dashboard. No credit card. Free forever.",
+  alternates: { canonical: "https://dnspreviewer.com/signup" },
+  openGraph: {
+    title: "Sign up — DNS Previewer",
+    description: "Free account unlocks password protection, no-expiry links, and a dashboard.",
+    url: "https://dnspreviewer.com/signup",
+    type: "website",
+  },
+};
 
 export default function SignupPage() {
   return (

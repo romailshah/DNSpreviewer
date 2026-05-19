@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getSessionRaw } from "@/lib/sessions";
@@ -7,6 +8,12 @@ import { ROOT_DOMAIN } from "@/lib/env";
 import { SessionStatus } from "@/components/SessionStatus";
 
 export const dynamic = "force-dynamic";
+
+// Preview detail pages reveal a session ID; they must never be indexed
+// (and search engines wouldn't see anything useful here anyway).
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function SessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -8,7 +8,12 @@ import { ROOT_DOMAIN } from "@/lib/env";
 import { DashboardList } from "@/components/DashboardList";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Dashboard — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardPage() {
   const user = await currentUser();

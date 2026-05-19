@@ -1,7 +1,21 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
-export const metadata = { title: "FAQ — DNS Previewer" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "FAQ — Frequently asked questions",
+  description:
+    "Answers to common questions about DNS Previewer — preview expiration, logging, login behavior, banner, troubleshooting 502s, the 10/hour limit, and abuse reporting.",
+  alternates: { canonical: "https://dnspreviewer.com/faq" },
+  openGraph: {
+    title: "DNS Previewer — Frequently asked questions",
+    description:
+      "Everything you wanted to know about the free DNS preview tool — expiration, logging, troubleshooting.",
+    url: "https://dnspreviewer.com/faq",
+    type: "article",
+  },
+};
 
 const faqs: Array<{ q: string; a: string }> = [
   {
@@ -46,6 +60,27 @@ const faqs: Array<{ q: string; a: string }> = [
   },
 ];
 
+/**
+ * Schema.org FAQPage structured data. When Google parses this, the FAQs are
+ * eligible to appear as an interactive accordion in the search result —
+ * dramatically increasing CTR. Test with:
+ *   https://search.google.com/test/rich-results?url=https://dnspreviewer.com/faq
+ */
+function faqJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a,
+      },
+    })),
+  };
+}
+
 export default function FAQPage() {
   return (
     <>
@@ -68,6 +103,12 @@ export default function FAQPage() {
         </div>
       </main>
       <SiteFooter />
+      {/* JSON-LD for Google rich results — must be a literal <script> tag so
+          search engine crawlers pick it up; Next.js's <Script> would defer it. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }}
+      />
     </>
   );
 }
