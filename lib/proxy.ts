@@ -22,6 +22,33 @@ const HOP_BY_HOP = new Set([
   "accept-encoding",
 ]);
 
+/**
+ * Status codes the Fetch spec defines as "null body statuses" — passing any
+ * non-null body to `new Response(body, { status })` for these throws
+ * "Invalid response status code N" at the constructor.
+ *
+ * Most importantly 304 (Not Modified): when the browser reloads a page it
+ * cached, it sends If-None-Match/If-Modified-Since. The upstream often
+ * replies 304 with no body. Without this check, our second-reload responses
+ * crashed with "Response constructor: Invalid response status code 304".
+ *
+ * Headers (ETag, Cache-Control, etc.) are forwarded through normally — the
+ * browser uses them to validate its cached copy of the resource.
+ */
+const NULL_BODY_STATUSES = new Set([101, 103, 204, 205, 304]);
+
+/**
+ * Construct a Response that respects the null-body-status contract.
+ * Use this in place of `new Response(body, { status, headers })` for any
+ * status we received from an upstream we don't fully control.
+ */
+function buildResponse(body: BodyInit | null, status: number, headers: Headers): Response {
+  return new Response(NULL_BODY_STATUSES.has(status) ? null : body, {
+    status,
+    headers,
+  });
+}
+
 export interface ProxyRequest {
   method: string;
   pathWithQuery: string;
@@ -135,6 +162,16 @@ async function proxyOne(
     outHeaders.set(k, Array.isArray(v) ? v.join(", ") : String(v));
   }
 
+  const status = upstreamRes.statusCode ?? 200;
+
+  // Null-body statuses (304 etc.) — no body to forward or rewrite, just
+  // pass headers through so the browser's conditional-request flow works.
+  if (NULL_BODY_STATUSES.has(status)) {
+    // Drain the upstream socket so the connection can be reused / closed.
+    upstreamRes.resume();
+    return buildResponse(null, status, outHeaders);
+  }
+
   const contentType = (upstreamRes.headers["content-type"] || "").toString().toLowerCase();
   const shouldRewrite =
     contentType.includes("text/html") ||
@@ -149,22 +186,13 @@ async function proxyOne(
         ? rewriteCss(text, baseDomain, session.siteType, req.previewHost)
         : rewriteHtml(text, baseDomain, session.siteType, req.previewHost);
       outHeaders.set("content-type", contentType);
-      return new Response(rewritten, {
-        status: upstreamRes.statusCode ?? 200,
-        headers: outHeaders,
-      });
+      return buildResponse(rewritten, status, outHeaders);
     }
-    return new Response(buf.data, {
-      status: upstreamRes.statusCode ?? 200,
-      headers: outHeaders,
-    });
+    return buildResponse(buf.data, status, outHeaders);
   }
 
   const stream = Readable.toWeb(upstreamRes) as unknown as ReadableStream<Uint8Array>;
-  return new Response(stream, {
-    status: upstreamRes.statusCode ?? 200,
-    headers: outHeaders,
-  });
+  return buildResponse(stream, status, outHeaders);
 }
 
 async function readBodyWithLimit(
