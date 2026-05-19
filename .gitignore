@@ -1,0 +1,40 @@
+# dependencies
+node_modules
+
+# next.js
+.next
+next-env.d.ts
+.vercel
+dist
+
+# env (NEVER commit local secrets)
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# os
+.DS_Store
+Thumbs.db
+
+# typescript build cache
+tsconfig.tsbuildinfo
+
+# sqlite db + WAL/journal files
+data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# claude code local settings (per-user permissions, etc.)
+.claude/settings.local.json
+
+# editor / IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+
