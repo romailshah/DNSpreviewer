@@ -1,14 +1,18 @@
 /**
  * Favicon — auto-served at /icon and referenced from <link rel="icon"> on
- * every page. Rendered programmatically so it stays in sync with brand
- * colors and we don't ship a binary asset.
+ * every page. Also the source for the /favicon.ico legacy path via a
+ * rewrite in next.config.js.
  *
- * Resolution kept small (32×32) so it loads instantly in browser tabs.
+ * Size: 96×96. Google's favicon-in-search guidelines REQUIRE a multiple
+ * of 48px square (48, 96, 144, ...). Smaller than that is silently
+ * rejected and the generic globe is shown in search results.
+ *   https://developers.google.com/search/docs/appearance/favicon-in-search
+ *
  * Apple touch icon is generated separately at 180×180 from apple-icon.tsx.
  */
 import { ImageResponse } from "next/og";
 
-export const size = { width: 32, height: 32 };
+export const size = { width: 96, height: 96 };
 export const contentType = "image/png";
 
 export default function Icon() {
@@ -19,12 +23,12 @@ export default function Icon() {
           width: "100%",
           height: "100%",
           background: "#ff7200",
-          borderRadius: 6,
+          borderRadius: 18,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "white",
-          fontSize: 22,
+          fontSize: 64,
           fontWeight: 800,
           fontFamily: "sans-serif",
         }}

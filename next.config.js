@@ -24,6 +24,17 @@ const nextConfig = {
       },
     ];
   },
+  // Google's favicon crawler still probes /favicon.ico first as a legacy
+  // fallback. When that 404s, search results show a generic globe icon
+  // (sometimes for weeks) before Google falls back to <link rel="icon">.
+  // Rewrite to our programmatic /icon route — same bytes, correct path.
+  // The Content-Type will be image/png (not image/x-icon) which every
+  // modern crawler accepts.
+  async rewrites() {
+    return [
+      { source: "/favicon.ico", destination: "/icon" },
+    ];
+  },
 };
 
 module.exports = nextConfig;
