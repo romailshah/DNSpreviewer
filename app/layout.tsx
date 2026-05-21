@@ -1,6 +1,20 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
+
+/**
+ * Google Analytics 4 Measurement ID. Public identifier — safe to commit.
+ * Find/replace in this file to swap; loads via next/script below.
+ *
+ * Notes:
+ *  - Only renders when NODE_ENV === "production" so `npm run dev` clicks
+ *    don't pollute the report.
+ *  - Preview subdomains (*.dnspreviewer.com) NEVER include this script
+ *    because those responses are served by the proxy route and bypass
+ *    this layout entirely.
+ */
+const GA_MEASUREMENT_ID = "G-749RD6V0WN";
 
 const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -90,9 +104,30 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const showAnalytics = process.env.NODE_ENV === "production";
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+
+        {/* Google Analytics 4 — production only. See GA_MEASUREMENT_ID above. */}
+        {showAnalytics && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        )}
+      </body>
     </html>
   );
 }
