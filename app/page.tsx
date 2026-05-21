@@ -141,15 +141,16 @@ function Hero({ isLoggedIn, rootDomain }: { isLoggedIn: boolean; rootDomain: str
 }
 
 function FreeVsPaid() {
+  // Rows reflect what we've verified against paid alternatives in this space.
+  // Specific competitor naming lives on /vs-skipdns; homepage stays generic.
   const rows: Array<{ feature: string; us: string; them: string }> = [
-    { feature: "Preview link generation", us: "Unlimited (free)", them: "Limited on free plan" },
-    { feature: "Custom link label", us: "Included", them: "Paid add-on" },
-    { feature: "Password-protected previews", us: "Included", them: "Paid plan only" },
-    { feature: "No-expiry links", us: "Included", them: "Paid plan only" },
-    { feature: "Wildcard / multisite", us: "Included", them: "Paid plan only" },
-    { feature: "HTTP, HTTPS, or both", us: "Included", them: "Limited" },
-    { feature: "Dashboard + saved links", us: "Free account", them: "Paid account" },
-    { feature: "Ads / tracking", us: "None", them: "Varies" },
+    { feature: "Monthly cost", us: "$0 — free, forever", them: "$9.9 – $159.9 / month" },
+    { feature: "Preview links at once", us: "Unlimited", them: "3 – 300 depending on tier" },
+    { feature: "Password-protected previews", us: "Included", them: "Higher tiers only" },
+    { feature: "No-expiry links", us: "Included (free account)", them: "Paid — deleted if you cancel" },
+    { feature: "Disable / re-enable a link", us: "Included", them: "Higher tiers only" },
+    { feature: "Self-hosting option", us: "Coming (open source)", them: "Not offered" },
+    { feature: "If you stop paying", us: "Nothing — it's free", them: "All your links deleted" },
   ];
   return (
     <section className="container-wide py-14 sm:py-20">
@@ -209,6 +210,16 @@ function FreeVsPaid() {
             <div className="col-span-3 px-5 py-4 text-ink-500">{r.them}</div>
           </div>
         ))}
+      </div>
+
+      {/* CTA to the dedicated comparison page (high-intent SEO target) */}
+      <div className="mt-6 sm:mt-8 text-center">
+        <Link
+          href="/vs-skipdns"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline underline-offset-4 transition"
+        >
+          See the full side-by-side comparison →
+        </Link>
       </div>
     </section>
   );
