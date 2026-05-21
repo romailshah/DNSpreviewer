@@ -27,6 +27,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      // High-intent comparison page targeting "skipdns alternative" keyword.
+      // Priority 0.9 because this is one of our strongest acquisition pages.
+      url: `${SITE_URL}/vs-skipdns`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${SITE_URL}/signup`,
       lastModified: now,
       changeFrequency: "yearly",
