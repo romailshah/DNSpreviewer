@@ -43,10 +43,13 @@ export async function SiteHeader() {
           </span>
         </Link>
 
-        {/* ---------- DESKTOP NAV (unchanged) — visible on lg (1024px) and up ---------- */}
+        {/* ---------- DESKTOP NAV — visible on lg (1024px) and up ---------- */}
         <nav className="hidden lg:flex items-center gap-2 shrink-0">
           <Link href="/how-it-works" className="btn-text px-3 py-2 text-sm">
             How it works
+          </Link>
+          <Link href="/blog" className="btn-text px-3 py-2 text-sm">
+            Blog
           </Link>
           <Link href="/faq" className="btn-text px-3 py-2 text-sm">
             FAQ
@@ -147,6 +150,7 @@ export async function SiteHeader() {
                   <MenuSeparator />
 
                   <MenuLink href="/how-it-works">How it works</MenuLink>
+                  <MenuLink href="/blog">Blog</MenuLink>
                   <MenuLink href="/faq">FAQ</MenuLink>
 
                   <MenuSeparator />
@@ -163,6 +167,7 @@ export async function SiteHeader() {
               ) : (
                 <>
                   <MenuLink href="/how-it-works">How it works</MenuLink>
+                  <MenuLink href="/blog">Blog</MenuLink>
                   <MenuLink href="/faq">FAQ</MenuLink>
 
                   <MenuSeparator />

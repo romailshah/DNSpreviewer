@@ -48,6 +48,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # Static chunks (CSS, JS, images served from /_next/static)
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Markdown blog content — /blog and /blog/[slug] read these files at request
+# time via fs.readFileSync. Next.js's standalone tracer doesn't see fs paths
+# constructed from process.cwd(), so we copy them in by hand.
+COPY --from=builder --chown=nextjs:nodejs /app/content ./content
+
 # better-sqlite3 is marked as a server-external package, so Next's tracer
 # leaves it out of standalone/node_modules. Copy it (and its tiny dependency
 # `bindings`) in by hand so `require("better-sqlite3")` resolves at runtime.

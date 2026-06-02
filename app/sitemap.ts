@@ -1,13 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getAllPostMeta } from "@/lib/blog";
 
 const SITE_URL = "https://dnspreviewer.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Use the build/deploy timestamp as a sensible "last modified" for now.
-  // When we add a blog or other content sources, swap this for per-page mtime.
   const now = new Date();
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${SITE_URL}/`,
       lastModified: now,
@@ -28,11 +27,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       // High-intent comparison page targeting "skipdns alternative" keyword.
-      // Priority 0.9 because this is one of our strongest acquisition pages.
       url: `${SITE_URL}/vs-skipdns`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
     },
     {
       url: `${SITE_URL}/signup`,
@@ -47,4 +51,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ];
+
+  const blogPosts: MetadataRoute.Sitemap = getAllPostMeta().map((post) => ({
+    url: `${SITE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.frontmatter.updatedAt ?? post.frontmatter.publishedAt),
+    changeFrequency: "monthly",
+    priority: 0.75,
+  }));
+
+  return [...staticPages, ...blogPosts];
 }

@@ -88,3 +88,80 @@ code {
     rgba(255, 114, 0, 0) 60%
   );
 }
+
+/* ─── Blog content typography ──────────────────────────────────────────────
+ * Custom prose styles for /blog/[slug] (HTML rendered from markdown).
+ * Brand-consistent and tighter than @tailwindcss/typography defaults.
+ */
+.blog-content {
+  @apply text-ink-700 text-base sm:text-lg leading-relaxed;
+}
+.blog-content > * + * {
+  @apply mt-5;
+}
+.blog-content h2 {
+  @apply font-display font-bold text-2xl sm:text-3xl text-ink-900 mt-12 mb-2 tracking-tight leading-tight;
+}
+.blog-content h3 {
+  @apply font-display font-semibold text-lg sm:text-xl text-ink-900 mt-8 mb-1 tracking-tight;
+}
+.blog-content h4 {
+  @apply font-display font-semibold text-base sm:text-lg text-ink-900 mt-6 mb-1;
+}
+.blog-content p {
+  @apply leading-relaxed;
+}
+.blog-content strong {
+  @apply text-ink-900 font-semibold;
+}
+.blog-content em {
+  @apply italic;
+}
+.blog-content a {
+  @apply text-brand-600 underline underline-offset-4 decoration-brand-200 hover:decoration-brand-500 transition;
+}
+.blog-content ul,
+.blog-content ol {
+  @apply pl-6 space-y-2;
+}
+.blog-content ul {
+  @apply list-disc;
+}
+.blog-content ol {
+  @apply list-decimal;
+}
+.blog-content li {
+  @apply leading-relaxed;
+}
+.blog-content li::marker {
+  @apply text-brand-500;
+}
+.blog-content blockquote {
+  @apply border-l-4 border-brand-300 pl-5 italic text-ink-700 my-6;
+}
+.blog-content code {
+  /* Overrides the global code style for inline code inside the blog */
+  @apply font-mono text-[0.9em] bg-ink-100 text-ink-900 px-1.5 py-0.5 rounded;
+}
+.blog-content pre {
+  @apply bg-ink-900 text-cream rounded-xl p-4 overflow-x-auto my-6 text-sm leading-relaxed;
+}
+.blog-content pre code {
+  @apply bg-transparent text-cream px-0 py-0 text-sm;
+}
+.blog-content hr {
+  @apply my-10 border-ink-200;
+}
+.blog-content img {
+  @apply rounded-xl my-6 max-w-full h-auto;
+}
+.blog-content table {
+  @apply w-full text-sm my-6 border-collapse;
+}
+.blog-content th,
+.blog-content td {
+  @apply border border-ink-200 px-3 py-2 text-left;
+}
+.blog-content th {
+  @apply bg-ink-50 font-semibold;
+}

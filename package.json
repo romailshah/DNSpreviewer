@@ -18,6 +18,8 @@
   "dependencies": {
     "bcryptjs": "2.4.3",
     "better-sqlite3": "11.3.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.4",
     "nanoid": "5.1.9",
     "next": "16.2.4",
     "react": "19.0.0",
@@ -27,6 +29,7 @@
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",
     "@types/better-sqlite3": "7.6.11",
+    "@types/marked": "^5.0.2",
     "@types/node": "20.14.10",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
