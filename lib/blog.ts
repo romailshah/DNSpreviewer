@@ -11,6 +11,11 @@ import { marked } from "marked";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "blog");
 
+export interface BlogPostFAQ {
+  q: string;
+  a: string;
+}
+
 export interface BlogPostFrontmatter {
   title: string;
   description: string;
@@ -25,6 +30,15 @@ export interface BlogPostFrontmatter {
   seoTitle?: string;
   /** Optional path override; defaults to filename without .md */
   slug?: string;
+  /**
+   * Optional FAQ items appended to the post.
+   *
+   * Rendered as a collapsible <details> section at the bottom and emitted
+   * as FAQPage JSON-LD so Google can show them as a rich-result accordion
+   * in search. 3-6 items is the sweet spot. Each question is a chance to
+   * rank for a long-tail query and capture "People Also Ask" placements.
+   */
+  faqs?: BlogPostFAQ[];
 }
 
 export interface BlogPost {

@@ -1,13 +1,26 @@
 ---
 title: "I crashed a client's WordPress site for 14 hours during a DNS migration. Here's the exact pre-flight checklist I now use."
-seoTitle: "WordPress Migration Checklist: 18 Things to Test Before You Flip DNS (2026)"
-description: "After botching a Black Friday migration in 2024, I built an 18-step checklist that catches issues most WordPress migration tutorials skip. The full guide — and the free tool I built to handle 6 of these steps."
+seoTitle: "WordPress Migration Checklist: 18 Things to Test Before You Flip DNS"
+description: "After a botched Black Friday migration cost a client $14k in downtime, I built an 18-step pre-flight checklist that catches the failure modes WP migration tutorials skip."
 publishedAt: "2026-06-02"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer — a free tool for previewing websites on new servers before flipping DNS. He's been migrating WordPress sites since 2017 and writing about his mistakes (publicly) since 2024."
 category: "Migration"
 tags: ["wordpress", "dns", "migration", "checklist", "hosting"]
 keywords: ["wordpress migration checklist", "test website before changing DNS", "WordPress migration downtime", "preview website on new server", "wordpress hosting migration", "DNS preview tool"]
+faqs:
+  - q: "How long does a WordPress migration usually take?"
+    a: "A clean WordPress migration takes 1-4 hours of active work for a small-to-medium site, plus another 24-48 hours of DNS propagation if you raise the TTL afterward. Larger sites with extensive media libraries and custom integrations can take a full day. The migration itself isn't the hard part — testing the new server under your real domain before flipping DNS is what catches most issues, and that step alone can take half a day if you don't have proper tooling."
+  - q: "Can you migrate a WordPress site without downtime?"
+    a: "Yes, if you do the prep work properly. Reduce DNS TTL to 60 seconds at least 24 hours before the migration. Test the new server under your real domain (not via /etc/hosts or by hitting the server IP) so you catch vhost and SSL issues before flipping records. Have a documented and tested rollback procedure. Done right, the actual visible downtime is under 60 seconds. Done wrong, you get hours of broken pages."
+  - q: "What's the difference between a staging environment and a DNS preview?"
+    a: "A staging site runs at a different URL (staging.example.com), so cookies, SSL certificates, CDN configurations, and URL rewrites all differ from production. A DNS preview tool lets you test how your real domain will respond when DNS resolves to the new server — same Host header, same TLS SNI, same edge behavior — without actually changing DNS. Staging catches code bugs; DNS preview catches infrastructure mismatches that only appear when the real domain hits the new server."
+  - q: "Why does my WordPress site break after migrating to a new host?"
+    a: "The most common causes, in rough order of frequency: vhost configuration mismatching the real Host header, SSL certificate not covering the domain, WP_HOME or WP_SITEURL pointing at the wrong domain or scheme, SPF and DKIM records updated to the new host's mail server (breaking transactional email), and serialized PHP data corrupted by a phpMyAdmin search-replace instead of a WP-CLI one. The first two only manifest after DNS flips, which is why testing under the new IP with the correct Host header is essential."
+  - q: "Should I lower DNS TTL before migrating a WordPress site?"
+    a: "Yes — drop it to 60 seconds at least 24 hours before the migration so global DNS caches refresh quickly when you flip. After the migration is stable for 48 hours, raise it back to a reasonable value (3600 to 86400 seconds) to reduce DNS query load. Skip this step and your 'instant cutover' can leave some visitors hitting the old server for hours after you think you're done."
+  - q: "Is it safe to migrate a WordPress site on weekends?"
+    a: "Technically yes — DNS doesn't care what day of the week it is. Operationally no — if your new host has issues, support response times on weekends and holidays are slower. Schedule migrations for Tuesday or Wednesday mornings (in your host's primary support timezone) so their team is fully staffed and you're fresh enough to debug a 7am issue if something goes wrong."
 ---
 
 It was the Tuesday before Black Friday 2024.

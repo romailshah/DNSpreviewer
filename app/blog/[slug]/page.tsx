@@ -55,48 +55,80 @@ function formatDate(iso: string): string {
 }
 
 /**
- * JSON-LD Article schema — eligible for Google rich results (article carousel,
- * Top Stories, author info card). The graph also includes a Person entity for
- * the author so Google can build a knowledge-panel-style attribution.
+ * JSON-LD graph for a blog post. Combines four entity types:
+ *  1. Article — the post itself, eligible for Top Stories + article carousels
+ *  2. Person — the author, builds a knowledge-panel-style attribution
+ *  3. Organization — the publisher (DNS Previewer)
+ *  4. BreadcrumbList — for the Home › Blog › Post path, eligible for the
+ *     breadcrumb display in Google search results
+ *  5. FAQPage (conditional) — only if the post defines `faqs` in frontmatter.
+ *     Each FAQ becomes a Question/Answer pair eligible for the FAQ
+ *     accordion rich-result in Google SERPs.
  */
 function articleJsonLd(post: ReturnType<typeof getPostBySlug>) {
   if (!post) return null;
   const f = post.frontmatter;
   const url = `${SITE_URL}/blog/${post.slug}`;
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Article",
-        "@id": `${url}#article`,
-        headline: f.title,
-        description: f.description,
-        url,
-        datePublished: f.publishedAt,
-        dateModified: f.updatedAt ?? f.publishedAt,
-        author: { "@id": `${SITE_URL}/#author-${f.author.replace(/\s+/g, "-").toLowerCase()}` },
-        publisher: { "@id": `${SITE_URL}/#organization` },
-        keywords: (f.keywords ?? []).join(", "),
-        articleSection: f.category,
-        mainEntityOfPage: { "@type": "WebPage", "@id": url },
-        wordCount: post.wordCount,
-      },
-      {
-        "@type": "Person",
-        "@id": `${SITE_URL}/#author-${f.author.replace(/\s+/g, "-").toLowerCase()}`,
-        name: f.author,
-        description: f.authorBio,
-        url: SITE_URL,
-      },
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: "DNS Previewer",
-        url: SITE_URL,
-        logo: { "@type": "ImageObject", url: `${SITE_URL}/apple-icon` },
-      },
-    ],
-  };
+  const authorId = `${SITE_URL}/#author-${f.author.replace(/\s+/g, "-").toLowerCase()}`;
+
+  const graph: Record<string, unknown>[] = [
+    {
+      "@type": "Article",
+      "@id": `${url}#article`,
+      headline: f.title,
+      description: f.description,
+      url,
+      datePublished: f.publishedAt,
+      dateModified: f.updatedAt ?? f.publishedAt,
+      author: { "@id": authorId },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      keywords: (f.keywords ?? []).join(", "),
+      articleSection: f.category,
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      wordCount: post.wordCount,
+      image: `${SITE_URL}/opengraph-image`,
+    },
+    {
+      "@type": "Person",
+      "@id": authorId,
+      name: f.author,
+      description: f.authorBio,
+      url: SITE_URL,
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "DNS Previewer",
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/apple-icon` },
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${url}#breadcrumbs`,
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+        { "@type": "ListItem", position: 3, name: f.title, item: url },
+      ],
+    },
+  ];
+
+  if (f.faqs && f.faqs.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      "@id": `${url}#faq`,
+      mainEntity: f.faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.a,
+        },
+      })),
+    });
+  }
+
+  return { "@context": "https://schema.org", "@graph": graph };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -143,6 +175,32 @@ export default async function BlogPostPage({ params }: PageProps) {
             className="blog-content"
             dangerouslySetInnerHTML={{ __html: post.html }}
           />
+
+          {/* FAQ section — appended at the end of the article, styled to
+              match the homepage /faq pattern. Emits FAQPage JSON-LD via the
+              articleJsonLd() helper above. */}
+          {f.faqs && f.faqs.length > 0 && (
+            <section className="mt-12 sm:mt-16">
+              <h2 className="font-display font-bold text-2xl sm:text-3xl text-ink-900 mt-12 mb-6 tracking-tight">
+                Frequently asked questions
+              </h2>
+              <div className="space-y-3 sm:space-y-4">
+                {f.faqs.map((faq) => (
+                  <details key={faq.q} className="card group">
+                    <summary className="font-display font-semibold text-ink-900 cursor-pointer flex items-start justify-between gap-3 list-none">
+                      <span className="flex-1">{faq.q}</span>
+                      <span className="text-ink-400 group-open:rotate-45 transition-transform text-xl leading-none shrink-0">
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 text-sm sm:text-base text-ink-700 leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
         </article>
 
         {/* Author bio — second (and final) place where DNS Previewer is mentioned */}
