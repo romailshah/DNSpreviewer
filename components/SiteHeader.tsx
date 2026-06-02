@@ -10,7 +10,7 @@ import {
 } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { AuthNav } from "./AuthNav";
-import iconImg from "@/public/brand/icon.png";
+import horizontalLogo from "@/public/brand/logo-horizontal.png";
 
 /**
  * Server action used by the mobile hamburger's Log out button.
@@ -35,14 +35,8 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-cream/80 backdrop-blur">
       <div className="container-wide flex h-16 items-center justify-between gap-3">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 font-display font-bold text-ink-900 shrink-0"
-        >
+        <Link href="/" className="flex items-center shrink-0" aria-label="DNS Previewer — home">
           <LogoMark />
-          <span className="text-base sm:text-lg tracking-tight whitespace-nowrap">
-            DNS Previewer
-          </span>
         </Link>
 
         {/* ---------- DESKTOP NAV — visible on lg (1024px) and up ---------- */}
@@ -213,18 +207,20 @@ function MenuSeparator() {
 }
 
 function LogoMark() {
-  // The brand icon — orange rounded square with the proxy/preview glyph.
-  // Source: public/brand/icon.png (256×256). The PNG already has its own
-  // corner radius and orange background baked in, so no wrapper styling
-  // beyond the shadow needed.
+  // Full horizontal brand lockup — icon + "DNS Previewer" wordmark +
+  // "PREVIEW BEFORE SWITCHING DNS" tagline, all in one image.
+  // Source: public/brand/logo-horizontal.png (1564×267, aspect ~5.86:1).
+  //
+  // Sized responsively: 28px tall on mobile (~164px wide), 36px on sm+
+  // (~211px wide). next/image handles dpr scaling for crisp retina render.
   return (
     <Image
-      src={iconImg}
-      alt=""
-      width={36}
-      height={36}
+      src={horizontalLogo}
+      alt="DNS Previewer — preview before switching DNS"
+      width={1564}
+      height={267}
       priority
-      className="h-9 w-9 shadow-glow rounded-[10px]"
+      className="h-7 sm:h-9 w-auto"
     />
   );
 }
