@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { AuthNav } from "./AuthNav";
+import iconImg from "@/public/brand/icon.png";
 
 /**
  * Server action used by the mobile hamburger's Log out button.
@@ -211,17 +213,18 @@ function MenuSeparator() {
 }
 
 function LogoMark() {
+  // The brand icon — orange rounded square with the proxy/preview glyph.
+  // Source: public/brand/icon.png (256×256). The PNG already has its own
+  // corner radius and orange background baked in, so no wrapper styling
+  // beyond the shadow needed.
   return (
-    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white shadow-glow">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path
-          d="M3 12c3-4.5 6-7 9-7s6 2.5 9 7c-3 4.5-6 7-9 7s-6-2.5-9-7z"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-        <circle cx="12" cy="12" r="2.5" fill="currentColor" />
-      </svg>
-    </span>
+    <Image
+      src={iconImg}
+      alt=""
+      width={36}
+      height={36}
+      priority
+      className="h-9 w-9 shadow-glow rounded-[10px]"
+    />
   );
 }

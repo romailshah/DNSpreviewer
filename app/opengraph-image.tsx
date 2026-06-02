@@ -16,6 +16,8 @@
  *   https://dnspreviewer.com/opengraph-image
  */
 import { ImageResponse } from "next/og";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export const alt =
   "DNS Previewer — Preview your website before switching DNS. Free, forever.";
@@ -31,6 +33,14 @@ const BRAND_LIGHT = "#ffe4c7";
 const CREAM = "#fff8f2";
 const INK_900 = "#171717";
 const INK_500 = "#737373";
+
+// Read the brand icon once at build time and embed as a data URI so the
+// generated PNG is fully self-contained — no external image fetches at
+// render time (which can fail in Satori's sandbox).
+const iconBuffer = readFileSync(
+  join(process.cwd(), "public", "brand", "icon.png"),
+);
+const iconDataUri = `data:image/png;base64,${iconBuffer.toString("base64")}`;
 
 export default async function OGImage() {
   return new ImageResponse(
@@ -49,32 +59,28 @@ export default async function OGImage() {
       >
         {/* ── Logo lockup ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <div
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={iconDataUri}
+            alt=""
+            width={96}
+            height={96}
             style={{
-              width: 88,
-              height: 88,
-              background: BRAND,
               borderRadius: 22,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: 56,
-              fontWeight: 700,
               boxShadow: `0 10px 40px -10px ${BRAND}80`,
             }}
-          >
-            ◉
-          </div>
+          />
           <div
             style={{
-              fontSize: 52,
+              fontSize: 56,
               fontWeight: 800,
-              color: INK_900,
               letterSpacing: "-0.02em",
+              display: "flex",
+              gap: 12,
             }}
           >
-            DNS Previewer
+            <span style={{ color: INK_900 }}>DNS</span>
+            <span style={{ color: BRAND }}>Previewer</span>
           </div>
         </div>
 
