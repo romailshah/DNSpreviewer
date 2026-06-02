@@ -32,7 +32,12 @@ const nextConfig = {
   // modern crawler accepts.
   async rewrites() {
     return [
-      { source: "/favicon.ico", destination: "/icon" },
+      // Google's favicon crawler probes /favicon.ico first as a legacy
+      // fallback. The static brand icon lives at /icon.png (Next.js
+      // file convention for app/icon.png), so we rewrite the legacy
+      // path there. Content-Type will be image/png; every modern
+      // crawler accepts that.
+      { source: "/favicon.ico", destination: "/icon.png" },
     ];
   },
 };
