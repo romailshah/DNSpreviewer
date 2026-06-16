@@ -38,3 +38,6 @@ data
 !.vscode/extensions.json
 .idea
 
+# stray working files for unrelated projects (don't commit by accident)
+.ringistry-*
+
