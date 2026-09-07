@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Turnstile } from "./Turnstile";
@@ -254,7 +254,7 @@ export function HeroPreviewForm({
           {/* One caption instead of repeating a state label on every switch.
               It describes what the current combination actually does, which is
               more useful than echoing "Off" twice. */}
-          <p className="mt-2.5 text-xs leading-relaxed text-ink-600">
+          <p className="mt-2.5 text-xs leading-relaxed text-ink-600" aria-live="polite">
             {needsAccount && !isLoggedIn ? (
               <>
                 Both need a free account.{" "}
@@ -560,22 +560,27 @@ function MiniField({
  * the signup prompt. Showing a dead disabled control here would hide the
  * feature we most want people to discover.
  */
+/** How long the locked switch stays visibly on before snapping back. */
+const TEASE_MS = 1100;
+
 /**
  * On/off switch for the two headline options in the hero form.
  *
  * Reuses the .toggle styles from globals.css so it matches the switches used
  * elsewhere rather than inventing a second control.
  *
- * Deliberately carries no per-switch state text. Two switches each captioned
- * "Off" plus two "Free account" notes was four labels saying very little; the
- * shared caption underneath describes the actual combination instead. The on
- * state is carried visually: the icon lifts out of a tinted disc and the label
- * gains a brand underline.
+ * Carries no per-switch state text. Two switches each captioned "Off" plus two
+ * "Free account" notes was four labels saying very little; the shared caption
+ * underneath describes the actual combination instead. The on state is carried
+ * visually: the icon lifts out of a tinted disc and the label gains a brand
+ * underline.
  *
- * `locked` renders a visitor who is not signed in. The switch still responds
- * to a click so intent is captured, but instead of flipping on it triggers the
- * signup prompt. A dead disabled switch would hide the feature we most want
- * people to find.
+ * `locked` renders a visitor who is not signed in. Clicking flips the switch on
+ * for a moment so they see the thing they are being offered, then it releases
+ * back to off while the caption explains that it needs a free account. Showing
+ * the on state and then taking it away lands better than a dead disabled
+ * control, and it is honest: nothing is actually enabled, and the caption says
+ * so before the switch has finished travelling back.
  */
 function InlineOption({
   on,
@@ -590,24 +595,46 @@ function InlineOption({
   icon: string;
   onChange: (v: boolean) => void;
 }) {
-  const active = on && !locked;
+  const [teasing, setTeasing] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, []);
+
+  function handleClick() {
+    if (locked) {
+      setTeasing(true);
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(() => setTeasing(false), TEASE_MS);
+    }
+    onChange(!on);
+  }
+
+  const enabled = on && !locked;
+  // Purely visual. aria-checked below stays on the real value so a screen
+  // reader is never told the option is on when it is not.
+  const looksOn = enabled || teasing;
+
   return (
     <label className="group inline-flex items-center gap-2.5 cursor-pointer select-none">
       <button
         type="button"
         role="switch"
-        aria-checked={active}
+        aria-checked={enabled}
         aria-label={label}
-        onClick={() => onChange(!on)}
+        onClick={handleClick}
         className="toggle"
-        data-on={active}
+        data-on={looksOn}
       >
         <span />
       </button>
 
       <span
         className={`grid h-7 w-7 place-items-center rounded-full text-sm transition duration-200 ${
-          active ? "bg-brand-100 scale-105" : "bg-ink-100 grayscale opacity-70"
+          looksOn ? "bg-brand-100 scale-105" : "bg-ink-100 grayscale opacity-70"
         }`}
         aria-hidden="true"
       >
@@ -616,7 +643,7 @@ function InlineOption({
 
       <span
         className={`text-xs sm:text-sm font-semibold transition-colors border-b-2 pb-0.5 ${
-          active
+          looksOn
             ? "text-brand-700 border-brand-400"
             : "text-ink-700 border-transparent group-hover:border-ink-200"
         }`}
