@@ -5,10 +5,10 @@
 # taken at `fly launch` time, change it here (e.g. "dnspreviewer-app").
 
 app            = "dnspreviewer"
-primary_region = "sin"   # Singapore — where the machine actually runs. Change to one closer to your users
-                         # if you like — e.g. "lhr" (London), "fra" (Frankfurt),
-                         # "sin" (Singapore), "syd" (Sydney). Full list:
-                         # https://fly.io/docs/reference/regions/
+primary_region = "iad"   # US-East (Virginia). This is where the machine and its
+                         # volume actually live. A fly-request-id header shows
+                         # the edge PoP that served a request, not this.
+                         # Region list: https://fly.io/docs/reference/regions/
 
 # ─── Build ──────────────────────────────────────────────────────────────────
 [build]
@@ -37,7 +37,7 @@ primary_region = "sin"   # Singapore — where the machine actually runs. Change
 # See OPERATIONS.md.
 
 # ─── Persistent SQLite volume ───────────────────────────────────────────────
-# Create with: `fly volume create dnspreviewer_data --size 1 --region sin`
+# Create with: `fly volume create dnspreviewer_data --size 1 --region iad`
 # (1 GiB is wildly more than enough for now; you can grow it later.)
 [[mounts]]
   source      = "dnspreviewer_data"

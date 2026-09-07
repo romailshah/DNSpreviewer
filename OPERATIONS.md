@@ -11,7 +11,7 @@ setting up your own instance on a VPS instead, see [DEPLOYMENT.md](DEPLOYMENT.md
 |---|---|
 | Platform | Fly.io, app `dnspreviewer` |
 | Config | `fly.toml` |
-| Region | `sin` (Singapore) |
+| Region | `iad` (US East, Virginia) |
 | Machine | 1 × `shared-cpu-1x`, 512 MB, sleeps when idle |
 | State | SQLite at `/data/dnspreviewer.db` on the `dnspreviewer_data` volume |
 | TLS | Fly-managed wildcard cert for `*.dnspreviewer.com` |
