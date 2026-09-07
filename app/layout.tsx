@@ -91,9 +91,10 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     creator: "@dnspreviewer",
   },
-  // No verification codes set yet — add them here when you register the site
-  // with Google Search Console / Bing Webmaster Tools.
-  // verification: { google: "...", other: { "msvalidate.01": "..." } },
+  // Google Search Console ownership for the https://dnspreviewer.com/ URL-prefix
+  // property on romailshah2@gmail.com. Removing this un-verifies the property and
+  // Search Console data stops, so leave it in place.
+  verification: { google: "pezMuoE-yOGSxJDMqfEZxYUI7hZR7ZbVMm3-JRYJnA4" },
 };
 
 export const viewport: Viewport = {
