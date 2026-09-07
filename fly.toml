@@ -5,7 +5,7 @@
 # taken at `fly launch` time, change it here (e.g. "dnspreviewer-app").
 
 app            = "dnspreviewer"
-primary_region = "iad"   # US-East (Virginia). Change to one closer to your users
+primary_region = "sin"   # Singapore — where the machine actually runs. Change to one closer to your users
                          # if you like — e.g. "lhr" (London), "fra" (Frankfurt),
                          # "sin" (Singapore), "syd" (Sydney). Full list:
                          # https://fly.io/docs/reference/regions/
@@ -25,10 +25,19 @@ primary_region = "iad"   # US-East (Virginia). Change to one closer to your user
   SESSION_TTL_MINUTES  = "15"
   RATE_LIMIT_PER_HOUR  = "10"
   MAX_REWRITE_MB       = "4"
-  # BLOCKED_HOSTS    = ""   # add abuse-targets later if needed
+  BACKUP_S3_REGION     = "auto"          # "auto" for Cloudflare R2
+  BACKUP_S3_PREFIX     = "dnspreviewer"
+  # BLOCKED_HOSTS      = ""   # extra abuse targets (adds to lib/blocklist.ts)
+  # BLOCKED_HOSTS_ALLOW = ""  # exceptions for customers who own a listed domain
+
+# Secrets — set with `fly secrets set`, never here:
+#   AUTH_SECRET, CRON_SECRET, TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY,
+#   BACKUP_S3_ENDPOINT, BACKUP_S3_BUCKET,
+#   BACKUP_S3_ACCESS_KEY_ID, BACKUP_S3_SECRET_ACCESS_KEY
+# See OPERATIONS.md.
 
 # ─── Persistent SQLite volume ───────────────────────────────────────────────
-# Create with: `fly volume create dnspreviewer_data --size 1 --region iad`
+# Create with: `fly volume create dnspreviewer_data --size 1 --region sin`
 # (1 GiB is wildly more than enough for now; you can grow it later.)
 [[mounts]]
   source      = "dnspreviewer_data"

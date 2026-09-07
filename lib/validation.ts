@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isBlockedTarget } from "./security";
+import { isBlockedTarget, isBlockedPreviewDomain } from "./security";
 
 const HOSTNAME_RE = /^(?=.{1,253}$)(?!-)([a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$/;
 const LABEL_RE = /^[a-zA-Z0-9-]{1,63}$/;
@@ -44,7 +44,19 @@ export const createSessionSchema = z
   .refine((v) => !isBlockedTarget(v.target, v.domain), {
     message: "This target is not allowed",
     path: ["target"],
-  });
+  })
+  // The previewed domain is the phishing-relevant field: it is what the
+  // upstream sees as Host and what the visitor believes they are looking at.
+  // Checking only the target would let domain=<bank> / target=<attacker box>
+  // straight through.
+  .refine(
+    (v) => !isBlockedPreviewDomain(effectiveDomain(v.domain, v.siteType, v.subdomain ?? null)),
+    {
+      message:
+        "Previews for this domain aren't allowed. If you own it, email abuse@dnspreviewer.com and we'll enable it for your account.",
+      path: ["domain"],
+    },
+  );
 
 export type CreateSessionInput = z.infer<typeof createSessionSchema>;
 

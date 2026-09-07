@@ -1,6 +1,14 @@
-# Production deployment
+# Production deployment (VPS / self-host)
 
-End-to-end guide for hosting DNS Previewer at `dnspreviewer.com` with a wildcard TLS certificate so previews like `abc123.dnspreviewer.com` work over HTTPS.
+> **Heads up:** `dnspreviewer.com` itself does **not** run on this setup — it runs
+> on Fly.io (see `fly.toml` and [OPERATIONS.md](OPERATIONS.md)). This document is
+> the self-hosting guide for running your own instance on a plain VPS, and the
+> reference for anyone who wants the service without Fly.
+>
+> If you are looking for how the live service is deployed, backed up, monitored,
+> or how to respond to an abuse report, read **[OPERATIONS.md](OPERATIONS.md)**.
+
+End-to-end guide for hosting DNS Previewer with a wildcard TLS certificate so previews like `abc123.example.com` work over HTTPS.
 
 **Total time:** ~45 minutes. **Monthly cost:** ~€5 for the VPS, free DNS & TLS.
 

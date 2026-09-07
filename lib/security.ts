@@ -24,9 +24,30 @@ const BLOCKED_V4_RANGES: Array<[number, number]> = [
   cidr("255.255.255.255", 32),
 ];
 
+/**
+ * Suffix-aware blocklist check. Blocking "paypal.com" must also block
+ * "login.paypal.com" — exact-match only would be trivially sidestepped.
+ */
+export function isBlockedHostname(host: string): boolean {
+  const h = host.toLowerCase().replace(/\.+$/, "");
+  for (const blocked of BLOCKED_HOSTS) {
+    if (h === blocked || h.endsWith(`.${blocked}`)) return true;
+  }
+  return false;
+}
+
+/**
+ * The hostname a preview claims to be (sent upstream as the Host header and
+ * shown to whoever opens the link). This is the field that matters for
+ * phishing: an attacker points domain=bank.example at their own server.
+ */
+export function isBlockedPreviewDomain(domain: string): boolean {
+  return isBlockedHostname(domain);
+}
+
 export function isBlockedTarget(target: string, ownDomain: string): boolean {
   const host = target.toLowerCase();
-  if (BLOCKED_HOSTS.has(host)) return true;
+  if (isBlockedHostname(host)) return true;
   if (host === ownDomain.toLowerCase()) return false;
 
   if (isIpLiteral(host)) {

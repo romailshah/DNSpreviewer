@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CreateForm } from "@/components/CreateForm";
 import { currentUser } from "@/lib/auth";
+import { TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 import type { Metadata } from "next";
 
@@ -29,7 +30,10 @@ export default async function CreatePage() {
           </p>
         </div>
         <div className="mt-10">
-          <CreateForm isLoggedIn={!!user} />
+          <CreateForm
+            isLoggedIn={!!user}
+            turnstileSiteKey={TURNSTILE_ENABLED ? TURNSTILE_SITE_KEY : ""}
+          />
         </div>
       </main>
       <SiteFooter />

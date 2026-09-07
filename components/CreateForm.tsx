@@ -3,11 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Turnstile } from "./Turnstile";
 
 type Protocol = "https" | "http" | "both";
 type SiteType = "regular" | "wildcard" | "subdomain";
 
-export function CreateForm({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function CreateForm({
+  isLoggedIn,
+  turnstileSiteKey,
+}: {
+  isLoggedIn: boolean;
+  turnstileSiteKey: string;
+}) {
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [domain, setDomain] = useState("");
@@ -21,6 +28,7 @@ export function CreateForm({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [noExpiry, setNoExpiry] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,6 +46,7 @@ export function CreateForm({ isLoggedIn }: { isLoggedIn: boolean }) {
       if (siteType === "subdomain" && subdomain.trim()) body.subdomain = subdomain.trim();
       if (passwordEnabled && password) body.password = password;
       if (noExpiry) body.noExpiry = true;
+      if (captchaToken) body.turnstileToken = captchaToken;
 
       const res = await fetch("/api/sessions", {
         method: "POST",
@@ -220,6 +229,10 @@ export function CreateForm({ isLoggedIn }: { isLoggedIn: boolean }) {
         <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
           {error}
         </div>
+      )}
+
+      {!isLoggedIn && turnstileSiteKey && (
+        <Turnstile siteKey={turnstileSiteKey} onToken={setCaptchaToken} />
       )}
 
       <div className="flex items-center justify-between pt-2">

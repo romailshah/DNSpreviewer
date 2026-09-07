@@ -3,9 +3,10 @@ import { createSessionSchema } from "@/lib/validation";
 import { createSession, listSessionsByUser } from "@/lib/sessions";
 import { checkCreateRateLimit, getClientIp } from "@/lib/rateLimit";
 import { assertHostResolvesPublic } from "@/lib/security";
-import { ROOT_DOMAIN, SESSION_TTL_MINUTES } from "@/lib/env";
+import { ROOT_DOMAIN, SESSION_TTL_MINUTES, TURNSTILE_ENABLED } from "@/lib/env";
 import { currentUser, hashPassword } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 
@@ -33,8 +34,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  // Captcha: anonymous creation only. Signed-in users are already accountable,
+  // and previews created from the dashboard shouldn't need a challenge.
+  if (!user && TURNSTILE_ENABLED) {
+    const token =
+      typeof (body as { turnstileToken?: unknown })?.turnstileToken === "string"
+        ? (body as { turnstileToken: string }).turnstileToken
+        : null;
+    const check = await verifyTurnstile(token, ip);
+    if (!check.ok) {
+      return NextResponse.json(
+        {
+          error: "captcha_failed",
+          message: "Couldn't verify you're human. Reload the page and try again.",
+        },
+        { status: 403 },
+      );
+    }
+  }
+
   const parsed = createSessionSchema.safeParse(body);
   if (!parsed.success) {
+    // Blocklist rejections are the signal that someone is probing the service
+    // for phishing use. Surface them in the admin activity feed.
+    const blocked = parsed.error.issues.some(
+      (i) => i.message === "This target is not allowed" || i.message.startsWith("Previews for this domain"),
+    );
+    if (blocked) {
+      const raw = body as { domain?: unknown; target?: unknown };
+      logActivity("preview.blocked", {
+        userId: user?.id ?? null,
+        ip,
+        details: {
+          domain: typeof raw?.domain === "string" ? raw.domain.slice(0, 253) : null,
+          target: typeof raw?.target === "string" ? raw.target.slice(0, 253) : null,
+        },
+      });
+    }
     return NextResponse.json(
       { error: "validation_failed", issues: parsed.error.flatten() },
       { status: 400 },

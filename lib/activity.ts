@@ -12,7 +12,10 @@ export type ActivityKind =
   | "preview.disabled"
   | "preview.enabled"
   | "preview.deleted"
-  | "admin.action";
+  | "admin.action"
+  | "preview.blocked"
+  | "backup.succeeded"
+  | "backup.failed";
 
 export interface Activity {
   id: number;

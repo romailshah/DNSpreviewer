@@ -13,6 +13,9 @@ const KIND_META: Record<ActivityKind, { label: string; color: string }> = {
   "preview.enabled": { label: "preview enabled", color: "bg-emerald-100 text-emerald-800" },
   "preview.deleted": { label: "preview deleted", color: "bg-red-100 text-red-800" },
   "admin.action": { label: "admin action", color: "bg-violet-100 text-violet-800" },
+  "preview.blocked": { label: "preview blocked", color: "bg-red-100 text-red-800" },
+  "backup.succeeded": { label: "backup", color: "bg-ink-100 text-ink-700" },
+  "backup.failed": { label: "backup failed", color: "bg-red-100 text-red-800" },
 };
 
 export function ActivityRow({ activity, compact }: { activity: Activity; compact?: boolean }) {

@@ -1,0 +1,45 @@
+# Scheduled operations for the live service.
+#
+# GitHub Actions is the scheduler because the Fly machine sleeps when idle
+# (min_machines_running = 0), so an in-process timer would only fire while
+# someone happened to be using the site. An external HTTP call both wakes the
+# machine and does the work.
+#
+# Required repository secret:
+#   CRON_SECRET — must match the CRON_SECRET set via `fly secrets set`.
+#
+# A failed job emails the repo owner, which is the alerting mechanism.
+
+name: Ops
+
+on:
+  schedule:
+    # 03:15 UTC daily — off-peak for both US and AU traffic.
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: Off-host database backup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger backup
+        run: |
+          curl --fail-with-body --silent --show-error --location \
+            --max-time 300 \
+            --request POST \
+            --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            https://dnspreviewer.com/api/cron/backup
+
+  health:
+    name: Deep health check
+    runs-on: ubuntu-latest
+    # Runs after the backup so a fresh backup timestamp is already recorded.
+    needs: backup
+    if: always()
+    steps:
+      - name: Check database, backup freshness and wildcard certificate
+        run: |
+          curl --fail-with-body --silent --show-error --location \
+            --max-time 60 \
+            "https://dnspreviewer.com/api/health?deep=1"

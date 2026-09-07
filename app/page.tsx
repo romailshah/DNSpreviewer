@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
-import { ROOT_DOMAIN } from "@/lib/env";
+import { ROOT_DOMAIN, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 /**
  * Schema.org JSON-LD for the homepage.
@@ -118,7 +118,11 @@ function Hero({ isLoggedIn, rootDomain }: { isLoggedIn: boolean; rootDomain: str
           No watermark, no signup wall, no nonsense.
         </p>
 
-        <HeroPreviewForm isLoggedIn={isLoggedIn} rootDomain={rootDomain} />
+        <HeroPreviewForm
+          isLoggedIn={isLoggedIn}
+          rootDomain={rootDomain}
+          turnstileSiteKey={TURNSTILE_ENABLED ? TURNSTILE_SITE_KEY : ""}
+        />
 
         <p className="mt-6 text-sm text-ink-500">
           <Link

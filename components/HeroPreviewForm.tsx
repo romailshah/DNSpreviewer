@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Turnstile } from "./Turnstile";
 
 type Protocol = "https" | "http" | "both";
 type SiteType = "regular" | "wildcard" | "subdomain";
@@ -48,9 +49,11 @@ function looksLikeIp(s: string): boolean {
 export function HeroPreviewForm({
   isLoggedIn,
   rootDomain,
+  turnstileSiteKey,
 }: {
   isLoggedIn: boolean;
   rootDomain: string;
+  turnstileSiteKey: string;
 }) {
   const router = useRouter();
 
@@ -75,6 +78,7 @@ export function HeroPreviewForm({
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   // Sample preview ID for the live URL indicator (stable per mount — no hydration mismatch)
   const [sampleId, setSampleId] = useState("xxxxxxxxxx");
@@ -119,6 +123,7 @@ export function HeroPreviewForm({
       if (siteType === "subdomain" && subdomain.trim()) body.subdomain = subdomain.trim();
       if (passwordEnabled && password) body.password = password;
       if (noExpiry) body.noExpiry = true;
+      if (captchaToken) body.turnstileToken = captchaToken;
 
       const res = await fetch("/api/sessions", {
         method: "POST",
@@ -344,6 +349,12 @@ export function HeroPreviewForm({
               disabled={!isLoggedIn}
             />
           </div>
+        </div>
+      )}
+
+      {!isLoggedIn && turnstileSiteKey && (
+        <div className="mt-4 flex justify-center">
+          <Turnstile siteKey={turnstileSiteKey} onToken={setCaptchaToken} />
         </div>
       )}
 
