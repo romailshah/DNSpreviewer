@@ -204,9 +204,14 @@ export function HeroPreviewForm({
             These were behind "advanced options" before, which buried the two
             things that actually differentiate us from the paid tools. Both are
             account-only server side, so a logged-out visitor gets an honest
-            prompt to sign up rather than a control that fails on submit. */}
-        <div className="mt-4 rounded-xl border border-ink-200 bg-ink-50/60 px-4 py-3">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            prompt to sign up rather than a control that fails on submit.
+
+            No container border here on purpose: the form card and the inputs
+            already draw one each, and a third nested box made the whole thing
+            read as a stack of rectangles. The active state carries the
+            emphasis instead. */}
+        <div className="mt-4">
+          <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
             <InlineOption
               on={passwordEnabled}
               locked={!isLoggedIn}
@@ -233,17 +238,12 @@ export function HeroPreviewForm({
                 setNoExpiry(v);
               }}
             />
-            {!passwordEnabled && !noExpiry && !needsAccount && (
-              <span className="text-[11px] text-ink-500 ml-auto">
-                Otherwise your link expires in {ttlMinutes} minutes
-              </span>
-            )}
           </div>
 
           {passwordEnabled && isLoggedIn && (
             <input
               type="password"
-              className="input mt-2"
+              className="input mt-3"
               placeholder="Password for this preview"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -251,15 +251,28 @@ export function HeroPreviewForm({
             />
           )}
 
-          {needsAccount && !isLoggedIn && (
-            <p className="mt-2 text-xs text-ink-600">
-              Both of these need a free account.{" "}
-              <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
-                Sign up free
-              </Link>{" "}
-              to unlock them. No card, no paid tier, they stay free.
-            </p>
-          )}
+          {/* One caption instead of repeating a state label on every switch.
+              It describes what the current combination actually does, which is
+              more useful than echoing "Off" twice. */}
+          <p className="mt-2.5 text-xs leading-relaxed text-ink-600">
+            {needsAccount && !isLoggedIn ? (
+              <>
+                Both need a free account.{" "}
+                <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
+                  Sign up
+                </Link>{" "}
+                and they are yours. No card, no paid tier, they stay free.
+              </>
+            ) : passwordEnabled && noExpiry ? (
+              <>Locked behind a password, and it never expires.</>
+            ) : passwordEnabled ? (
+              <>Only people with the password can open it.</>
+            ) : noExpiry ? (
+              <>Stays live until you switch it off. No countdown.</>
+            ) : (
+              <>Your link expires in {ttlMinutes} minutes unless you change that.</>
+            )}
+          </p>
         </div>
         {/* Live preview + submit */}
         <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -551,12 +564,18 @@ function MiniField({
  * On/off switch for the two headline options in the hero form.
  *
  * Reuses the .toggle styles from globals.css so it matches the switches used
- * elsewhere in the app rather than inventing a second control.
+ * elsewhere rather than inventing a second control.
  *
- * `locked` renders a visitor who is not signed in: the switch still responds
- * to a click so the intent is captured, but instead of flipping on it surfaces
- * the signup prompt. A dead disabled switch would hide the feature we most
- * want people to find.
+ * Deliberately carries no per-switch state text. Two switches each captioned
+ * "Off" plus two "Free account" notes was four labels saying very little; the
+ * shared caption underneath describes the actual combination instead. The on
+ * state is carried visually: the icon lifts out of a tinted disc and the label
+ * gains a brand underline.
+ *
+ * `locked` renders a visitor who is not signed in. The switch still responds
+ * to a click so intent is captured, but instead of flipping on it triggers the
+ * signup prompt. A dead disabled switch would hide the feature we most want
+ * people to find.
  */
 function InlineOption({
   on,
@@ -573,7 +592,7 @@ function InlineOption({
 }) {
   const active = on && !locked;
   return (
-    <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
+    <label className="group inline-flex items-center gap-2.5 cursor-pointer select-none">
       <button
         type="button"
         role="switch"
@@ -585,19 +604,24 @@ function InlineOption({
       >
         <span />
       </button>
-      <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm">
-        <span aria-hidden="true">{icon}</span>
-        <span className={`font-semibold ${active ? "text-brand-700" : "text-ink-800"}`}>
-          {label}
-        </span>
-        <span className={`text-[10px] font-bold uppercase tracking-wide ${
-          active ? "text-brand-600" : "text-ink-400"
-        }`}>
-          {active ? "On" : "Off"}
-        </span>
-        {locked && (
-          <span className="text-[10px] font-medium text-ink-500">Free account</span>
-        )}
+
+      <span
+        className={`grid h-7 w-7 place-items-center rounded-full text-sm transition duration-200 ${
+          active ? "bg-brand-100 scale-105" : "bg-ink-100 grayscale opacity-70"
+        }`}
+        aria-hidden="true"
+      >
+        {icon}
+      </span>
+
+      <span
+        className={`text-xs sm:text-sm font-semibold transition-colors border-b-2 pb-0.5 ${
+          active
+            ? "text-brand-700 border-brand-400"
+            : "text-ink-700 border-transparent group-hover:border-ink-200"
+        }`}
+      >
+        {label}
       </span>
     </label>
   );
