@@ -32,9 +32,9 @@ const body = Inter({
 
 const SITE_URL = "https://dnspreviewer.com";
 const SITE_NAME = "DNS Previewer";
-const DEFAULT_TITLE = "DNS Previewer — Preview your site before switching DNS. Free, forever.";
+const DEFAULT_TITLE = "DNS Previewer: Preview Your Site Before Switching DNS, Free";
 const DEFAULT_DESCRIPTION =
-  "Test how your website looks on a new server before switching DNS. 100% free — password protection, no-expiry links, wildcard support, all included. No signup wall.";
+  "Test how your website looks on a new server before switching DNS. Free, with password protection, no-expiry links and wildcard support included. No signup wall.";
 
 export const metadata: Metadata = {
   // `%s | DNS Previewer` is what per-page titles render as; the homepage uses

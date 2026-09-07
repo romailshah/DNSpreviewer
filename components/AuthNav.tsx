@@ -20,7 +20,7 @@ export function AuthNav({ user }: { user: { email: string; role?: string } | nul
         <Link href="/login" className="btn-text px-2 sm:px-3 py-2 text-sm">Log in</Link>
         <Link href="/signup" className="btn-primary !py-2 !px-3 sm:!px-4 text-sm whitespace-nowrap">
           <span className="sm:hidden">Sign up</span>
-          <span className="hidden sm:inline">Sign up — it&rsquo;s free</span>
+          <span className="hidden sm:inline">Sign up, it&rsquo;s free</span>
         </Link>
       </>
     );

@@ -29,7 +29,7 @@ function homepageJsonLd() {
         url: "https://dnspreviewer.com/",
         name: "DNS Previewer",
         description:
-          "Preview your website on a new server before switching DNS. 100% free — password protection, no-expiry links, wildcard support.",
+          "Preview your website on a new server before switching DNS. Free, with password protection, no-expiry links and wildcard support.",
         inLanguage: "en-US",
         publisher: { "@id": "https://dnspreviewer.com/#organization" },
       },
@@ -51,7 +51,7 @@ function homepageJsonLd() {
         name: "DNS Previewer",
         url: "https://dnspreviewer.com/",
         description:
-          "Free tool to preview your website on a new server before switching DNS — wildcard subdomain reverse proxy with password protection, no-expiry links, and HTML/CSS URL rewriting.",
+          "Free tool to preview your website on a new server before switching DNS. Wildcard subdomain reverse proxy with password protection, no-expiry links and HTML/CSS URL rewriting.",
         applicationCategory: "DeveloperApplication",
         applicationSubCategory: "DNS / Web Hosting Migration",
         operatingSystem: "Any (web-based)",
@@ -113,9 +113,10 @@ function Hero({ isLoggedIn, rootDomain }: { isLoggedIn: boolean; rootDomain: str
           <span className="text-brand-500">before</span> switching DNS.
         </h1>
         <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-ink-700 max-w-2xl mx-auto leading-relaxed">
-          Every feature our paid competitors lock up — password protection, no-expiry links,
-          wildcard support, custom labels — <strong className="text-ink-900">free for everyone</strong>.
-          No watermark, no signup wall, no nonsense.
+          Password protection, no-expiry links, wildcard support, custom labels.
+          Everything the paid tools charge a monthly fee for,{" "}
+          <strong className="text-ink-900">free for everyone</strong>. No watermark,
+          no signup wall, no trial countdown.
         </p>
 
         <HeroPreviewForm
@@ -148,23 +149,23 @@ function FreeVsPaid() {
   // Rows reflect what we've verified against paid alternatives in this space.
   // Specific competitor naming lives on /vs-skipdns; homepage stays generic.
   const rows: Array<{ feature: string; us: string; them: string }> = [
-    { feature: "Monthly cost", us: "$0 — free, forever", them: "$9.9 – $159.9 / month" },
-    { feature: "Preview links at once", us: "Unlimited", them: "3 – 300 depending on tier" },
-    { feature: "Password-protected previews", us: "Included", them: "Higher tiers only" },
-    { feature: "No-expiry links", us: "Included (free account)", them: "Paid — deleted if you cancel" },
-    { feature: "Disable / re-enable a link", us: "Included", them: "Higher tiers only" },
-    { feature: "Self-hosting option", us: "Coming (open source)", them: "Not offered" },
-    { feature: "If you stop paying", us: "Nothing — it's free", them: "All your links deleted" },
+    { feature: "Monthly cost", us: "$0, free forever", them: "$9.9 to $159.9 a month" },
+    { feature: "Preview links at once", us: "Unlimited", them: "3 to 300 depending on plan" },
+    { feature: "Free option", us: "Free permanently", them: "3 to 30 day trial, then paid" },
+    { feature: "No-expiry links", us: "Included with a free account", them: "Only while you keep paying" },
+    { feature: "Self-hosting option", us: "Yes, source on GitHub", them: "Not offered" },
+    { feature: "If you stop paying", us: "Nothing changes, it stays free", them: "All your links deleted" },
   ];
   return (
     <section className="container-wide py-14 sm:py-20">
       <div className="text-center">
         <span className="chip">The difference</span>
         <h2 className="heading mt-4 text-2xl sm:text-3xl md:text-4xl text-ink-900">
-          Everything others paywall — on us.
+          The same job, without the monthly bill.
         </h2>
         <p className="mt-4 text-sm sm:text-base text-ink-700 max-w-2xl mx-auto">
-          DNS migration is infrastructure, not a luxury. We refuse to charge for basics.
+          Checking a site before you point DNS at it is basic plumbing. We do not think
+          basic plumbing should carry a subscription.
         </p>
       </div>
 
@@ -242,7 +243,7 @@ function Steps() {
     {
       n: "1",
       title: "Enter your domain and new server",
-      body: "example.com + 203.0.113.42. Label it, protect with a password, pick no-expiry — all optional.",
+      body: "example.com plus 203.0.113.42. Label it, protect it with a password, pick no-expiry. All optional.",
     },
     {
       n: "2",
@@ -252,7 +253,7 @@ function Steps() {
     {
       n: "3",
       title: "Test, fix, then flip DNS with confidence",
-      body: "Verify the homepage, logins, forms — the whole thing. When it all works, update your DNS for real.",
+      body: "Check the homepage, the logins, the forms, the whole thing. When it all works, update your DNS for real.",
     },
   ];
   return (
@@ -281,7 +282,7 @@ function Features() {
   const items = [
     { icon: "🔒", title: "Password protect", body: "Share a preview only with stakeholders who have the password." },
     { icon: "♾️", title: "No-expiry links", body: "Sign in and create previews that live until you deactivate them." },
-    { icon: "🌐", title: "Wildcard / multisite", body: "Preview a whole domain — subdomains included." },
+    { icon: "🌐", title: "Wildcard / multisite", body: "Preview a whole domain, subdomains included." },
     { icon: "🎯", title: "Specific subdomain", body: "Aim at blog.example.com or staging.example.com directly." },
     { icon: "⚡", title: "Flexible SSL", body: "HTTPS, HTTP, or auto-fallback. Your upstream cert doesn't have to match." },
     { icon: "🏷️", title: "Custom labels", body: "Give each preview a friendly name for your dashboard." },

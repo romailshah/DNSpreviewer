@@ -20,7 +20,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const alt =
-  "DNS Previewer — Preview your website before switching DNS. Free, forever.";
+  "DNS Previewer: preview your website before switching DNS, free forever.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

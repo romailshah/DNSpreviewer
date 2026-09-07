@@ -5,7 +5,7 @@ import { AuthForm } from "@/components/AuthForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign up — it's free forever",
+  title: "Sign Up Free, No Card Required",
   description:
     "Create a free DNS Previewer account to unlock password-protected previews, no-expiry links, and a dashboard. No credit card. Free forever.",
   alternates: { canonical: "https://dnspreviewer.com/signup" },

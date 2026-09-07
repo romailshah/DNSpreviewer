@@ -35,7 +35,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-cream/80 backdrop-blur">
       <div className="container-wide flex h-16 items-center justify-between gap-3">
-        <Link href="/" className="flex items-center shrink-0" aria-label="DNS Previewer — home">
+        <Link href="/" className="flex items-center shrink-0" aria-label="DNS Previewer home">
           <LogoMark />
         </Link>
 
@@ -216,7 +216,7 @@ function LogoMark() {
   return (
     <Image
       src={horizontalLogo}
-      alt="DNS Previewer — preview before switching DNS"
+      alt="DNS Previewer, preview your site before switching DNS"
       width={1564}
       height={267}
       priority
