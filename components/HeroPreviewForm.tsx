@@ -81,7 +81,7 @@ export function HeroPreviewForm({
   const [step, setStep] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [needsAccount, setNeedsAccount] = useState(false);
+  const [accountPrompt, setAccountPrompt] = useState<"password" | "noExpiry" | null>(null);
 
   // Sample preview ID for the live URL indicator (stable per mount — no hydration mismatch)
   const [sampleId, setSampleId] = useState("xxxxxxxxxx");
@@ -203,8 +203,8 @@ export function HeroPreviewForm({
         {/* Above-the-fold options.
             These were behind "advanced options" before, which buried the two
             things that actually differentiate us from the paid tools. Both are
-            account-only server side, so a logged-out visitor gets an honest
-            prompt to sign up rather than a control that fails on submit.
+            account-only server side, so a logged-out visitor gets a popover
+            explaining that, rather than a control that fails on submit.
 
             No container border here on purpose: the form card and the inputs
             already draw one each, and a third nested box made the whole thing
@@ -217,9 +217,13 @@ export function HeroPreviewForm({
               locked={!isLoggedIn}
               label="Password protect"
               icon="🔒"
+              promptTitle="Password-protect this preview"
+              promptBody="Only people you give the password to can open the link. Included with a free account, not a paid add-on."
+              promptOpen={accountPrompt === "password"}
+              onDismissPrompt={() => setAccountPrompt(null)}
               onChange={(v) => {
                 if (!isLoggedIn) {
-                  setNeedsAccount(true);
+                  setAccountPrompt("password");
                   return;
                 }
                 setPasswordEnabled(v);
@@ -230,9 +234,14 @@ export function HeroPreviewForm({
               locked={!isLoggedIn}
               label="No expiry"
               icon="♾️"
+              promptTitle="Make this link permanent"
+              promptBody={`Guest links die after ${ttlMinutes} minutes. With an account yours stays live until you switch it off, and it keeps working if you never come back.`}
+              promptOpen={accountPrompt === "noExpiry"}
+              promptAlign="right"
+              onDismissPrompt={() => setAccountPrompt(null)}
               onChange={(v) => {
                 if (!isLoggedIn) {
-                  setNeedsAccount(true);
+                  setAccountPrompt("noExpiry");
                   return;
                 }
                 setNoExpiry(v);
@@ -253,17 +262,10 @@ export function HeroPreviewForm({
 
           {/* One caption instead of repeating a state label on every switch.
               It describes what the current combination actually does, which is
-              more useful than echoing "Off" twice. */}
+              more useful than echoing "Off" twice. The signup message lives in
+              the popover now, so this line stays purely descriptive. */}
           <p className="mt-2.5 text-xs leading-relaxed text-ink-600" aria-live="polite">
-            {needsAccount && !isLoggedIn ? (
-              <>
-                Both need a free account.{" "}
-                <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
-                  Sign up
-                </Link>{" "}
-                and they are yours. No card, no paid tier, they stay free.
-              </>
-            ) : passwordEnabled && noExpiry ? (
+            {passwordEnabled && noExpiry ? (
               <>Locked behind a password, and it never expires.</>
             ) : passwordEnabled ? (
               <>Only people with the password can open it.</>
@@ -582,11 +584,11 @@ const TEASE_MS = 700;
  * underline.
  *
  * `locked` renders a visitor who is not signed in. Clicking flips the switch on
- * for a moment so they see the thing they are being offered, then it releases
- * back to off while the caption explains that it needs a free account. Showing
- * the on state and then taking it away lands better than a dead disabled
- * control, and it is honest: nothing is actually enabled, and the caption says
- * so before the switch has finished travelling back.
+ * for a moment so they see what is on offer, then releases it while a popover
+ * opens against that specific switch explaining what the option does and
+ * offering the signup. Anchoring it to the switch they touched keeps the
+ * message attached to the thing they wanted, which a shared caption line
+ * underneath could not do.
  */
 function InlineOption({
   on,
@@ -594,21 +596,67 @@ function InlineOption({
   label,
   icon,
   onChange,
+  promptTitle,
+  promptBody,
+  promptOpen,
+  onDismissPrompt,
+  promptAlign = "left",
 }: {
   on: boolean;
   locked?: boolean;
   label: string;
   icon: string;
   onChange: (v: boolean) => void;
+  promptTitle: string;
+  promptBody: string;
+  promptOpen: boolean;
+  onDismissPrompt: () => void;
+  /** Which edge the popover hangs from. Right keeps it off the submit button
+   *  for options that sit near it. */
+  promptAlign?: "left" | "right";
 }) {
   const [teasing, setTeasing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const switchRef = useRef<HTMLButtonElement>(null);
+  const ctaRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
   }, []);
+
+  // Send focus to the signup link when the popover opens, and hand it back to
+  // the switch when it closes, so a keyboard user is not dropped somewhere.
+  useEffect(() => {
+    if (promptOpen) ctaRef.current?.focus();
+  }, [promptOpen]);
+
+  // Dismiss on outside click or Escape. Without this the popover is a trap:
+  // there is nothing obvious to click to make it go away.
+  useEffect(() => {
+    if (!promptOpen) return;
+
+    function onPointerDown(e: MouseEvent | TouchEvent) {
+      if (!wrapRef.current?.contains(e.target as Node)) onDismissPrompt();
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onDismissPrompt();
+        switchRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("touchstart", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("touchstart", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [promptOpen, onDismissPrompt]);
 
   function handleClick() {
     if (locked) {
@@ -625,37 +673,100 @@ function InlineOption({
   const looksOn = enabled || teasing;
 
   return (
-    <label className="group inline-flex items-center gap-2.5 cursor-pointer select-none">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={enabled}
-        aria-label={label}
-        onClick={handleClick}
-        className="toggle"
-        data-on={looksOn}
-      >
-        <span />
-      </button>
+    <div ref={wrapRef} className="relative">
+      <label className="group inline-flex items-center gap-2.5 cursor-pointer select-none">
+        <button
+          ref={switchRef}
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          aria-label={label}
+          aria-haspopup={locked ? "dialog" : undefined}
+          aria-expanded={locked ? promptOpen : undefined}
+          onClick={handleClick}
+          className="toggle"
+          data-on={looksOn}
+        >
+          <span />
+        </button>
 
-      <span
-        className={`grid h-7 w-7 place-items-center rounded-full text-sm transition duration-200 ${
-          looksOn ? "bg-brand-100 scale-105" : "bg-ink-100 grayscale opacity-70"
-        }`}
-        aria-hidden="true"
-      >
-        {icon}
-      </span>
+        <span
+          className={`grid h-7 w-7 place-items-center rounded-full text-sm transition duration-200 ${
+            looksOn ? "bg-brand-100 scale-105" : "bg-ink-100 grayscale opacity-70"
+          }`}
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
 
-      <span
-        className={`text-xs sm:text-sm font-semibold transition-colors border-b-2 pb-0.5 ${
-          looksOn
-            ? "text-brand-700 border-brand-400"
-            : "text-ink-700 border-transparent group-hover:border-ink-200"
-        }`}
-      >
-        {label}
-      </span>
-    </label>
+        <span
+          className={`text-xs sm:text-sm font-semibold transition-colors border-b-2 pb-0.5 ${
+            looksOn
+              ? "text-brand-700 border-brand-400"
+              : "text-ink-700 border-transparent group-hover:border-ink-200"
+          }`}
+        >
+          {label}
+        </span>
+      </label>
+
+      {promptOpen && (
+        <div
+          role="dialog"
+          aria-label={promptTitle}
+          className={`absolute top-full z-30 mt-3 w-72 max-w-[calc(100vw-3rem)] rounded-xl border border-ink-200 bg-white p-4 shadow-lg ${
+            // Right alignment only once the switches sit side by side. They
+            // stack on mobile, where hanging off the right edge of a narrow
+            // switch pushes the popover off screen.
+            promptAlign === "right" ? "left-0 sm:left-auto sm:right-0" : "left-0"
+          }`}
+        >
+          {/* Caret pointing back at the switch that opened this. */}
+          <span
+            aria-hidden="true"
+            className={`absolute -top-1.5 h-3 w-3 rotate-45 border-l border-t border-ink-200 bg-white ${
+              promptAlign === "right" ? "left-5 sm:left-auto sm:right-5" : "left-5"
+            }`}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              onDismissPrompt();
+              switchRef.current?.focus();
+            }}
+            aria-label="Dismiss"
+            className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+
+          <div className="flex items-start gap-2.5 pr-5">
+            <span aria-hidden="true" className="text-base leading-none mt-0.5">
+              {icon}
+            </span>
+            <div>
+              <p className="font-display font-semibold text-sm text-ink-900">{promptTitle}</p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-600">{promptBody}</p>
+            </div>
+          </div>
+
+          <Link
+            ref={ctaRef}
+            href="/signup"
+            className="btn-primary mt-3 w-full !py-2 text-sm justify-center"
+          >
+            Create a free account
+          </Link>
+
+          <p className="mt-2 text-center text-[11px] text-ink-500">
+            No card, no paid tier.{" "}
+            <Link href="/login" className="font-semibold text-brand-600 hover:underline">
+              Already have one?
+            </Link>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
