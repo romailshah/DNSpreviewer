@@ -25,6 +25,9 @@ primary_region = "iad"   # US-East (Virginia). This is where the machine and its
   SESSION_TTL_MINUTES  = "15"
   RATE_LIMIT_PER_HOUR  = "10"
   MAX_REWRITE_MB       = "4"
+  BACKUP_GITHUB_BRANCH = "main"
+  BACKUP_GITHUB_PREFIX = "backups"
+  BACKUP_GITHUB_KEEP   = "90"           # GitHub has no lifecycle rules
   BACKUP_S3_REGION     = "auto"          # "auto" for Cloudflare R2
   BACKUP_S3_PREFIX     = "dnspreviewer"
   # BLOCKED_HOSTS      = ""   # extra abuse targets (adds to lib/blocklist.ts)
@@ -32,6 +35,7 @@ primary_region = "iad"   # US-East (Virginia). This is where the machine and its
 
 # Secrets — set with `fly secrets set`, never here:
 #   AUTH_SECRET, CRON_SECRET, TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY,
+#   BACKUP_ENCRYPTION_KEY, BACKUP_GITHUB_TOKEN, BACKUP_GITHUB_REPO,
 #   BACKUP_S3_ENDPOINT, BACKUP_S3_BUCKET,
 #   BACKUP_S3_ACCESS_KEY_ID, BACKUP_S3_SECRET_ACCESS_KEY
 # See OPERATIONS.md.

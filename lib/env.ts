@@ -44,13 +44,38 @@ export const TURNSTILE_ENABLED = Boolean(TURNSTILE_SITE_KEY && TURNSTILE_SECRET_
 // requests (fail closed).
 export const CRON_SECRET = process.env.CRON_SECRET || "";
 
-// ─── Off-host backups (any S3-compatible bucket: R2, B2, S3, Wasabi) ────────
+// ─── Off-host backups ───────────────────────────────────────────────────────
+// Two possible destinations. Either or both can be configured; the backup job
+// writes to every destination that is fully configured, and fails if none is.
+
+// Destination A: a private GitHub repository (Contents API).
+// The repo MUST be private. The database contains user emails, bcrypt password
+// hashes, auth session tokens and creator IP addresses. Never point this at the
+// public application repo.
+export const BACKUP_GITHUB_TOKEN = process.env.BACKUP_GITHUB_TOKEN || "";
+export const BACKUP_GITHUB_REPO = process.env.BACKUP_GITHUB_REPO || ""; // "owner/repo"
+export const BACKUP_GITHUB_BRANCH = process.env.BACKUP_GITHUB_BRANCH || "main";
+export const BACKUP_GITHUB_PREFIX = process.env.BACKUP_GITHUB_PREFIX || "backups";
+// GitHub has no lifecycle rules, so retention is enforced by the job itself.
+export const BACKUP_GITHUB_KEEP = Number(process.env.BACKUP_GITHUB_KEEP || 90);
+export const BACKUP_GITHUB_ENABLED = Boolean(BACKUP_GITHUB_TOKEN && BACKUP_GITHUB_REPO);
+
+// Destination B: any S3-compatible bucket (R2, B2, S3, Wasabi).
 export const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || "";
 export const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || "auto";
 export const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || "";
 export const BACKUP_S3_ACCESS_KEY_ID = process.env.BACKUP_S3_ACCESS_KEY_ID || "";
 export const BACKUP_S3_SECRET_ACCESS_KEY = process.env.BACKUP_S3_SECRET_ACCESS_KEY || "";
 export const BACKUP_S3_PREFIX = process.env.BACKUP_S3_PREFIX || "dnspreviewer";
-export const BACKUP_ENABLED = Boolean(
+export const BACKUP_S3_ENABLED = Boolean(
   BACKUP_S3_ENDPOINT && BACKUP_S3_BUCKET && BACKUP_S3_ACCESS_KEY_ID && BACKUP_S3_SECRET_ACCESS_KEY,
 );
+
+// Encryption at rest, applied before the dump leaves the machine.
+// 64 hex characters (32 bytes) for AES-256-GCM. Unset means the backup is
+// uploaded as plain gzip, which is only acceptable for a destination you are
+// certain stays private.
+export const BACKUP_ENCRYPTION_KEY = process.env.BACKUP_ENCRYPTION_KEY || "";
+export const BACKUP_ENCRYPTED = Boolean(BACKUP_ENCRYPTION_KEY);
+
+export const BACKUP_ENABLED = BACKUP_GITHUB_ENABLED || BACKUP_S3_ENABLED;

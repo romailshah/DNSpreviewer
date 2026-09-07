@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
         rawBytes: result.rawBytes,
         uploadedBytes: result.uploadedBytes,
         durationMs: result.durationMs,
+        encrypted: result.encrypted,
+        destinations: result.destinations,
+        prunedBackups: result.pruned,
         prunedActivity,
       },
     });

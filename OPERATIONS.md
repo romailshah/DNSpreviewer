@@ -41,78 +41,111 @@ Non-secret settings live in `[env]` in `fly.toml`. Everything below is set with
 fly secrets set \
   AUTH_SECRET="$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")" \
   CRON_SECRET="$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")" \
+  BACKUP_ENCRYPTION_KEY="<64 hex chars, saved in your password manager first>" \
+  BACKUP_GITHUB_TOKEN="github_pat_..." \
+  BACKUP_GITHUB_REPO="romailshah/dnspreviewer-backups" \
   TURNSTILE_SITE_KEY="0x4AAA..." \
-  TURNSTILE_SECRET_KEY="0x4AAA..." \
-  BACKUP_S3_ENDPOINT="https://<account>.r2.cloudflarestorage.com" \
-  BACKUP_S3_BUCKET="dnspreviewer-backups" \
-  BACKUP_S3_ACCESS_KEY_ID="..." \
-  BACKUP_S3_SECRET_ACCESS_KEY="..."
+  TURNSTILE_SECRET_KEY="0x4AAA..."
 ```
 
 `CRON_SECRET` must also be added as a **GitHub repository secret** of the same
-name, because the scheduler lives in GitHub Actions (see below).
+name on the application repo, because the scheduler lives in GitHub Actions.
+
+`BACKUP_GITHUB_TOKEN` should be a fine-grained token scoped to the backup repo
+alone, with Contents: read and write. If it ever leaks, the blast radius is one
+private repo of encrypted files rather than your source code.
 
 ---
 
 ## Backups
 
+### What is in the file, and why that matters
+
+The database holds user email addresses, bcrypt password hashes, auth session
+tokens, preview targets and the creator IP for every preview. Any destination
+you send it to must be private, and the dump is encrypted before it leaves the
+machine so a mistake at the destination is not immediately a breach.
+
+**Never point a backup at the public application repo.**
+
 ### How it works
 
 `POST /api/cron/backup` (bearer-authenticated with `CRON_SECRET`):
 
-1. Takes a consistent snapshot with SQLite's online backup API — no downtime.
+1. Takes a consistent snapshot with SQLite's online backup API. No downtime.
 2. Runs `PRAGMA quick_check` on the copy. A backup that captured a corrupt page
    is worse than none, because it stops you looking.
-3. Gzips it and PUTs it to an S3-compatible bucket at
-   `<prefix>/<year>/<month>/dnspreviewer-<timestamp>.db.gz`.
-4. Records a `backup.succeeded` row in the activity log, which is what the
-   staleness check reads.
+3. Gzips it, then encrypts with AES-256-GCM using `BACKUP_ENCRYPTION_KEY`.
+4. Uploads to every configured destination: a private GitHub repo, an
+   S3-compatible bucket, or both.
+5. Prunes old backups on GitHub down to `BACKUP_GITHUB_KEEP` (default 90).
+6. Records a `backup.succeeded` row, which is what the staleness check reads.
 
-The scheduler is `.github/workflows/ops.yml`, running daily at 03:15 UTC. It has
-to be external: the Fly machine sleeps when idle, so an in-process timer would
-only fire while someone happened to be using the site. The HTTP call wakes the
+The scheduler is `.github/workflows/ops.yml`, daily at 03:15 UTC. It has to be
+external: the Fly machine sleeps when idle, so an in-process timer would only
+fire while someone happened to be using the site. The HTTP call wakes the
 machine and does the work.
 
-Backups fail **closed** — with `CRON_SECRET` unset, the endpoint refuses
-everything rather than letting anyone trigger a dump.
+Backups fail **closed**. With `CRON_SECRET` unset the endpoint refuses
+everything rather than letting anyone trigger a dump of your user table.
 
-### One-time bucket setup
+### Encrypted file format
 
-Any S3-compatible bucket works (Cloudflare R2, Backblaze B2, AWS S3, Wasabi).
-R2 is the cheapest sane default — no egress fees, generous free tier.
+`DNSPBK` (6 bytes) | version (1) | IV (12) | GCM auth tag (16) | ciphertext
 
-1. Create a **private** bucket, e.g. `dnspreviewer-backups`.
-2. Create an access key scoped to just that bucket.
-3. Add a **lifecycle rule: delete objects older than 90 days.** The backup job
-   deliberately does not prune; retention is the bucket's job, so a bug in the
-   app can never delete your history.
+Decryption fails loudly on a wrong key or a tampered file rather than returning
+garbage. The `.db.gz.enc` extension is a convenience; the restore script detects
+the magic header rather than trusting the filename.
+
+### One-time setup
+
+**Private GitHub repo**
+
+1. Create a new **private** repo, for example `dnspreviewer-backups`, with a
+   README so the default branch exists.
+2. Create a fine-grained personal access token scoped to **only that repo**,
+   with **Contents: read and write**. Nothing else.
+3. Set the secrets on Fly (see Secrets and configuration above).
+
+**Encryption key**
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Put it in your password manager first, then set it as a Fly secret. If you lose
+this key every backup is permanently unreadable. That is the deal encryption
+makes and there is no recovery path around it.
 
 ### Verify it works
 
 ```bash
-# From your machine, against production:
 curl -X POST -H "Authorization: Bearer $CRON_SECRET" \
   https://dnspreviewer.com/api/cron/backup
-
-# Or locally with the same env vars:
-npm run backup
 ```
 
-Then confirm the object actually landed in the bucket. A backup you have never
+Then confirm the file actually appeared in the repo. A backup you have never
 looked at is a hope, not a backup.
 
 ### Restore
 
-SQLite keeps `-wal` and `-shm` sidecar files; a restore that leaves stale ones
+```bash
+# 1. Download the backup from the repo, then turn it back into a database.
+BACKUP_ENCRYPTION_KEY=<your key> \
+  npx tsx scripts/restore-backup.ts dnspreviewer-<timestamp>.db.gz.enc restored.db
+```
+
+That decrypts, decompresses and integrity-checks the file, and prints the user
+and preview counts so you can confirm you grabbed the right one before going
+further.
+
+SQLite keeps `-wal` and `-shm` sidecar files. A restore that leaves stale ones
 behind will corrupt or silently revert your data.
 
 ```bash
-# 1. Fetch and decompress the snapshot locally.
-gunzip dnspreviewer-<timestamp>.db.gz
-
-# 2. Upload it to the volume, alongside (not over) the live DB.
+# 2. Upload it to the volume, alongside (not over) the live database.
 fly ssh sftp shell -a dnspreviewer
-  put dnspreviewer-<timestamp>.db /data/restore.db
+  put restored.db /data/restore.db
   exit
 
 # 3. Swap it in and clear the sidecars.
@@ -126,8 +159,6 @@ fly apps restart dnspreviewer
 ```
 
 Keep `dnspreviewer.db.bak` until you have confirmed the restore is good.
-
----
 
 ## Monitoring
 
