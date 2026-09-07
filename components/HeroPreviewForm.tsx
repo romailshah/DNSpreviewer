@@ -205,8 +205,8 @@ export function HeroPreviewForm({
             things that actually differentiate us from the paid tools. Both are
             account-only server side, so a logged-out visitor gets an honest
             prompt to sign up rather than a control that fails on submit. */}
-        <div className="mt-3 sm:mt-4">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="mt-4 rounded-xl border border-ink-200 bg-ink-50/60 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <InlineOption
               on={passwordEnabled}
               locked={!isLoggedIn}
@@ -234,7 +234,7 @@ export function HeroPreviewForm({
               }}
             />
             {!passwordEnabled && !noExpiry && !needsAccount && (
-              <span className="text-[11px] text-ink-500">
+              <span className="text-[11px] text-ink-500 ml-auto">
                 Otherwise your link expires in {ttlMinutes} minutes
               </span>
             )}
@@ -547,6 +547,17 @@ function MiniField({
  * the signup prompt. Showing a dead disabled control here would hide the
  * feature we most want people to discover.
  */
+/**
+ * On/off switch for the two headline options in the hero form.
+ *
+ * Reuses the .toggle styles from globals.css so it matches the switches used
+ * elsewhere in the app rather than inventing a second control.
+ *
+ * `locked` renders a visitor who is not signed in: the switch still responds
+ * to a click so the intent is captured, but instead of flipping on it surfaces
+ * the signup prompt. A dead disabled switch would hide the feature we most
+ * want people to find.
+ */
 function InlineOption({
   on,
   locked,
@@ -562,29 +573,32 @@ function InlineOption({
 }) {
   const active = on && !locked;
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={active}
-      onClick={() => onChange(!on)}
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs sm:text-sm font-semibold transition ${
-        active
-          ? "border-brand-300 bg-brand-50 text-brand-700"
-          : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"
-      }`}
-    >
-      <span aria-hidden="true">{icon}</span>
-      <span>{label}</span>
-      {locked ? (
-        <span className="text-[10px] font-medium text-ink-500">Free account</span>
-      ) : (
-        <span
-          aria-hidden="true"
-          className={`h-3.5 w-3.5 rounded-full border transition ${
-            active ? "border-brand-500 bg-brand-500" : "border-ink-300 bg-transparent"
-          }`}
-        />
-      )}
-    </button>
+    <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={active}
+        aria-label={label}
+        onClick={() => onChange(!on)}
+        className="toggle"
+        data-on={active}
+      >
+        <span />
+      </button>
+      <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm">
+        <span aria-hidden="true">{icon}</span>
+        <span className={`font-semibold ${active ? "text-brand-700" : "text-ink-800"}`}>
+          {label}
+        </span>
+        <span className={`text-[10px] font-bold uppercase tracking-wide ${
+          active ? "text-brand-600" : "text-ink-400"
+        }`}>
+          {active ? "On" : "Off"}
+        </span>
+        {locked && (
+          <span className="text-[10px] font-medium text-ink-500">Free account</span>
+        )}
+      </span>
+    </label>
   );
 }
