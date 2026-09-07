@@ -560,8 +560,14 @@ function MiniField({
  * the signup prompt. Showing a dead disabled control here would hide the
  * feature we most want people to discover.
  */
-/** How long the locked switch stays visibly on before snapping back. */
-const TEASE_MS = 1100;
+/**
+ * How long the locked switch stays visibly on before releasing.
+ *
+ * The .toggle transition is 200ms each way, so this budget is roughly
+ * 200 travelling on, 300 held, 200 travelling back. 1100 was the first
+ * attempt and read as a stall rather than a demo.
+ */
+const TEASE_MS = 700;
 
 /**
  * On/off switch for the two headline options in the hero form.
