@@ -25,7 +25,7 @@ faqs:
   - q: "Can the hosts file use wildcards for subdomains?"
     a: "No. The hosts file matches exact hostnames only. There is no way to write *.example.com and have it cover blog.example.com, shop.example.com and the rest. Every hostname needs its own line, and you have to know all of them in advance. This is the single biggest limitation when you are migrating a WordPress multisite or any site with a lot of subdomains."
   - q: "Why is my hosts file not working?"
-    a: "Three common causes. First, DNS caching: your operating system or browser is still holding the old answer, so flush it with ipconfig /flushdns on Windows, or sudo dscacheutil -flushcache followed by sudo killall -HUP mDNSResponder on macOS. Second, Firefox with DNS over HTTPS enabled resolves names inside the browser and skips the operating system resolver, and therefore skips the hosts file entirely. Chrome does not enable Secure DNS by default, so Chrome usually still honours it. Third, the file was saved without administrator rights, so your edit never reached disk."
+    a: "Three common causes. First, DNS caching: your operating system or browser is still holding the old answer, so flush it with ipconfig /flushdns on Windows, or sudo dscacheutil -flushcache followed by sudo killall -HUP mDNSResponder on macOS. Second, Firefox with DNS over HTTPS enabled resolves names inside the browser and skips the operating system resolver, and therefore skips the hosts file entirely. Chrome behaves differently and usually still honours the file, because it checks the system resolver for local entries. Third, the file was saved without administrator rights, so your edit never reached disk."
   - q: "Can I share a hosts file change with a client?"
     a: "Not directly. A hosts file entry only affects the machine it was saved on. To let a client see the new server you would have to talk them through editing a protected system file with administrator rights on their own computer, which is a difficult ask and often blocked outright on managed work laptops. This is the usual reason people look for an alternative."
   - q: "Can I edit the hosts file on an iPhone or Android phone?"
@@ -86,7 +86,7 @@ That hurts more than it sounds, because mobile is where layout breaks, where tou
 
 Firefox enables DNS over HTTPS, which resolves names inside the browser over an encrypted connection to a DNS provider. When that is on, resolution never reaches your operating system's resolver, so your hosts file is skipped entirely. Your entry is correct, saved, and completely ignored.
 
-Mozilla has tracked support for local address overrides under DoH in [bug 1453207](https://bugzilla.mozilla.org/show_bug.cgi?id=1453207) for years. Chrome does not turn Secure DNS on by default, so Chrome generally still respects the hosts file, which is why the same test can pass in one browser and fail in another on the same machine.
+Mozilla has tracked support for local address overrides under DoH in [bug 1453207](https://bugzilla.mozilla.org/show_bug.cgi?id=1453207) for years. Chrome behaves differently here and generally still honours the file, because it checks the system resolver for local entries, which is why the same test can pass in one browser and fail in another on the same machine.
 
 If you are going to rely on the hosts file, check whether DoH is on before you conclude anything about the server.
 
@@ -118,7 +118,7 @@ That difference solves most of the list above at once. A link can go to a client
 
 Wildcards stop being a problem too, because the proxy can be told to cover a whole domain including its subdomains, instead of you enumerating them by hand.
 
-[DNS Previewer](/) does this for free, including the wildcard case, an optional password on the link if you would rather not have it publicly reachable, and links that do not expire if you create an account. You can also pick whether the upstream connection uses HTTPS, HTTP, or falls back automatically, which matters when the new server does not have a valid certificate for the domain yet.
+[DNS Previewer](/) does this for free, including the wildcard case. You can also pick whether the upstream connection uses HTTPS, HTTP, or falls back automatically, which matters when the new server does not have a valid certificate for the domain yet. Creating a free account additionally lets you put a password on a link, so it is not openly reachable by anyone who has the URL, and create links that never expire.
 
 ### The honest limitations
 
