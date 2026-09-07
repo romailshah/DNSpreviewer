@@ -50,10 +50,12 @@ export function HeroPreviewForm({
   isLoggedIn,
   rootDomain,
   turnstileSiteKey,
+  ttlMinutes,
 }: {
   isLoggedIn: boolean;
   rootDomain: string;
   turnstileSiteKey: string;
+  ttlMinutes: number;
 }) {
   const router = useRouter();
 
@@ -79,6 +81,7 @@ export function HeroPreviewForm({
   const [step, setStep] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [needsAccount, setNeedsAccount] = useState(false);
 
   // Sample preview ID for the live URL indicator (stable per mount — no hydration mismatch)
   const [sampleId, setSampleId] = useState("xxxxxxxxxx");
@@ -142,7 +145,7 @@ export function HeroPreviewForm({
         setStep("");
         return;
       }
-      setStep("Ready — redirecting…");
+      setStep("Ready, redirecting…");
       router.push(`/s/${data.id}`);
     } catch (err) {
       setError((err as Error).message || "Network error");
@@ -196,6 +199,68 @@ export function HeroPreviewForm({
           </FieldSlot>
         </div>
 
+
+        {/* Above-the-fold options.
+            These were behind "advanced options" before, which buried the two
+            things that actually differentiate us from the paid tools. Both are
+            account-only server side, so a logged-out visitor gets an honest
+            prompt to sign up rather than a control that fails on submit. */}
+        <div className="mt-3 sm:mt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <InlineOption
+              on={passwordEnabled}
+              locked={!isLoggedIn}
+              label="Password protect"
+              icon="🔒"
+              onChange={(v) => {
+                if (!isLoggedIn) {
+                  setNeedsAccount(true);
+                  return;
+                }
+                setPasswordEnabled(v);
+              }}
+            />
+            <InlineOption
+              on={noExpiry}
+              locked={!isLoggedIn}
+              label="No expiry"
+              icon="♾️"
+              onChange={(v) => {
+                if (!isLoggedIn) {
+                  setNeedsAccount(true);
+                  return;
+                }
+                setNoExpiry(v);
+              }}
+            />
+            {!passwordEnabled && !noExpiry && !needsAccount && (
+              <span className="text-[11px] text-ink-500">
+                Otherwise your link expires in {ttlMinutes} minutes
+              </span>
+            )}
+          </div>
+
+          {passwordEnabled && isLoggedIn && (
+            <input
+              type="password"
+              className="input mt-2"
+              placeholder="Password for this preview"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+          )}
+
+          {needsAccount && !isLoggedIn && (
+            <p className="mt-2 text-xs text-ink-600">
+              Both of these need a free account.{" "}
+              <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
+                Sign up free
+              </Link>{" "}
+              to unlock them. No card, no paid tier, they stay free.
+            </p>
+          )}
+        </div>
         {/* Live preview + submit */}
         <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="text-xs sm:text-sm text-ink-600 min-w-0 truncate">
@@ -315,40 +380,6 @@ export function HeroPreviewForm({
             </MiniField>
           </div>
 
-          <div className="space-y-3 rounded-xl border border-ink-200 bg-ink-50/50 p-4">
-            <MiniToggle
-              on={passwordEnabled}
-              onChange={setPasswordEnabled}
-              title="🔒 Password-protect this preview"
-              hint={
-                isLoggedIn
-                  ? "Only people with the password can load it."
-                  : "Sign up free to enable."
-              }
-              disabled={!isLoggedIn}
-            />
-            {passwordEnabled && (
-              <input
-                type="password"
-                className="input"
-                placeholder="Preview password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-              />
-            )}
-            <MiniToggle
-              on={noExpiry}
-              onChange={setNoExpiry}
-              title="♾️ No expiry"
-              hint={
-                isLoggedIn
-                  ? "Stays active until you deactivate it."
-                  : "Sign up free to enable."
-              }
-              disabled={!isLoggedIn}
-            />
-          </div>
         </div>
       )}
 
@@ -361,7 +392,7 @@ export function HeroPreviewForm({
       {/* Footer meta */}
       <p className="mt-5 text-xs text-ink-500 text-center">
         {isLoggedIn ? (
-          <>Logged in — your preview saves to your dashboard.</>
+          <>Logged in. Your preview saves to your dashboard.</>
         ) : (
           <>
             Creating as guest.{" "}
@@ -508,36 +539,52 @@ function MiniField({
   );
 }
 
-function MiniToggle({
+/**
+ * Compact chip toggle for the two headline options in the hero form.
+ *
+ * `locked` renders a visitor who is not signed in: the chip still responds to
+ * a click so the intent is captured, but instead of switching on it surfaces
+ * the signup prompt. Showing a dead disabled control here would hide the
+ * feature we most want people to discover.
+ */
+function InlineOption({
   on,
+  locked,
+  label,
+  icon,
   onChange,
-  title,
-  hint,
-  disabled,
 }: {
   on: boolean;
+  locked?: boolean;
+  label: string;
+  icon: string;
   onChange: (v: boolean) => void;
-  title: string;
-  hint?: string;
-  disabled?: boolean;
 }) {
+  const active = on && !locked;
   return (
-    <label className={`flex items-start gap-3 ${disabled ? "opacity-60" : ""}`}>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={on && !disabled}
-        disabled={disabled}
-        onClick={() => !disabled && onChange(!on)}
-        className="toggle mt-0.5"
-        data-on={on && !disabled}
-      >
-        <span />
-      </button>
-      <div className="flex-1">
-        <div className="font-semibold text-sm text-ink-900">{title}</div>
-        {hint && <div className="text-[11px] text-ink-500 mt-0.5">{hint}</div>}
-      </div>
-    </label>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={active}
+      onClick={() => onChange(!on)}
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs sm:text-sm font-semibold transition ${
+        active
+          ? "border-brand-300 bg-brand-50 text-brand-700"
+          : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"
+      }`}
+    >
+      <span aria-hidden="true">{icon}</span>
+      <span>{label}</span>
+      {locked ? (
+        <span className="text-[10px] font-medium text-ink-500">Free account</span>
+      ) : (
+        <span
+          aria-hidden="true"
+          className={`h-3.5 w-3.5 rounded-full border transition ${
+            active ? "border-brand-500 bg-brand-500" : "border-ink-300 bg-transparent"
+          }`}
+        />
+      )}
+    </button>
   );
 }

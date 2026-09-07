@@ -75,7 +75,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
           <h2 className="font-display font-semibold text-ink-900">Troubleshooting</h2>
           <ul className="mt-3 space-y-2 text-sm text-ink-700 list-disc pl-5">
             <li>Page blank or &ldquo;upstream error&rdquo;? Your server may not be listening on the selected protocol. Try <strong>Both HTTP+HTTPS</strong> for auto-fallback.</li>
-            <li>Login broken? Many apps pin session cookies to your exact domain — inherent to any preview proxy.</li>
+            <li>Login broken? Many apps pin session cookies to your exact domain, which is inherent to any preview proxy.</li>
             <li>Assets from external CDNs (fonts, analytics) load directly from their origin.</li>
           </ul>
         </div>

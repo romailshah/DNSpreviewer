@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
-import { ROOT_DOMAIN, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
+import { ROOT_DOMAIN, SESSION_TTL_MINUTES, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 /**
  * Schema.org JSON-LD for the homepage.
@@ -122,6 +122,7 @@ function Hero({ isLoggedIn, rootDomain }: { isLoggedIn: boolean; rootDomain: str
         <HeroPreviewForm
           isLoggedIn={isLoggedIn}
           rootDomain={rootDomain}
+          ttlMinutes={SESSION_TTL_MINUTES}
           turnstileSiteKey={TURNSTILE_ENABLED ? TURNSTILE_SITE_KEY : ""}
         />
 
