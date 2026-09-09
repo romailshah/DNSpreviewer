@@ -1,163 +1,188 @@
 ---
-title: "I've never met a senior sysadmin who believes in DNS propagation. Here's the version they tell each other."
-seoTitle: "DNS Propagation Time: What Actually Happens When You Change DNS Records"
-description: "Your hosting company says 'wait 24-48 hours for DNS propagation.' That's not how DNS works — and the real mechanism explains why your migration broke at 3am."
+title: "DNS propagation: how long it really takes"
+seoTitle: "DNS Propagation: How Long It Really Takes"
+description: "DNS propagation is not a wave crossing the internet, it is caches expiring. What controls the delay, how long it really takes, and how to check it."
 publishedAt: "2026-06-16"
+updatedAt: "2026-09-09"
 author: "Romail Shah"
-authorBio: "Romail Shah is a full-stack developer and founder of DNS Previewer — a free tool for previewing websites on new servers before flipping DNS. He's been migrating sites and arguing with DNS for the better part of a decade."
+authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."
 category: "DNS"
 tags: ["dns", "propagation", "ttl", "migration", "devops", "sysadmin"]
-keywords: ["dns propagation time", "how long does dns propagation take", "dns propagation", "dns ttl", "dns caching", "dns resolver cache", "dns preview tool", "is dns propagation real", "why is my dns not propagating"]
+keywords:
+  [
+    "dns propagation",
+    "how long does dns propagation take",
+    "what is dns propagation",
+    "dns propagation time",
+    "how to check dns propagation",
+    "how to speed up dns propagation",
+    "dns propagation how long",
+    "force dns propagation",
+    "dns ttl",
+  ]
 faqs:
-  - q: "How long does DNS propagation actually take?"
-    a: "There's no single answer. The TTL on your DNS record sets the upper bound that any cache should hold the old answer before re-asking. If your TTL is 60 seconds and you change the record now, most caches refresh within a minute. But individual caches at ISPs, corporate networks, or browser-level DNS layers may hold stale answers longer — sometimes hours — regardless of what TTL you set. The 24-48 hour advice is a polite catchall for that long tail. In practice, propagation completes in 60-300 seconds if you lowered TTL in advance, with a small tail of weird caches that take longer."
-  - q: "Why does DNS propagation take so long?"
-    a: "It doesn't, technically. What takes long is the slowest cache in the resolution chain expiring its old answer. Each DNS resolver — your ISP's, your corporate IT's, third-party services like 8.8.8.8 and 1.1.1.1, your browser's internal cache — independently decides when to refresh based on the TTL field on the record. Most caches respect TTL within seconds. A few legacy or hard-coded caches don't. Your total 'propagation time' is dominated by the slowest cache, not the fastest, which is why the experience feels random."
+  - q: "What is DNS propagation?"
+    a: "DNS propagation is the delay between changing a DNS record and every visitor seeing the change. The name is misleading, because nothing is pushed anywhere. There is no central system that distributes your new IP address to the world's DNS resolvers. Instead, every resolver that already has your old answer keeps serving it until its cached copy expires, then asks again and gets the new one. What people call propagation is really thousands of independent caches expiring on their own clocks."
+  - q: "How long does DNS propagation take?"
+    a: "It depends almost entirely on the TTL that was on the record before you changed it. If you lowered the TTL to 60 seconds at least a day in advance, most people see the change within a minute or two. If the record was sitting on a default TTL of 3600 seconds, expect about an hour for most visitors. If it was on an old 86400 default, expect up to a day. The 24 to 48 hours your hosting company quotes is a safety margin that covers the slowest cache in the chain, not a queue you are waiting in."
+  - q: "How do I check DNS propagation?"
+    a: "Query several resolvers directly rather than loading the site in your browser, which adds its own cache. Use dig @1.1.1.1 example.com and dig @8.8.8.8 example.com to ask two large public resolvers, and dig +trace example.com to watch the full walk from the root servers down to your authoritative nameserver. For a global view, whatsmydns.net queries 20 to 50 resolvers around the world at once. Different results from different resolvers are normal and expected, not a sign that something is broken."
   - q: "Can you speed up DNS propagation?"
-    a: "Partially. You can't force someone else's cache to refresh, but you CAN control the TTL on your own records — lower it to 60 seconds at least 24 hours before a change so upstream caches refresh more aggressively in the lead-up. You can also bypass the wait entirely by testing the new server's behavior under your domain BEFORE flipping the record. A DNS preview tool does this; so does editing /etc/hosts locally for one machine. Once you confirm the new server responds correctly, the actual cutover is anticlimactic."
-  - q: "Why is my DNS not propagating?"
-    a: "Most of the time, it has propagated — somewhere. The real question is 'where is the cache that hasn't refreshed yet?' Common culprits: your client's corporate IT runs its own resolver with a hard-capped TTL of 24 hours, your own browser has a stale DNS cache (clear at chrome://net-internals/#dns), or your ISP's resolver respects TTLs poorly. Verify by checking from multiple networks using https://whatsmydns.net — if some regions show the new IP and some show the old, it's specific stale caches, not 'incomplete propagation.'"
-  - q: "What's the difference between DNS TTL and propagation?"
-    a: "TTL (Time To Live) is a numeric field on every DNS record that tells caches 'hold this answer for N seconds before re-asking.' Propagation is the colloquial term for the time between making a change and that change being visible to everyone. They're related: a low TTL makes propagation feel fast (because caches refresh faster), a high TTL makes it feel slow. TTL is what you control. 'Propagation' is the user-facing experience that results."
-  - q: "How can I test a DNS change before it propagates?"
-    a: "Three options, in order of how cleanly they work. Best: a DNS preview tool like DNS Previewer or skipdns.link that generates a temporary URL reverse-proxying your new server with the correct Host header and TLS SNI for your real domain. You can hit the preview from any device, anywhere, before changing actual records. Decent: edit /etc/hosts to map your domain to the new IP — works only on your machine. Bad but common: hit the new server's raw IP directly — the vhost config probably won't respond correctly without the right Host header."
+    a: "You cannot force someone else's resolver to drop its cache, and no tool can. What you can do is lower the TTL on the record at least 24 hours before the change, so that every cache in the chain is already refreshing quickly by the time you make it. That single step is the difference between a one minute cutover and an all day one. After the change, the only caches you can genuinely flush are your own: ipconfig /flushdns on Windows, sudo dscacheutil -flushcache on macOS, and chrome://net-internals/#dns in Chrome."
+  - q: "Why does DNS propagation take 24 to 48 hours?"
+    a: "Usually it does not. The number is a holdover from the 1990s and early 2000s, when common TTL defaults were 86400 seconds (24 hours) or 172800 (48 hours). Modern practice for actively managed records is 60 to 3600 seconds, but the advice never updated. It survives because it is a wide enough window that most support tickets resolve themselves before anyone follows up, and because there is genuinely a long tail of badly behaved caches that ignore published TTLs."
   - q: "Why do different DNS checkers show different results?"
-    a: "Because each DNS checker queries from a different physical location, asking a different DNS resolver, which has its own cache. Tools like whatsmydns.net check 20-50 resolvers around the world. If some show the new IP and some show the old, that's expected — not a sign of 'incomplete propagation.' It's a sign that some caches have refreshed and some haven't. Within a few hours of TTL expiring on every cache in the chain, they all show the same IP."
+    a: "Because each checker queries from a different physical location, asking a different resolver, each with its own cache. Tools like whatsmydns.net check 20 to 50 resolvers around the world. If some show the new IP and some show the old one, that is expected. It means some caches have expired and some have not. Once the TTL has elapsed on every cache in the chain, they all agree."
+  - q: "What is the difference between DNS TTL and propagation?"
+    a: "TTL, or Time To Live, is a numeric field on every DNS record telling caches how many seconds to hold the answer before asking again. Propagation is the colloquial name for the time between making a change and that change being visible to everyone. A low TTL makes propagation feel fast because caches refresh sooner. A high TTL makes it feel slow. TTL is the thing you control. Propagation is the experience that results from it."
 ---
 
-Wednesday morning, a client asked me whether her site had "finished propagating yet."
+DNS propagation is the delay between changing a DNS record and everyone being able to see the change. The name is misleading, because nothing actually propagates.
 
-I'd flipped DNS at 6am. By 9am she was on Slack — polite, but pointed, in that way that means a manager is asking — wanting an ETA. Could I check the propagation status? Was 24 hours the right wait? What about 48? Her old web guy used to say it could take up to 72.
+Here is the short answer, since that is what most people came for. If you lowered the TTL on the record to 60 seconds a day beforehand, the change reaches most people within a minute or two. If the record was sitting on a default TTL of 3600, expect roughly an hour. The 24 to 48 hours your hosting company quotes is a safety margin covering the slowest cache in the chain, not a queue you are sitting in.
 
-The honest answer was: it's already done. It was done within about 90 seconds. The reason her IT team couldn't reach the new site was that their office DNS resolver was a Pi-hole someone had configured in 2019 with a 7-day cache flush. It had nothing to do with "propagation."
+The longer answer is worth reading, because it tells you which part of that delay you control and which part you do not.
 
-But I didn't say that. I said something like "sometimes there's a tail, let me confirm." Because explaining DNS to a non-technical client during an active outage is a bad use of everyone's time.
+## What DNS propagation actually is
 
-This post is the version we don't say out loud.
+There is no central registry pushing your A record out to the world's resolvers. There is no batch job at 4am updating the internet's address book. DNS is pull based. Nothing is sent anywhere.
 
-## DNS doesn't propagate. That's not how it works.
+The way somebody learns about your record change is that something on their side asks for it. Their browser, their operating system, their ISP's resolver. When that question gets asked depends on whether anyone in the chain still holds a cached answer, and how long they were told to hold it.
 
-There is no central registry pushing your A record to the world's resolvers. There is no batch job at 4am that updates "the internet's address book." When tech support tells you to "wait 24-48 hours for DNS to propagate," they are using a polite fiction that covers for a much weirder reality.
+That instruction is the TTL, a number of seconds attached to the record by whoever runs the DNS zone. A resolver that fetched your record with a TTL of 3600 will keep serving the old answer for up to an hour, no matter what you changed in the meantime, and no matter how urgently you need it gone.
 
-I've been doing infrastructure work for the better part of a decade — debugging "DNS issues" that aren't really DNS issues, explaining to project managers why the site is back for me but still broken for their team. And every time I've talked to someone with serious DNS chops about how they explain propagation to clients, they've all said some version of the same thing: we lie. Politely.
+So what people call propagation is thousands of independent caches, scattered across resolvers and devices, each expiring at a slightly different moment depending on when it first cached the record and what TTL it was handed. **There is no clean cutover.** Two visitors arriving five minutes after your change can reach two different servers, and both are behaving correctly.
 
-We say "propagation" because the truth involves TTL fields, recursive resolver caching, browser-level DNS pinning, OS-level DNS caching, and at least three different layers of corporate / ISP / mobile carrier infrastructure that absolutely don't update on any predictable schedule. The actual mechanism is genuinely chaotic. The "24-48 hours" advice is a wide enough window that almost nobody complains.
+## How long does DNS propagation take?
 
-Let me get specific. Here's what actually happens when you change an A record, why your client's IT team will be the last to see the change, and why I no longer "wait for propagation" before launching production websites.
+Almost entirely down to the TTL that was on the record *before* you changed it. Not the one you set afterwards. By the time you make the change, every cache already holding your record is counting down using the old value.
 
-(Spoiler: I built a free tool for this. But that's not the point of this post.)
+| TTL before the change | Most visitors see the new record within |
+| --- | --- |
+| 60 seconds | 1 to 2 minutes |
+| 300 seconds | About 5 minutes |
+| 3600 seconds (common default) | About 1 hour |
+| 14400 seconds | About 4 hours |
+| 86400 seconds (old default) | Up to 24 hours |
+
+Those figures cover the bulk of traffic, not every last visitor. There is always a tail: a corporate resolver with a hard TTL floor, an ISP that caps everything at four hours, a phone that has not changed networks in a week. The tail is why the 24 to 48 hour advice persists even though the mechanism has nothing to do with it.
+
+The practical consequence is that the most important step happens a day before the migration, not during it. Lower the TTL to 60 seconds at least 24 hours ahead, and every upstream cache spends that day refreshing on a short clock. Then when you flip the record, they come back for it within about a minute.
+
+Miss that step and you inherit whatever the old TTL was, with no way to shorten it after the fact.
 
 ## How DNS actually resolves a domain
 
-The first thing to understand is that DNS is **pull-based**.
+Here is the cascade a single lookup passes through, and the cache sitting at each stop.
 
-There is no system, anywhere, that knows about every A record in the world and pushes updates to caches. The way someone finds out about my A record change is that something on their side — their browser, their OS, their ISP's resolver — asks for it.
+1. **Browser DNS cache.** Chrome's is roughly a minute by default. Firefox respects published TTLs more carefully. Native mobile apps frequently keep their own caches that bypass the OS entirely.
 
-When that question gets asked depends on whether anyone in the chain still has a cached answer. And how long they keep that cached answer depends on a value called **TTL** (Time To Live), which is set on the record itself by whoever owns the DNS zone.
+2. **OS DNS cache.** macOS uses `mDNSResponder`, modern Linux usually `systemd-resolved`, Windows the DNS Client service. These respect the TTL of the response they received, though some enforce minimum TTL floors.
 
-Here's the cascade in more detail:
+3. **Local network resolver.** Usually whatever your DHCP lease handed you: your home router, your office gateway, your ISP. It has its own cache and does not always respect the published TTL. Some ISPs hard cap TTLs at four hours regardless of what the authoritative record says. Corporate networks running BIND, Unbound, pfSense or Pi-hole each make their own decisions.
 
-1. **Browser DNS cache.** Chrome's cache, for example, is roughly 1 minute by default. Firefox respects published TTLs more carefully. Native mobile apps frequently maintain their own caches that bypass the OS entirely.
+4. **Recursive resolution up the tree.** With no cached answer, the resolver walks up: root server, then TLD server for `.com` or `.io`, then your authoritative nameserver, then back down. The walk takes milliseconds. The answer goes into the cache for whatever TTL it carried.
 
-2. **OS DNS cache.** macOS uses `mDNSResponder`. Modern Linux is usually `systemd-resolved`. Windows has the DNS Client service. These respect the TTL of the response they got back, though some have minimum-TTL floors.
+5. **DoH and DoT resolvers.** Browsers running DNS over HTTPS bypass your local resolver completely. Firefox uses Cloudflare by default. Chrome on Android often uses Google. These run their own caches, shared across millions of devices.
 
-3. **Local network resolver.** The first DNS resolver your machine asks is usually whatever your DHCP lease handed you — your home router, your office gateway, your ISP. This resolver has its own cache, and it doesn't always respect the published TTL. Some ISPs hard-cap TTLs at, say, 4 hours regardless of what the authoritative record says. Corporate networks running their own resolvers (BIND, Unbound, pfsense, Pi-hole) each make their own decisions.
+The 24 to 48 hour figure is really the time for the slowest layer in that chain to give up its copy. Usually a third party resolver capping TTL at a day, or a corporate resolver configured years ago by someone who has since left.
 
-4. **Recursive resolution up the tree.** If the local resolver doesn't have a cached answer, it walks up: root server → TLD server (`.com`, `.io`, etc.) → your authoritative nameserver, then back down. This walk takes milliseconds. The answer it gets back goes into the cache for the TTL it was given.
+## Why the 24 to 48 hour number stuck
 
-5. **DoH and DoT routing around your local resolver.** Modern browsers running DNS-over-HTTPS bypass your local resolver entirely. Firefox uses Cloudflare by default. Chrome on Android often uses Google. These resolvers run their own caches, shared across millions of devices.
+It is not wrong so much as the wrong abstraction, and there are a few reasons it survived.
 
-So when you "propagate" a DNS change, what's actually happening is: each individual cache, scattered across hundreds of resolvers and millions of devices, gets its cached answer expired at a slightly different time based on when it was originally cached and what TTL it was given. **There is no clean cutover.**
+**Old TTL defaults.** In the 1990s and early 2000s, common TTLs were 86400 or 172800 seconds. Anyone who learned DNS then internalised those numbers as the window. Modern practice for actively managed records is 60 to 3600, but the advice never caught up.
 
-I want to underline that. There is genuinely no clean cutover. Two different visitors hitting your site five minutes after you change DNS may see two completely different servers depending on which resolver they go through and when that resolver last cached the record.
+**ISP cache flush schedules.** Some legacy ISPs ran batch cache flushes on a daily cycle. Change your record just before one and propagation felt instant. Change it just after and it felt like a full day. From the outside, the delay looked random.
 
-The "24-48 hours" wait is the time it takes for the slowest cache layer in the chain to expire — usually a third-party resolver that hard-caps TTL at 24 hours, or a corporate Pi-hole someone configured in 2019, or your client's grandparent's iPhone connected to their gym's wifi with a captive resolver.
+**It closes tickets.** If a customer changes DNS and immediately complains, the cheapest possible answer is to wait 24 to 48 hours. By hour 24 the problem has usually either resolved itself or stopped mattering. As support economics go, it is hard to beat.
 
-## Why "24-48 hours" became the polite fiction
+**The long tail is real.** Even with sensible TTLs, there is always one cache somewhere that will not update for a day. The polite fiction acknowledges that without having to explain it.
 
-The 24-48 hour number isn't wrong. It's just the wrong abstraction.
+So it is a load bearing approximation. The trouble starts when you take it literally and build your migration plan around waiting it out.
 
-It's wrong in the same way "nothing can go faster than light" is wrong — technically accurate for the situations most people encounter, but the actual mechanism (TTL fields per record, caching at every layer, no central authority) is genuinely interesting and people who care should know it.
+## What actually controls when your change is visible
 
-Why does support tell you 24-48 hours? A few reasons, stacking up over time:
+Five layers, ordered from the one you control to the ones you really do not.
 
-**Old TTL defaults.** In the 1990s and early 2000s, common TTLs were 86400 seconds (24 hours) or 172800 (48 hours). Anyone who learned DNS in that era internalized those numbers as the relevant window. Modern best practice is TTLs of 60-3600 for actively-managed records, but the "24-48 hours" advice never updated to match.
+### Layer 1: TTL on your record (you control this)
 
-**ISP cache flushing schedules.** Some legacy ISPs ran batch DNS cache flushes on a daily schedule. If you made a change right before the flush, propagation felt instant. If you made it right after, it felt like 24 hours. From the user's perspective, the delay was random.
+The only knob you can genuinely turn. Set it to 60 seconds at least 24 hours before the change, flip the record, then raise it back to 3600 or higher once the new server has been stable for a couple of days. Leaving it at 60 forever adds unnecessary query load and latency.
 
-**CYA from hosting support.** If a customer changes DNS and immediately complains, the cheapest answer is "wait 24-48 hours." Most of the time, by hour 24, either the issue has been fixed or the customer has stopped caring. The advice resolves 90% of tickets without escalation. It is, from a support-economics standpoint, brilliant.
+### Layer 2: Your authoritative nameservers (mostly out of your control)
 
-**A genuinely long tail.** Even with modern TTLs, the long tail of stale caches is hard to nail down. There is always one cache somewhere that won't update for a day. The polite fiction acknowledges this without explaining it.
-
-So the conventional wisdom isn't a lie. It's a load-bearing approximation that papers over the long tail. The problem is when you take it literally and design your migration plan around it.
-
-## What actually controls when your DNS change is visible
-
-If you want to know when your DNS change will actually be visible to a specific person, the answer is: it depends on five layers, listed here from "you control this" to "you really, really don't."
-
-### Layer 1: TTL on your DNS record (you control this)
-
-This is the only knob you can actually turn. The TTL you set tells every cache in the chain how long to hold the answer before re-asking.
-
-The pre-migration play: set your TTL to 60 seconds at least 24 hours before you plan to change the record. This causes every upstream cache to refresh more frequently in the lead-up. Then when you flip the record, those caches re-ask within roughly 60 seconds.
-
-After the change is stable for 48 hours, raise TTL back to 3600 or higher. This reduces unnecessary DNS query load and improves latency for steady-state traffic.
-
-If you forget to lower TTL in advance, your "instant" cutover can leave caches holding stale records for whatever the previous TTL was. If the old TTL was 14400 (4 hours), you've got 4 hours of mixed-traffic state. If it was 86400 (a day), you've got a day.
-
-### Layer 2: Your authoritative nameserver's response time (mostly out of your control)
-
-Your DNS provider's nameservers may not propagate changes between their own server farms instantly. Cloudflare is roughly instant. Route 53 is roughly instant. Some smaller registrars take 1-5 minutes for a change made in the admin panel to actually appear on all their authoritative nameservers.
-
-This is usually not a problem, but it's worth knowing if you're chasing a "why isn't the change live yet?" issue right after making it. Wait two minutes, then `dig +trace @your.nameserver.com example.com` to verify.
+Your DNS provider may not push changes between its own server farms instantly. Cloudflare and Route 53 are effectively immediate. Some smaller registrars take one to five minutes for an admin panel change to appear on all their nameservers. Wait two minutes, then confirm with `dig +trace example.com` before you go hunting for a bigger problem.
 
 ### Layer 3: ISP and public resolver caches (out of your control)
 
-Whatever cache your client's office router uses, whatever cache their ISP's resolver uses, whatever cache 8.8.8.8 or 1.1.1.1 has — these update according to their own rules. Most respect TTLs. Some don't.
-
-The big public resolvers (Cloudflare 1.1.1.1, Google 8.8.8.8, Quad9 9.9.9.9) tend to respect TTLs well. ISP resolvers are more variable — some respect the published TTL, some hard-cap it, some have known quirks documented on Stack Overflow if you go looking. Corporate networks running their own resolvers do whatever the IT team configured. Often badly.
-
-You can ask specific resolvers to refresh, but only if you control them. Telling your client's IT team to flush their cache works exactly as well as you'd expect, which is to say sometimes.
+The large public resolvers, Cloudflare on 1.1.1.1, Google on 8.8.8.8, Quad9 on 9.9.9.9, respect TTLs well. ISP resolvers vary. Some respect the published value, some cap it, some have quirks you will only find documented in an old forum thread. Corporate resolvers do whatever their IT team configured, which is often not what the record asked for.
 
 ### Layer 4: Browser DNS caches (out of your control)
 
-Chrome's DNS cache is roughly 1 minute. Safari's is similar. Firefox respects the TTL more carefully. Native mobile apps often have their own caches with TTLs the OS can't see.
+Chrome's is about a minute, Safari's similar, Firefox respects TTLs more carefully. Small, but the most visible layer: "it works on my phone but not in this tab" is nearly always a stale browser cache. Clearing it at `chrome://net-internals/#dns` fixes it for that person, in that browser, once.
 
-The browser cache is the smallest layer, but it's the most visible — "the site works on my phone but not in this Chrome tab" is almost always Chrome's DNS cache being stale. Visiting `chrome://net-internals/#dns` and clearing the cache works for that user, on that browser, that one time.
+### Layer 5: DNS over HTTPS providers (out of your control)
 
-### Layer 5: DNS-over-HTTPS providers (out of your control)
+A browser using DoH bypasses both the ISP resolver and the corporate one, talking straight to a third party endpoint. This is why asking a client's IT team to flush their cache sometimes changes nothing at all. They control the corporate resolver. The browser is talking to Cloudflare, and nobody at the company knows about it.
 
-If your client's browser is using DoH (Firefox by default, increasingly common in Chrome on Android), they're bypassing both their ISP resolver and their corporate resolver, and going directly to a third-party DoH provider — usually Cloudflare or Google.
+## How to check DNS propagation
 
-This is fine when it works, but it adds another opaque cache layer to the mix. And it's the reason "ask their IT team to flush DNS" sometimes doesn't help at all. The IT team controls the corporate resolver. The user's browser is talking to a Cloudflare endpoint nobody at the company knows about.
+Do not test by loading the site in your browser. That adds two more caches, the browser's and your operating system's, on top of the resolver you are trying to inspect. Query resolvers directly instead.
+
+```
+# Ask two large public resolvers what they currently hold
+dig @1.1.1.1 example.com +short
+dig @8.8.8.8 example.com +short
+
+# Watch the full walk from the root servers down
+dig +trace example.com
+
+# Ask your authoritative nameserver directly, bypassing every cache
+dig @ns1.yourprovider.com example.com +short
+```
+
+On Windows without `dig`, `nslookup example.com 1.1.1.1` gets you most of the way.
+
+That last command is the useful one during a migration. Your authoritative nameserver is the source of truth. If it returns the new IP, your change is live and everything after that is caching. For a global picture, [whatsmydns.net](https://www.whatsmydns.net) queries 20 to 50 resolvers at once.
+
+Expect disagreement between them. Mixed results are the normal state partway through a TTL window, not a fault.
+
+## Can you speed up DNS propagation?
+
+Not after the fact, and no tool can. You cannot reach into someone else's resolver and expire their cache. Anything claiming to force global propagation is selling you a checker with a refresh button.
+
+What genuinely works is preparation. Lowering the TTL 24 hours ahead is the entire game, and it is the difference between a one minute cutover and an all day one.
+
+The only caches you can actually flush are your own:
+
+- **Windows:** `ipconfig /flushdns`
+- **macOS:** `sudo dscacheutil -flushcache` then `sudo killall -HUP mDNSResponder`
+- **Linux (systemd):** `sudo resolvectl flush-caches`
+- **Chrome:** visit `chrome://net-internals/#dns` and clear the host cache
+
+Useful for confirming your own work. Useless for the client whose office resolver is the actual problem.
 
 ## What to do instead of waiting
 
-Once you accept that DNS doesn't "propagate" on a schedule, your migration playbook changes. You stop waiting. You start testing the new server while DNS still points at the old one.
+Once you accept that the delay is caches expiring rather than a process completing, the migration playbook changes. You stop waiting and start testing the new server while DNS still points at the old one.
 
-This is the part where I have a conflict of interest, so I'll be upfront: I built a free tool called [DNS Previewer](https://dnspreviewer.com) specifically for this. It generates a temporary subdomain that reverse-proxies your new server with the correct Host header and TLS SNI for your real domain. You can hit it from any device, anywhere, before changing actual DNS records — you see exactly what visitors will see post-flip.
+I should be upfront about a conflict of interest here: I built a free tool for this. [DNS Previewer](https://dnspreviewer.com) generates a temporary subdomain that proxies your new server using the correct Host header and TLS SNI for your real domain, so the server responds exactly as it will after the change. You can open it from any device before touching a record. [SkipDNS](https://skipdns.link) is the established paid tool doing the same job, and I keep an [honest comparison of the two](/vs-skipdns) including the parts where theirs is better. Editing your hosts file also works, with [limitations worth knowing](/blog/preview-website-new-server-without-hosts-file).
 
-[skipdns.link](https://skipdns.link) is the established paid tool in this space (starts at $9.9/mo; the useful features like password protection are at $39.9/mo). Both work the same way mechanically. Use whichever you prefer. The point is: don't migrate without testing the new server under your actual domain's response behavior. That's the step that catches the kind of vhost-and-SSL mismatch I [wrote about last week](/blog/wordpress-migration-checklist-test-before-dns) — the one that took down a client's site for fourteen hours.
+The playbook itself:
 
-Beyond that, the playbook I run now:
+- **Lower TTL to 60 seconds at least 24 hours before the migration.** The single most important variable you control, and the only one you cannot fix later.
+- **Test the new server under your real domain's behaviour** before any record change, so vhost and certificate mismatches surface before production does.
+- **Flip the record once the new server responds correctly.** The cutover should feel boring.
+- **Do not trust a single checker.** Test from the client's actual network too, since that is where stale cache problems hide.
+- **Raise TTL back to 3600 or higher after 48 stable hours.**
+- **Write down the old IP and test your rollback** before you need it at 4am.
 
-- **Lower TTL to 60 seconds at least 24 hours before the migration.** Don't skip this. It's the single most important variable you control.
-- **Test the new server under your domain's behavior** before any record change. Use a DNS preview tool, or `/etc/hosts` if you only need to verify from one machine.
-- **Once you're confident the new server responds correctly, flip the DNS record.** The cutover should feel boring.
-- **Don't trust any single DNS checker.** [whatsmydns.net](https://www.whatsmydns.net) shows you 20-50 resolvers' views. But also test from your client's actual network — that's where the long tail of stale-cache problems hides.
-- **After 48 hours stable, raise TTL back to 3600 or 86400.** Don't leave it at 60 forever; it adds DNS query overhead at scale.
-- **Document the old IP, and have a tested rollback procedure.** If you have to revert at 4am, you don't want to be looking up the old IP from email archives.
+Waiting and seeing is what produces the 3am phone call. Testing before flipping catches the same problems without involving anyone's visitors.
 
-The "wait and see" approach is what creates the 3am phone call. The "test the new server before flipping" approach catches the same issues without involving production.
+## The short version
 
-## What sysadmins tell each other instead
+DNS propagation is not a process running somewhere that you can check the status of. It is the sum of every cache between your record and your visitor, each expiring on its own clock, with TTL as the only input you control.
 
-Senior infrastructure people don't really talk about "DNS propagation" with each other. They talk about TTLs, resolver caches, and where the stale cache that's blocking the client's IT team is hiding. When you hear them say "propagation" in a meeting, they're doing it for the same reason a cardiologist tells you to "watch your salt" instead of explaining the renin-angiotensin system — the simplification is faster than the truth, and almost as useful.
+Set a low TTL a day in advance, verify the new server before you change anything, query resolvers directly rather than reloading a browser tab, and accept that the long tail of stale caches is not anyone's fault. It is how the protocol was designed to work.
 
-When I explain this to clients, I still use the word "propagation." It's a useful shorthand. But internally, I think of it as a cascade of independent caches, each running its own clock, with TTL as the only thing I can really control. The cleanup is in choosing a good TTL ahead of time, testing the new server before flipping, and accepting that the long tail of stale caches isn't anyone's fault — it's just how the protocol works.
-
-If you've ever been the person on the 7am Slack message saying "let me check the propagation status," the version sysadmins tell each other is more useful and less mysterious than the version we tell clients.
-
-The bonus is that once you understand what's actually happening, you stop waiting for it.
-
-— Romail
+Once you understand what is actually happening, you stop waiting for it.
