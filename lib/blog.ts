@@ -23,6 +23,8 @@ export interface BlogPostFrontmatter {
   updatedAt?: string;
   author: string;
   authorBio?: string;
+  /** The site to link to from the author bio. Falls back to AUTHOR_SITE. */
+  authorUrl?: string;
   category?: string;
   tags?: string[];
   keywords?: string[];

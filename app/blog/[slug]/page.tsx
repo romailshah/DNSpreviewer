@@ -10,6 +10,8 @@ interface PageProps {
 }
 
 const SITE_URL = "https://dnspreviewer.com";
+/** Where the author bio links out to, unless a post overrides it with authorUrl. */
+const AUTHOR_SITE = "https://romailshah.com/";
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
@@ -93,7 +95,10 @@ function articleJsonLd(post: ReturnType<typeof getPostBySlug>) {
       "@id": authorId,
       name: f.author,
       description: f.authorBio,
-      url: SITE_URL,
+      // The Person entity should resolve to the author's own site, not the
+      // publisher's. sameAs ties the two together for entity matching.
+      url: f.authorUrl || AUTHOR_SITE,
+      sameAs: [SITE_URL],
     },
     {
       "@type": "Organization",
@@ -212,6 +217,20 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="mt-2 font-display font-bold text-lg text-ink-900">{f.author}</div>
             <p className="mt-2 text-sm sm:text-base text-ink-700 leading-relaxed">
               {f.authorBio}
+            </p>
+            <p className="mt-3 text-sm text-ink-700">
+              More of his work at{" "}
+              <a
+                href={f.authorUrl || AUTHOR_SITE}
+                className="font-semibold text-brand-600 hover:underline"
+                target="_blank"
+                rel="noopener"
+              >
+                {(f.authorUrl || AUTHOR_SITE)
+                  .replace(/^https?:\/\//, "")
+                  .replace(/\/$/, "")}
+              </a>
+              .
             </p>
           </aside>
         )}
