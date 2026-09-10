@@ -1,7 +1,7 @@
 ---
 title: "How to preview a site on a new server without editing the hosts file"
 seoTitle: "Preview a Site on a New Server Without the Hosts File"
-description: "Editing the hosts file works, but only on one machine, with admin rights, and never with wildcards. Here is what it does, where it breaks, and how to test a new server without it."
+description: "The hosts file works on one machine, with admin rights, and never with wildcards. What it does, where it breaks, and how to test a new server without it."
 publishedAt: "2026-09-07"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."

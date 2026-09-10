@@ -46,7 +46,7 @@ const faqs: Array<{ q: string; a: string; group: string }> = [
   {
     q: "Why do some links inside the preview go to my real domain?",
     group: "When something looks wrong",
-    a: "We rewrite HTML and CSS URLs pointing at your exact domain. Subdomains (like cdn.example.com) and absolute JavaScript-built URLs aren't automatically rewritten — same behavior as every other preview proxy.",
+    a: "We rewrite HTML and CSS URLs pointing at your exact domain. Subdomains (like cdn.example.com) and absolute JavaScript-built URLs aren't automatically rewritten, same behavior as every other preview proxy.",
   },
   {
     q: "Will logins / checkouts work?",
