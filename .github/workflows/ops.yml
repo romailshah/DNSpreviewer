@@ -5,23 +5,39 @@
 # someone happened to be using the site. An external HTTP call both wakes the
 # machine and does the work.
 #
-# Required repository secret:
-#   CRON_SECRET — must match the CRON_SECRET set via `fly secrets set`.
-#
 # A failed job emails the repo owner, which is the alerting mechanism.
 
 name: Ops
 
 on:
   schedule:
-    # 03:15 UTC daily — off-peak for both US and AU traffic.
+    # 03:15 UTC daily, off-peak for both US and AU traffic.
     - cron: "15 3 * * *"
   workflow_dispatch:
 
 jobs:
+  # ── Off-host database backup ────────────────────────────────────────────────
+  #
+  # MANUAL ONLY. This job does not run on the daily schedule.
+  #
+  # Backups are not configured: the endpoint needs CRON_SECRET as a repository
+  # secret here, and BACKUP_GITHUB_TOKEN plus BACKUP_ENCRYPTION_KEY as Fly
+  # secrets. Without them the request returns 401 and the job fails, which was
+  # producing a failure email every morning for a job that could never succeed.
+  #
+  # Rather than delete the job, it is gated to manual runs so the setup work is
+  # not lost. To put backups back on the daily schedule:
+  #
+  #   1. Add CRON_SECRET under Settings, Secrets and variables, Actions
+  #   2. fly secrets set BACKUP_GITHUB_TOKEN=... BACKUP_ENCRYPTION_KEY=...
+  #   3. Delete the `if:` line below
+  #
+  # Until then the database exists in exactly one place, on one Fly volume.
+  # See OPERATIONS.md for the full setup.
   backup:
     name: Off-host database backup
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Trigger backup
         run: |
@@ -31,14 +47,21 @@ jobs:
             --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             https://dnspreviewer.com/api/cron/backup
 
+  # ── Deep health check ───────────────────────────────────────────────────────
+  #
+  # Runs daily and needs no secrets. Fails, and therefore emails, only when
+  # something is genuinely wrong: the database is unreachable, or the wildcard
+  # certificate has under 21 days left. That second check is the one that
+  # matters, because a failed renewal breaks every preview link while the
+  # marketing site keeps returning a healthy 200.
+  #
+  # Deliberately does not depend on the backup job, so it still runs on the
+  # schedule while backups are gated to manual.
   health:
     name: Deep health check
     runs-on: ubuntu-latest
-    # Runs after the backup so a fresh backup timestamp is already recorded.
-    needs: backup
-    if: always()
     steps:
-      - name: Check database, backup freshness and wildcard certificate
+      - name: Check database and wildcard certificate
         run: |
           curl --fail-with-body --silent --show-error --location \
             --max-time 60 \
