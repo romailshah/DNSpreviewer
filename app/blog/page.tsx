@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { getAllPostMeta } from "@/lib/blog";
 
 export const metadata: Metadata = {
-  title: "Blog — DNS migration, WordPress, and the parts of web hosting nobody writes about",
+  title: "DNS migration and WordPress hosting notes",
   description:
     "Field notes on DNS migrations, WordPress hosting, and the operational details that break websites at 3am. Written by Romail Shah, founder of DNS Previewer.",
   alternates: { canonical: "https://dnspreviewer.com/blog" },
@@ -40,7 +40,7 @@ export default function BlogIndex() {
           </h1>
           <p className="mt-5 text-base sm:text-lg text-ink-700 max-w-2xl mx-auto leading-relaxed">
             Field notes on DNS migrations, WordPress hosting, and the parts of running
-            websites that break at 3am — written from the trenches by people who&apos;ve
+            websites that break at 3am, written from the trenches by people who&apos;ve
             been on those calls.
           </p>
         </header>
@@ -92,7 +92,7 @@ export default function BlogIndex() {
           </h3>
           <p className="mt-3 text-sm sm:text-base text-ink-700 max-w-xl mx-auto">
             Preview your site on a new server before flipping DNS. Password protection,
-            no-expiry links, wildcard subdomains — every feature unlocked. Free, forever.
+            no-expiry links, wildcard subdomains. Every feature unlocked, free forever.
           </p>
           <div className="mt-6">
             <Link href="/" className="btn-primary">

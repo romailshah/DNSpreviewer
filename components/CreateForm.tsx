@@ -88,13 +88,13 @@ export function CreateForm({
 
       <Field
         label="Custom link label"
-        hint="Optional — a friendly name shown in your dashboard."
+        hint="Optional. A friendly name shown in your dashboard."
         id="label"
       >
         <input
           id="label"
           className="input"
-          placeholder="e.g. Client site — pre-migration QA"
+          placeholder="e.g. Client site, pre-migration QA"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           maxLength={80}
@@ -121,7 +121,7 @@ export function CreateForm({
 
       <Field
         label="New server (IP or hostname)"
-        hint="Public IPs only — private / loopback addresses are rejected."
+        hint="Public IPs only. Private and loopback addresses are rejected."
         id="target"
         required
       >

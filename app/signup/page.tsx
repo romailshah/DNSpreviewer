@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Create a free DNS Previewer account to unlock password-protected previews, no-expiry links, and a dashboard. No credit card. Free forever.",
   alternates: { canonical: "https://dnspreviewer.com/signup" },
   openGraph: {
-    title: "Sign up — DNS Previewer",
+    title: "Sign up",
     description: "Free account unlocks password protection, no-expiry links, and a dashboard.",
     url: "https://dnspreviewer.com/signup",
     type: "website",

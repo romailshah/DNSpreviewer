@@ -1,6 +1,6 @@
 ---
-title: "The hosts file is a perfectly good way to test a migration. It just cannot leave your laptop."
-seoTitle: "Preview a Website on a New Server Without Editing Your Hosts File"
+title: "How to preview a site on a new server without editing the hosts file"
+seoTitle: "Preview a Site on a New Server Without the Hosts File"
 description: "Editing the hosts file works, but only on one machine, with admin rights, and never with wildcards. Here is what it does, where it breaks, and how to test a new server without it."
 publishedAt: "2026-09-07"
 author: "Romail Shah"

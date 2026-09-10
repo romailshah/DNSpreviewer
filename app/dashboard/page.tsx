@@ -67,7 +67,7 @@ function EmptyState() {
     <div className="card text-center py-16">
       <div className="text-5xl">🔗</div>
       <h2 className="heading mt-4 text-xl text-ink-900">No previews yet</h2>
-      <p className="mt-2 text-ink-700">Create your first preview — takes under a minute.</p>
+      <p className="mt-2 text-ink-700">Create your first preview. It takes under a minute.</p>
       <Link href="/create" className="btn-primary mt-6 inline-flex">Create a preview</Link>
     </div>
   );

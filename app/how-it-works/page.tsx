@@ -7,12 +7,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "How DNS Previewer works",
   description:
-    "How DNS Previewer lets you test a website on a new server before flipping DNS — wildcard subdomains, reverse proxy, HTML/CSS URL rewriting, password protection, and what's supported vs not.",
+    "How DNS Previewer tests a website on a new server before you flip DNS: wildcard subdomains, reverse proxy, URL rewriting, and what is not supported.",
   alternates: { canonical: "https://dnspreviewer.com/how-it-works" },
   openGraph: {
     title: "How DNS Previewer works",
     description:
-      "Test a website on a new server before flipping DNS — how the wildcard subdomain proxy works under the hood.",
+      "Test a website on a new server before flipping DNS. How the wildcard subdomain proxy works under the hood.",
     url: "https://dnspreviewer.com/how-it-works",
     type: "article",
   },
@@ -34,7 +34,7 @@ function howToJsonLd() {
     "@type": "HowTo",
     name: "How to preview a website on a new server before switching DNS",
     description:
-      "Test a website running on a new server before pointing your domain at it — using a wildcard subdomain reverse proxy that streams your target server back to your browser under a temporary URL.",
+      "Test a website running on a new server before pointing your domain at it, using a wildcard subdomain reverse proxy that streams your target server back to your browser under a temporary URL.",
     totalTime: "PT1M",
     estimatedCost: {
       "@type": "MonetaryAmount",
@@ -87,7 +87,7 @@ export default function HowItWorks() {
           real domain, and a botched switchover is visible to every visitor.
         </p>
 
-        <h2 className="heading mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-ink-900">The standard workarounds — and why they hurt</h2>
+        <h2 className="heading mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-ink-900">The standard workarounds, and why they hurt</h2>
         <ul className="mt-3 list-disc pl-5 sm:pl-6 space-y-2 text-sm sm:text-base text-ink-700 leading-relaxed">
           <li><strong className="text-ink-900">Editing /etc/hosts:</strong> only works on your machine. Can&rsquo;t share with clients or QA.</li>
           <li><strong className="text-ink-900">Using the server&rsquo;s IP directly:</strong> wrong Host header, SSL cert errors, broken vhosts.</li>
@@ -105,7 +105,7 @@ export default function HowItWorks() {
           </li>
           <li>
             When you visit that URL, our proxy connects to your target server using the correct{" "}
-            <code>Host</code> header and TLS SNI for your domain — so your server serves the right
+            <code>Host</code> header and TLS SNI for your domain, so your server serves the right
             vhost and content.
           </li>
           <li>

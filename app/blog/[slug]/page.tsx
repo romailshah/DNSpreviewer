@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const f = post.frontmatter;
   const url = `${SITE_URL}/blog/${post.slug}`;
   return {
-    title: f.seoTitle ?? f.title,
+    title: { absolute: f.seoTitle ?? f.title },
     description: f.description,
     keywords: f.keywords,
     authors: [{ name: f.author }],

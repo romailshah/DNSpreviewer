@@ -119,8 +119,8 @@ export default async function OGImage() {
               maxWidth: 920,
             }}
           >
-            Every feature competitors paywall — password protection, no-expiry
-            links, wildcard — free for everyone.
+            Every feature competitors paywall: password protection, no-expiry
+            links, wildcard. Free for everyone.
           </div>
         </div>
 

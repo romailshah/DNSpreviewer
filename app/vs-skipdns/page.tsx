@@ -4,9 +4,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Free SkipDNS Alternative for Previewing a Site Before DNS",
+  title: "SkipDNS Alternative: Free Preview Before DNS",
   description:
-    "SkipDNS costs $9.9 to $159.9 a month with no permanently free plan, and deletes your links when you cancel. DNS Previewer does the same job for free. Verified pricing comparison, updated September 2026.",
+    "SkipDNS costs $9.9 to $159.9 a month and deletes your links when you cancel. DNS Previewer does the same job free. Verified pricing, updated September 2026.",
   alternates: { canonical: "https://dnspreviewer.com/vs-skipdns" },
   openGraph: {
     title: "Free SkipDNS Alternative for Previewing a Site Before DNS",

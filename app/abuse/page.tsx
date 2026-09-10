@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Report a DNS Previewer preview being used for phishing, impersonation, or abuse. We respond fast and kill sessions on confirmed reports.",
   alternates: { canonical: "https://dnspreviewer.com/abuse" },
   openGraph: {
-    title: "DNS Previewer — Report abuse",
+    title: "Report Abuse",
     description: "Report a preview being misused. We take action fast.",
     url: "https://dnspreviewer.com/abuse",
     type: "article",
@@ -24,7 +24,7 @@ export default function AbusePage() {
         <h1 className="text-3xl font-bold text-slate-900">Report abuse</h1>
         <p className="mt-3 text-slate-600">
           DNS Previewer is a free tool for legitimate DNS migration testing. If a preview is being
-          used to impersonate a site, phish, or bypass access controls, tell us — we kill sessions
+          used to impersonate a site, phish, or bypass access controls, tell us. We kill sessions
           fast.
         </p>
         <div className="mt-8 card">

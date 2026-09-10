@@ -38,18 +38,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.7,
     },
-    {
-      url: `${SITE_URL}/signup`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/abuse`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    // /signup and /abuse are deliberately absent. Both are utility pages with
+    // nothing to rank for, and listing them dilutes the sitemap.
   ];
 
   const blogPosts: MetadataRoute.Sitemap = getAllPostMeta().map((post) => ({
