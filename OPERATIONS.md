@@ -197,7 +197,7 @@ marketing site go dark at once**, and delisting takes days. Defence in depth:
 |---|---|---|
 | Built-in blocklist | `lib/blocklist.ts` | Banks, webmail, payment, IdPs, dev hosts. Suffix-matched, so `login.paypal.com` is covered by `paypal.com`. Checked against **both** the previewed domain and the upstream target. |
 | Runtime additions | `BLOCKED_HOSTS` secret | Comma-separated. Add new targets as you see them. |
-| Exceptions | `BLOCKED_HOSTS_ALLOW` | For a customer who genuinely owns a listed domain. |
+| Exceptions | `BLOCKED_HOSTS_ALLOW` | Hostnames always permitted, checked before the blocklist and suffix matched. Use this rather than deleting a blocklist entry: the list contains public suffixes such as `gov.uk`, so removing the entry unblocks every UK public body at once, while an allowlist entry unblocks only the domain you name. |
 | Captcha | Turnstile, anonymous creates only | Disabled automatically when keys are unset. Fails open if Cloudflare is unreachable — rate limits and the blocklist still apply. |
 | Rate limit | `RATE_LIMIT_PER_HOUR` (10) | Per IP, anonymous only. Drop to 3 under active abuse. |
 | SSRF guards | `lib/security.ts` | Private ranges + cloud metadata. **Never weaken these.** |

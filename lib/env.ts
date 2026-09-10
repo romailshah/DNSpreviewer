@@ -18,17 +18,26 @@ function hostList(raw: string | undefined): string[] {
  * Hosts that may never be proxied or previewed. The built-in list in
  * blocklist.ts covers the phishing targets that get a wildcard domain
  * blacklisted fastest (banks, webmail, payment, identity providers).
- * BLOCKED_HOSTS adds to that list; BLOCKED_HOSTS_ALLOW removes from it, for
- * the rare case where a customer legitimately owns a listed domain.
+ * BLOCKED_HOSTS adds to that list.
  */
-export const BLOCKED_HOSTS = (() => {
-  const allow = new Set(hostList(process.env.BLOCKED_HOSTS_ALLOW));
-  const set = new Set<string>();
-  for (const h of [...DEFAULT_BLOCKED_HOSTS, ...hostList(process.env.BLOCKED_HOSTS)]) {
-    if (!allow.has(h)) set.add(h);
-  }
-  return set;
-})();
+export const BLOCKED_HOSTS = new Set<string>([
+  ...DEFAULT_BLOCKED_HOSTS,
+  ...hostList(process.env.BLOCKED_HOSTS),
+]);
+
+/**
+ * Hostnames that are always permitted, checked before the blocklist.
+ *
+ * Suffix matched like the blocklist itself, so allowing "example.gov.uk" also
+ * allows "www.example.gov.uk", but not "example.gov.uk.evil.com".
+ *
+ * This exists because blocklist entries and real domains are not the same
+ * shape. The blocklist contains "gov.uk", which is a public suffix, so suffix
+ * matching blocks every UK public body under it. Removing the entry would
+ * unblock all of them at once. An allowlist entry unblocks exactly the one
+ * domain you name and leaves the rest alone.
+ */
+export const ALLOWED_HOSTS = new Set<string>(hostList(process.env.BLOCKED_HOSTS_ALLOW));
 
 export const SESSION_TTL_MS = SESSION_TTL_MINUTES * 60 * 1000;
 

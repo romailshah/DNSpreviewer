@@ -1,4 +1,4 @@
-import { BLOCKED_HOSTS } from "./env";
+import { ALLOWED_HOSTS, BLOCKED_HOSTS } from "./env";
 import { isIpLiteral } from "./validation";
 
 /**
@@ -24,15 +24,31 @@ const BLOCKED_V4_RANGES: Array<[number, number]> = [
   cidr("255.255.255.255", 32),
 ];
 
+/** Suffix match: "a.b.com" matches an entry of "b.com", but "ab.com" does not. */
+function matchesSuffix(host: string, entry: string): boolean {
+  return host === entry || host.endsWith(`.${entry}`);
+}
+
 /**
  * Suffix-aware blocklist check. Blocking "paypal.com" must also block
- * "login.paypal.com" — exact-match only would be trivially sidestepped.
+ * "login.paypal.com", since exact-match only would be trivially sidestepped.
+ *
+ * The allowlist is checked first and wins. That ordering is the point: a
+ * blocklist entry can be a public suffix such as "gov.uk", which legitimately
+ * covers thousands of unrelated organisations, and the allowlist is how a
+ * single one of them gets through without unblocking the rest.
  */
 export function isBlockedHostname(host: string): boolean {
   const h = host.toLowerCase().replace(/\.+$/, "");
-  for (const blocked of BLOCKED_HOSTS) {
-    if (h === blocked || h.endsWith(`.${blocked}`)) return true;
+
+  for (const allowed of ALLOWED_HOSTS) {
+    if (matchesSuffix(h, allowed)) return false;
   }
+
+  for (const blocked of BLOCKED_HOSTS) {
+    if (matchesSuffix(h, blocked)) return true;
+  }
+
   return false;
 }
 

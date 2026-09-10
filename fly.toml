@@ -31,7 +31,10 @@ primary_region = "iad"   # US-East (Virginia). This is where the machine and its
   BACKUP_S3_REGION     = "auto"          # "auto" for Cloudflare R2
   BACKUP_S3_PREFIX     = "dnspreviewer"
   # BLOCKED_HOSTS      = ""   # extra abuse targets (adds to lib/blocklist.ts)
-  # BLOCKED_HOSTS_ALLOW = ""  # exceptions for customers who own a listed domain
+  # Hostnames always permitted, suffix matched, checked before the blocklist.
+  # Needed because "gov.uk" in the blocklist is a public suffix and so blocks
+  # every UK public body under it. Listing one here unblocks only that one.
+  BLOCKED_HOSTS_ALLOW  = "northwalesadoption.gov.uk"
 
 # Secrets — set with `fly secrets set`, never here:
 #   AUTH_SECRET, CRON_SECRET, TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY,
