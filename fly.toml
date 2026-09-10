@@ -32,9 +32,10 @@ primary_region = "iad"   # US-East (Virginia). This is where the machine and its
   BACKUP_S3_PREFIX     = "dnspreviewer"
   # BLOCKED_HOSTS      = ""   # extra abuse targets (adds to lib/blocklist.ts)
   # Hostnames always permitted, suffix matched, checked before the blocklist.
-  # Needed because "gov.uk" in the blocklist is a public suffix and so blocks
-  # every UK public body under it. Listing one here unblocks only that one.
-  BLOCKED_HOSTS_ALLOW  = "northwalesadoption.gov.uk"
+  # Empty because government domains are no longer blocked at all, so the
+  # northwalesadoption.gov.uk exception that used to live here is redundant.
+  # Still the right tool if a specific customer ever needs an exception.
+  # BLOCKED_HOSTS_ALLOW = ""
 
 # Secrets — set with `fly secrets set`, never here:
 #   AUTH_SECRET, CRON_SECRET, TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY,

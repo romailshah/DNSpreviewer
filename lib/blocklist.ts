@@ -127,12 +127,57 @@ export const DEFAULT_BLOCKED_HOSTS: string[] = [
   "namecheap.com",
   "fly.io",
 
-  // ─── Government / tax ──────────────────────────────────────────────────────
-  "irs.gov",
-  "gov.uk",
-  "hmrc.gov.uk",
-  "ato.gov.au",
-  "mygov.au",
-  "canada.ca",
-  "fbr.gov.pk",
+  // ─── Government and tax: deliberately absent ───────────────────────────────
+  //
+  // These were here and have been removed. Government registries are
+  // restricted: nobody can register a .gov, .gov.uk or .gov.au domain without
+  // being the public body it belongs to, which removes the impersonation risk
+  // that justifies everything above.
+  //
+  // Tax and government phishing is real, but it runs on lookalike domains on
+  // ordinary TLDs, hmrc-refund.example rather than hmrc.gov.uk, and a list of
+  // genuine government domains never catches those.
+  //
+  // The cost was concrete. "gov.uk" is a public suffix, so suffix matching
+  // blocked every UK public body under it, thousands of unrelated
+  // organisations. A council web team hit this in September 2026.
 ];
+
+/**
+ * Never add a public suffix to the list above.
+ *
+ * Entries are suffix matched, so an entry that is itself a public suffix
+ * blocks every domain registered under it. "gov.uk", "co.uk", "com.au" and
+ * "org.uk" are registry-operated namespaces, not organisations.
+ *
+ * This list is checked at module load in development so the mistake cannot be
+ * repeated silently.
+ */
+const PUBLIC_SUFFIXES = [
+  "gov.uk",
+  "co.uk",
+  "org.uk",
+  "ac.uk",
+  "nhs.uk",
+  "com.au",
+  "gov.au",
+  "net.au",
+  "org.au",
+  "co.nz",
+  "co.za",
+  "com.br",
+  "co.jp",
+  "com.pk",
+  "gov.pk",
+  "co.in",
+  "com.mx",
+];
+
+if (process.env.NODE_ENV !== "production") {
+  const offenders = DEFAULT_BLOCKED_HOSTS.filter((h) => PUBLIC_SUFFIXES.includes(h));
+  if (offenders.length > 0) {
+    throw new Error(
+      `lib/blocklist.ts contains public suffixes, which would block every domain registered under them: ${offenders.join(", ")}. Block the specific organisation instead.`,
+    );
+  }
+}
