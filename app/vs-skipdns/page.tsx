@@ -4,14 +4,17 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "SkipDNS Alternative: Free Preview Before DNS",
+  // Google shows the OpenGraph title for this page in search, not the <title>
+  // tag (confirmed from the live SERP, September 2026). Keep the two aligned so
+  // the result is the same whichever one it picks.
+  title: "Free SkipDNS Alternative, No Link Limits",
   description:
-    "SkipDNS costs $9.9 to $159.9 a month and deletes your links when you cancel. DNS Previewer does the same job free. Verified pricing, updated September 2026.",
+    "SkipDNS starts at $9.9 a month, caps your links and deletes them if you cancel. DNS Previewer does the same job free, with no link cap.",
   alternates: { canonical: "https://dnspreviewer.com/vs-skipdns" },
   openGraph: {
-    title: "Free SkipDNS Alternative for Previewing a Site Before DNS",
+    title: "Free SkipDNS Alternative, No Link Limits",
     description:
-      "SkipDNS starts at $9.9 a month and deletes your links if you cancel. DNS Previewer is free. Verified side by side comparison.",
+      "SkipDNS starts at $9.9 a month, caps your links and deletes them if you cancel. DNS Previewer does the same job free, with no link cap.",
     url: "https://dnspreviewer.com/vs-skipdns",
     type: "article",
   },
@@ -90,7 +93,9 @@ const faqs = [
   },
   {
     q: "Is there a free SkipDNS alternative?",
-    a: "Yes. DNS Previewer does the same job at no cost. You give it a domain and the IP address of the new server, and it returns a preview link on a subdomain such as x7k3p.dnspreviewer.com that loads your site from the new server as though DNS had already changed. There is no card, no trial clock and no paid tier.",
+    // Google quotes the opening of this answer as the search snippet, so the
+    // reasons to switch come first and the explanation follows.
+    a: "Yes. DNS Previewer does the same job at no cost, with no cap on how many links you keep and no subscription to cancel. You give it a domain and the IP address of the new server, and it returns a preview link on a subdomain such as x7k3p.dnspreviewer.com that loads your site from the new server as though DNS had already changed. There is no card and no trial clock.",
   },
   {
     q: "What happens to my SkipDNS links if I cancel?",
