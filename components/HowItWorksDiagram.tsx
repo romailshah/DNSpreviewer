@@ -5,150 +5,221 @@ import type { ReactNode } from "react";
  * Top-of-page explainer for /how-it-works: the migration steps without DNS
  * Previewer next to the same migration with it. Built from HTML rather than
  * an image so it reflows on mobile and stays readable text for search
- * engines and LLMs.
+ * engines and LLMs. The "with" panel reuses the homepage CTA gradient.
  */
 export function HowItWorksDiagram() {
   return (
-    <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
-      <Panel tone="without">
-        <Step n={1} title="Copy your site to the new server">
+    <div className="relative grid gap-5 lg:grid-cols-2 lg:gap-8">
+      <span
+        className="hidden lg:inline-flex absolute left-1/2 top-10 z-10 h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-ink-900 font-display text-sm font-bold text-white ring-8 ring-cream"
+        aria-hidden="true"
+      >
+        vs
+      </span>
+
+      <Panel
+        tone="without"
+        title="Without DNS Previewer"
+        tagline="Switch first, find out later."
+      >
+        <Step tone="without" n={1} title="Copy your site to the new server">
           Files, database and SSL certificate.
         </Step>
-        <Step n={2} title="Switch DNS and hope">
+        <Step tone="without" n={2} title="Switch DNS and hope">
           There&rsquo;s no easy way to see the new server under your real domain first.
         </Step>
-        <Step n={3} title="Wait for DNS to update">
+        <Step tone="without" n={3} title="Wait for DNS to update">
           Often hours, depending on the TTL on your DNS record.
         </Step>
-        <Step n={4} title="Find the problems live" warn last>
-          Broken pages, SSL errors or a missing database show up in front of real visitors.
+        <Step tone="without" marker="warn" title="Find the problems live" last>
+          Your visitors spot them before you do.
+          <MiniBrowser url="example.com" variant="error" />
         </Step>
-        <Outcome tone="without">
-          Rolling back means another DNS change, and another wait.
-        </Outcome>
+        <div className="mt-6 inline-flex items-center gap-2 self-start rounded-xl bg-red-50 px-3.5 py-2 text-sm font-medium text-red-700">
+          <WarnIcon />
+          Rolling back means another DNS change and another wait
+        </div>
       </Panel>
 
-      <Panel tone="with">
-        <Step n={1} title="Copy your site to the new server" brand>
-          Same as before. Your live site stays exactly where it is.
+      <Panel tone="with" title="With DNS Previewer" tagline="Check first, switch when it works.">
+        <Step tone="with" n={1} title="Copy your site to the new server">
+          Same as before. Your live site stays put.
         </Step>
-        <Step n={2} title="Generate a preview link" brand>
-          Enter your domain and the new server&rsquo;s IP address on DNS Previewer.
+        <Step tone="with" n={2} title="Generate a preview link">
+          Enter your domain and the new server&rsquo;s IP address.
         </Step>
-        <Step n={3} title="Check it in your browser" brand>
-          The link loads your site from the new server under your real domain. Send it to your
-          client or open it on your phone.
+        <Step tone="with" n={3} title="Check it in your browser">
+          Your real domain, served from the new server. Send it to a client or open it on your phone.
+          <MiniBrowser url="x7k3p.dnspreviewer.com" variant="ok" />
         </Step>
-        <Step n={4} title="Everything works? Switch DNS" brand done last>
-          You already know the new server is ready, so there&rsquo;s nothing to find out live.
+        <Step tone="with" marker="done" title="Everything works? Switch DNS" last>
+          Visitors go straight to a working new site.
         </Step>
-        <Outcome tone="with">
-          Visitors go straight from the old site to a working new one.
-          <Link href="/" className="btn-primary mt-4 w-full sm:w-auto">
-            Generate a preview link
-          </Link>
-        </Outcome>
+        <Link
+          href="/"
+          className="mt-6 inline-flex items-center justify-center gap-2 self-start rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 shadow-soft transition hover:bg-cream"
+        >
+          Generate a preview link
+          <ArrowIcon />
+        </Link>
       </Panel>
     </div>
   );
 }
 
-type PanelTone = "without" | "with";
+type Tone = "without" | "with";
 
-function Panel({ tone, children }: { tone: PanelTone; children: ReactNode }) {
+function Panel({
+  tone,
+  title,
+  tagline,
+  children,
+}: {
+  tone: Tone;
+  title: string;
+  tagline: string;
+  children: ReactNode;
+}) {
   const isWith = tone === "with";
   return (
     <section
-      className={`flex flex-col rounded-2xl sm:rounded-3xl border p-5 sm:p-7 ${
-        isWith ? "border-brand-200 bg-white shadow-glow" : "border-ink-200 bg-ink-50"
+      className={`relative flex flex-col overflow-hidden rounded-3xl p-6 sm:p-8 ${
+        isWith
+          ? "bg-gradient-to-br from-brand-500 to-brand-600 text-white shadow-glow"
+          : "border border-ink-200 bg-white shadow-soft"
       }`}
     >
-      <div className="flex items-center gap-2.5">
+      {isWith && (
+        <>
+          <div className="pointer-events-none absolute -top-24 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-brand-400/40 blur-3xl" />
+        </>
+      )}
+      <div className="relative">
         <span
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${
-            isWith ? "bg-brand-500 text-white" : "bg-ink-200 text-ink-700"
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${
+            isWith ? "bg-white/15 text-white" : "bg-red-50 text-red-700"
           }`}
-          aria-hidden="true"
         >
           {isWith ? <CheckIcon /> : <CrossIcon />}
+          {isWith ? "The safe way" : "The usual way"}
         </span>
-        <h2 className={`heading text-lg sm:text-xl ${isWith ? "text-ink-900" : "text-ink-700"}`}>
-          {isWith ? "With DNS Previewer" : "Without DNS Previewer"}
-        </h2>
+        <h2 className={`heading mt-4 text-2xl sm:text-3xl ${isWith ? "text-white" : "text-ink-900"}`}>{title}</h2>
+        <p className={`mt-1.5 ${isWith ? "text-white/85" : "text-ink-500"}`}>{tagline}</p>
       </div>
-      <ol className="mt-6 flex-1">{children}</ol>
+      <ol className="relative mt-7 flex flex-1 flex-col">{children}</ol>
     </section>
   );
 }
 
 function Step({
+  tone,
   n,
   title,
-  children,
-  brand,
-  warn,
-  done,
+  marker,
   last,
+  children,
 }: {
-  n: number;
+  tone: Tone;
+  n?: number;
   title: string;
-  children: ReactNode;
-  brand?: boolean;
-  warn?: boolean;
-  done?: boolean;
+  marker?: "warn" | "done";
   last?: boolean;
+  children: ReactNode;
 }) {
-  const marker = warn
-    ? "bg-red-50 text-red-600 border-red-200"
-    : done
-      ? "bg-brand-500 text-white border-brand-500"
-      : brand
-        ? "bg-brand-50 text-brand-700 border-brand-200"
-        : "bg-white text-ink-500 border-ink-200";
+  const isWith = tone === "with";
+  const markerClass =
+    marker === "warn"
+      ? "bg-red-500 text-white border-red-500"
+      : marker === "done"
+        ? "bg-white text-brand-600 border-white"
+        : isWith
+          ? "bg-white/15 text-white border-white/40"
+          : "bg-white text-ink-700 border-ink-200";
   return (
-    <li className="relative flex gap-4 pb-6 last:pb-0">
+    <li className={`relative flex gap-4 ${last ? "" : "pb-6"}`}>
       {!last && (
         <span
-          className={`absolute left-[15px] top-9 bottom-1 w-0.5 ${brand ? "bg-brand-200" : "bg-ink-200"}`}
+          className={`absolute left-[17px] top-10 bottom-1 w-0.5 rounded-full ${isWith ? "bg-white/30" : "bg-ink-200"}`}
           aria-hidden="true"
         />
       )}
       <span
-        className={`relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border font-display text-sm font-bold ${marker}`}
+        className={`relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border font-display text-sm font-bold ${markerClass}`}
       >
-        {warn ? <WarnIcon /> : done ? <CheckIcon /> : n}
+        {marker === "warn" ? <WarnIcon /> : marker === "done" ? <CheckIcon /> : n}
       </span>
-      <div className="pt-1">
-        <h3 className={`font-display font-semibold ${warn ? "text-red-700" : "text-ink-900"}`}>{title}</h3>
-        <p className={`mt-1 text-sm leading-relaxed ${brand ? "text-ink-700" : "text-ink-500"}`}>{children}</p>
+      <div className="min-w-0 flex-1 pt-1.5">
+        <h3
+          className={`font-display text-base font-semibold sm:text-lg ${
+            marker === "warn" ? "text-red-600" : isWith ? "text-white" : "text-ink-900"
+          }`}
+        >
+          {title}
+        </h3>
+        <div className={`mt-1 text-sm leading-relaxed ${isWith ? "text-white/85" : "text-ink-500"}`}>{children}</div>
       </div>
     </li>
   );
 }
 
-function Outcome({ tone, children }: { tone: PanelTone; children: ReactNode }) {
-  const isWith = tone === "with";
+/** Tiny browser window used as an illustration inside a step. */
+function MiniBrowser({ url, variant }: { url: string; variant: "error" | "ok" }) {
+  const ok = variant === "ok";
   return (
     <div
-      className={`mt-6 rounded-xl px-4 py-3 text-sm font-medium ${
-        isWith ? "bg-brand-50 text-brand-800" : "bg-white text-ink-700 border border-ink-200"
+      className={`mt-3 overflow-hidden rounded-xl border bg-white ${
+        ok ? "border-white/60 shadow-soft" : "border-red-200"
       }`}
+      aria-hidden="true"
     >
-      <div className="flex flex-col items-start">{children}</div>
+      <div className="flex items-center gap-1.5 border-b border-ink-200 bg-ink-50 px-3 py-2">
+        <span className="h-2 w-2 rounded-full bg-red-300" />
+        <span className="h-2 w-2 rounded-full bg-amber-300" />
+        <span className="h-2 w-2 rounded-full bg-emerald-300" />
+        <span className="ml-2 min-w-0 flex-1 truncate rounded-md border border-ink-200 bg-white px-2 py-0.5 font-mono text-[11px] text-ink-700">
+          {url}
+        </span>
+      </div>
+      {ok ? (
+        <div className="flex items-center gap-3 p-3">
+          <div className="flex-1 space-y-1.5">
+            <div className="h-2 w-2/3 rounded-full bg-brand-200" />
+            <div className="h-1.5 w-full rounded-full bg-ink-200" />
+            <div className="h-1.5 w-4/5 rounded-full bg-ink-200" />
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+            <CheckIcon />
+            Works
+          </span>
+        </div>
+      ) : (
+        <div className="p-3">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-red-600">
+            <WarnIcon />
+            Error establishing a database connection
+          </div>
+          <div className="mt-2 space-y-1.5 opacity-60">
+            <div className="h-1.5 w-full rounded-full bg-ink-200" />
+            <div className="h-1.5 w-3/5 rounded-full bg-ink-200" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const iconProps = {
-  width: 16,
-  height: 16,
+  width: 14,
+  height: 14,
   viewBox: "0 0 24 24",
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 2.5,
+  strokeWidth: 3,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
   "aria-hidden": true,
+  className: "shrink-0",
 };
 
 function CheckIcon() {
@@ -170,7 +241,15 @@ function CrossIcon() {
 function WarnIcon() {
   return (
     <svg {...iconProps}>
-      <path d="M12 8v5M12 16.5h.01" />
+      <path d="M12 6v8M12 18.5h.01" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg {...iconProps} width={16} height={16} strokeWidth={2.5}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
   );
 }
