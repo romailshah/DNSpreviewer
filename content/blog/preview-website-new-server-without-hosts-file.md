@@ -98,7 +98,7 @@ Editing the file does not clear what your system already remembers:
 - **macOS:** `sudo dscacheutil -flushcache` then `sudo killall -HUP mDNSResponder`
 - **Chrome, separately:** visit `chrome://net-internals/#dns` and clear the host cache
 
-Skip this and you will spend twenty minutes debugging a server that was fine all along.
+Skip this and you will spend twenty minutes debugging a server that was fine all along. The commands for Linux, Firefox and phones are in [how to flush DNS](/blog/how-to-flush-dns).
 
 ### You have to remember to take it out
 

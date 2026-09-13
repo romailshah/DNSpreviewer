@@ -133,7 +133,7 @@ If your carefully typed line vanishes minutes later, this is usually why. Check 
 
 The file is correct, the save worked, and the browser still loads the old site. In rough order of likelihood:
 
-**The DNS cache is stale.** Run `ipconfig /flushdns`. Chrome keeps a separate cache of its own, cleared at `chrome://net-internals/#dns`.
+**The DNS cache is stale.** Run `ipconfig /flushdns`. Chrome keeps a separate cache of its own, cleared at `chrome://net-internals/#dns`. There is a [full guide to flushing DNS](/blog/how-to-flush-dns) covering every browser and operating system.
 
 **Firefox is bypassing it entirely.** With DNS over HTTPS enabled, Firefox resolves names inside the browser over an encrypted connection to a DNS provider, so the request never reaches the Windows resolver and your hosts entry is never consulted. Mozilla has tracked local address overrides under DoH in [bug 1453207](https://bugzilla.mozilla.org/show_bug.cgi?id=1453207) for years. Chrome checks the system resolver for local entries and generally still honours the file, which is why the same test can pass in one browser and fail in another on one machine.
 

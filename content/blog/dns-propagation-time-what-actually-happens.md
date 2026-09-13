@@ -160,7 +160,7 @@ The only caches you can actually flush are your own:
 - **Linux (systemd):** `sudo resolvectl flush-caches`
 - **Chrome:** visit `chrome://net-internals/#dns` and clear the host cache
 
-Useful for confirming your own work. Useless for the client whose office resolver is the actual problem.
+Useful for confirming your own work. Useless for the client whose office resolver is the actual problem. The full set of commands, including Firefox, iPhone and Android, is in [how to flush DNS](/blog/how-to-flush-dns).
 
 ## What to do instead of waiting
 
