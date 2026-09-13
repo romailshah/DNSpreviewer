@@ -21,19 +21,19 @@ keywords:
   ]
 faqs:
   - q: "Where is the hosts file in Windows 11?"
-    a: "C:\\Windows\\System32\\drivers\\etc\\hosts. The path is identical on Windows 11, Windows 10, Windows 8 and Windows 7, and has not moved since Windows XP. The file has no extension, so it shows as just hosts with no file type. If your system drive is not C:, use %SystemRoot%\\System32\\drivers\\etc\\hosts instead, which resolves to the correct drive automatically."
+    a: "C:\\Windows\\System32\\drivers\\etc\\hosts. It's in exactly the same place on Windows 11, 10, 8 and 7, and it hasn't moved since Windows XP. The file has no extension, so it shows up as just hosts with no file type. If Windows isn't installed on your C: drive, use %SystemRoot%\\System32\\drivers\\etc\\hosts instead, which points to the right drive automatically."
   - q: "Does Windows 11 still use the hosts file?"
-    a: "Yes. Windows 11 checks the hosts file before sending any DNS query, exactly as every previous version did. Nothing about it has been deprecated. The two things that make it look broken on modern systems are Controlled Folder Access silently blocking writes to the folder, and browsers using DNS over HTTPS resolving names internally and skipping the operating system resolver entirely."
+    a: "Yes. Windows 11 checks the hosts file before it sends any DNS query, just like every version before it, and nothing about it has been deprecated. It can look broken on modern systems for two reasons: Controlled Folder Access quietly blocking writes to the folder, and browsers using DNS over HTTPS, which resolve names themselves and skip the operating system entirely."
   - q: "Why can't I save the hosts file?"
-    a: "Almost always one of three reasons. The editor is not running as Administrator, so the write is refused because the file sits in a protected system folder. Notepad saved it as hosts.txt because the Save as type box was left on Text Documents, which means the real hosts file was never touched. Or Controlled Folder Access in Windows Security is blocking modification of the drivers\\etc folder, which produces a permission error even when you are running elevated."
+    a: "It's almost always one of three things. Your editor isn't running as administrator, so Windows refuses the write because the file lives in a protected system folder. Notepad saved it as hosts.txt because Save as type was left on Text Documents, so the real hosts file never changed. Or Controlled Folder Access in Windows Security is blocking changes to the drivers\\etc folder, which gives you a permission error even when you're running as administrator."
   - q: "Why is my hosts file not working?"
-    a: "Four common causes. Your DNS cache still holds the old answer, so run ipconfig /flushdns. Firefox has DNS over HTTPS enabled and resolves names inside the browser, bypassing the hosts file completely. The file was saved as hosts.txt rather than hosts. Or the entry is there but does not cover the hostname being requested, because the hosts file matches exact names only and www.example.com needs its own separate line."
+    a: "There are four usual causes. Your DNS cache still has the old answer, so run ipconfig /flushdns. Firefox has DNS over HTTPS switched on and resolves names inside the browser, which skips the hosts file completely. The file got saved as hosts.txt instead of hosts. Or the entry's there but doesn't match the hostname you're visiting, because the hosts file only matches exact names and www.example.com needs a line of its own."
   - q: "How do I edit the hosts file as administrator?"
-    a: "Press the Windows key, type notepad, right click Notepad in the results and choose Run as administrator. Then use File, Open, paste C:\\Windows\\System32\\drivers\\etc\\hosts into the filename box and press Enter. You must change the file type dropdown to All Files first, otherwise the folder appears empty because the hosts file has no .txt extension."
+    a: "Press the Windows key, type notepad, right click Notepad in the results and choose Run as administrator. Then go to File, Open, paste C:\\Windows\\System32\\drivers\\etc\\hosts into the filename box and press Enter. If you browse to the folder instead, switch the file type dropdown to All Files first, or the folder will look empty because the hosts file has no .txt extension."
   - q: "Where is the hosts file on Mac and Linux?"
-    a: "/etc/hosts on both. Edit it with sudo nano /etc/hosts or sudo vi /etc/hosts, since it is owned by root. On macOS, flush the cache afterwards with sudo dscacheutil -flushcache followed by sudo killall -HUP mDNSResponder. The file format is identical across all three operating systems: an IP address, whitespace, then the hostname."
+    a: "/etc/hosts on both. Edit it with sudo nano /etc/hosts or sudo vi /etc/hosts, since root owns it. On macOS, flush the cache afterwards with sudo dscacheutil -flushcache followed by sudo killall -HUP mDNSResponder. The format's the same on all three systems: an IP address, some whitespace, then the hostname."
   - q: "How do I reset the Windows hosts file to default?"
-    a: "Replace the contents with the default file, which contains nothing but comment lines beginning with #. A hosts file with no active entries is the normal state for a clean Windows install. Microsoft publishes the exact default contents and a reset procedure in its support documentation. Resetting is worth trying if you suspect malware added redirect entries, since hijacking this file is a well known technique."
+    a: "Replace what's in it with the default contents, which are nothing but comment lines starting with #. A hosts file with no active entries is normal for a clean Windows install. Microsoft publishes the exact default contents and a reset procedure in its support documentation. It's worth doing if you think malware has added redirect entries, since hijacking this file is a well known trick."
 ---
 
 The Windows hosts file lives here:
@@ -42,52 +42,52 @@ The Windows hosts file lives here:
 C:\Windows\System32\drivers\etc\hosts
 ```
 
-No file extension. Not `hosts.txt`, not `hosts.ini`, just `hosts`. That single detail is behind a good share of the confusion around this file, because Notepad hides extensionless files by default and Windows Explorer shows the folder as empty until you tell it otherwise.
+There's no file extension. Not `hosts.txt`, not `hosts.ini`, just `hosts`. A lot of the confusion around this file comes down to that, because Notepad hides files without an extension by default and File Explorer shows the folder as empty until you tell it otherwise.
 
-The path has not changed since Windows XP. Windows 11 uses exactly the same location as Windows 10, 8 and 7.
+The path hasn't changed since Windows XP. Windows 11 keeps it in exactly the same place as Windows 10, 8 and 7.
 
 ## Where the Windows hosts file is
 
-If your Windows installation is not on the C: drive, use the environment variable instead of hardcoding the letter:
+If Windows isn't installed on your C: drive, use the environment variable rather than typing the drive letter:
 
 ```
 %SystemRoot%\System32\drivers\etc\hosts
 ```
 
-That resolves to whichever drive Windows is actually installed on. You can paste it directly into the Explorer address bar, the Run dialog (Windows key + R), or a Notepad Open box.
+That points to whichever drive Windows is actually on. You can paste it straight into the File Explorer address bar, the Run dialog (Windows key + R), or Notepad's Open box.
 
-Two things about the folder catch people out. The `etc` folder also contains `lmhosts.sam`, `networks`, `protocol` and `services`, and only `hosts` is the one you want. And if you open the folder in Explorer and see nothing, File Explorer is filtering by type. The file is there.
+The folder itself catches people out in a couple of ways. The `etc` folder also holds `lmhosts.sam`, `networks`, `protocol` and `services`, and `hosts` is the only one you want. If you open the folder and it looks empty, File Explorer is filtering by file type. The file's there.
 
 ## Does Windows 11 still use the hosts file?
 
-Yes, and nothing about it is deprecated. Windows 11 checks the hosts file before it sends any DNS query, the same as every version before it.
+Yes, and none of it has been deprecated. Windows 11 checks the hosts file before it sends a DNS query, the same way every version before it has.
 
-The reason people ask is that two newer behaviours make it look like the file stopped working. Controlled Folder Access, part of Windows Security, can silently block writes to the `drivers\etc` folder. And browsers using DNS over HTTPS resolve hostnames inside the browser, never asking Windows, which means your hosts entry is correct and simply never consulted. Both are covered further down.
+People ask because two newer features can make it look like it's stopped working. Controlled Folder Access, part of Windows Security, can quietly block writes to the `drivers\etc` folder. And browsers that use DNS over HTTPS look up hostnames themselves without asking Windows, so your hosts entry can be perfectly correct and just never get read. Both are covered further down.
 
 ## How to edit the hosts file on Windows
 
-The file is in a protected system folder, so an ordinary editor cannot write to it. You need an elevated one.
+The file sits in a protected system folder, so a normal editor can't write to it. You need to run one as administrator.
 
-**The quickest route:**
+The quickest way:
 
 1. Press the Windows key and type `notepad`
 2. Right click Notepad in the results and choose **Run as administrator**
 3. In Notepad, choose **File**, then **Open**
 4. Paste `C:\Windows\System32\drivers\etc\hosts` into the File name box and press Enter
 
-Step 4 matters. If you browse to the folder instead of pasting the full path, set the file type dropdown from **Text Documents** to **All Files** first, or the folder will look empty.
+Pasting the full path in step 4 saves you a headache. If you browse to the folder instead, change the file type dropdown from **Text Documents** to **All Files** first, or the folder will look empty.
 
-**From an elevated terminal**, this is one line:
+If you'd rather use a terminal, it's one line:
 
 ```
 notepad %SystemRoot%\System32\drivers\etc\hosts
 ```
 
-Open Terminal or Command Prompt as administrator first, or the same permission error applies.
+Just open Terminal or Command Prompt as administrator first, or you'll hit the same permission error.
 
 ### The format
 
-One mapping per line, IP address first, then whitespace, then the hostname. Lines starting with `#` are comments.
+It's one mapping per line: the IP address first, then some whitespace, then the hostname. Lines that start with `#` are comments.
 
 ```
 # Point a domain at a new server for testing
@@ -95,9 +95,9 @@ One mapping per line, IP address first, then whitespace, then the hostname. Line
 203.0.113.42    www.example.com
 ```
 
-Note the second line. The hosts file matches **exact hostnames only**. An entry for `example.com` does nothing for `www.example.com`, and there is no wildcard syntax, so `*.example.com` is not valid and will simply be ignored. Every hostname you care about needs its own line.
+Look at the second line there. The hosts file only matches exact hostnames, so an entry for `example.com` does nothing for `www.example.com`. There's no wildcard syntax either, and `*.example.com` isn't valid, so Windows just ignores it. Every hostname you care about needs its own line.
 
-After saving, clear the DNS cache so Windows stops serving the old answer:
+Once you've saved, clear the DNS cache so Windows stops handing out the old answer:
 
 ```
 ipconfig /flushdns
@@ -105,65 +105,65 @@ ipconfig /flushdns
 
 ## Why you cannot save the hosts file
 
-This is the most common failure, and it has four distinct causes that produce similar looking errors.
+This is where most people get stuck, and there are four different causes that all produce much the same looking error.
 
 ### Your editor is not elevated
 
-Notepad opened normally will let you type changes and then refuse the save, usually offering a Save As dialog pointing at your Documents folder. That dialog is the tell. Windows is not asking where to save, it is telling you it cannot write where you asked. Close it and reopen Notepad as administrator.
+If you open Notepad normally, it'll let you type your changes and then refuse to save, usually by popping up a Save As box pointed at your Documents folder. That box gives it away. Windows can't write where you asked, and offering you somewhere else is its way of saying so. Close it and reopen Notepad as administrator.
 
 ### Notepad saved it as hosts.txt
 
-If the Save As dialog appeared and you clicked through it, check the folder. A `hosts.txt` sitting next to `hosts` means your edit went into a new file that Windows will never read. Delete it, and when saving deliberately, set **Save as type** to **All Files** and put the filename in quotes as `"hosts"` so Notepad does not append an extension.
+If that Save As box appeared and you clicked through it, go and check the folder. A `hosts.txt` sitting next to `hosts` means your changes went into a brand new file that Windows will never look at. Delete it. Next time you save, set **Save as type** to **All Files** and type the filename in quotes as `"hosts"`, so Notepad doesn't tack an extension on.
 
 ### Controlled Folder Access is blocking the write
 
-This one is modern, and it produces a permission error even when you are correctly running as administrator, which makes it genuinely confusing.
+This one's newer, and it's genuinely confusing, because you get a permission error even when you're correctly running as administrator.
 
-Controlled Folder Access is an anti-ransomware feature in Windows Security that blocks untrusted applications from modifying protected folders. Notepad is not always on its trusted list. Check under **Windows Security**, **Virus and threat protection**, **Ransomware protection**. Either allow your editor through, or turn the feature off briefly and back on afterwards. Microsoft documents the behaviour in its [Controlled folder access reference](https://learn.microsoft.com/en-us/defender-endpoint/controlled-folders).
+Controlled Folder Access is an anti-ransomware feature in Windows Security that stops untrusted apps changing protected folders, and Notepad isn't always on its trusted list. You'll find it under **Windows Security**, **Virus and threat protection**, **Ransomware protection**. Either let your editor through, or switch the feature off for a moment and turn it back on once you're done. Microsoft explains how it behaves in its [Controlled folder access reference](https://learn.microsoft.com/en-us/defender-endpoint/controlled-folders).
 
-One catch worth knowing: with Controlled Folder Access enabled, the usual Defender exclusions cannot be applied, so adding an exclusion for the folder will not help while it is on.
+It's also worth knowing that the usual Defender exclusions can't be applied while Controlled Folder Access is on, so adding an exclusion for the folder won't help.
 
 ### Defender flagged the change as a hijack
 
-Microsoft Defender treats hosts file edits as suspicious by design, because redirecting domains through this file is a standard malware technique. Modifications can trigger a detection called [SettingsModifier:Win32/HostsFileHijack](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?name=SettingsModifier:Win32/HostsFileHijack), and Defender may quietly revert your entries.
+Microsoft Defender treats changes to the hosts file as suspicious on purpose, since redirecting domains through this file is a standard malware trick. Editing it can trigger a detection called [SettingsModifier:Win32/HostsFileHijack](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?name=SettingsModifier:Win32/HostsFileHijack), and Defender may quietly undo your changes.
 
-If your carefully typed line vanishes minutes later, this is usually why. Check the Protection history in Windows Security before assuming you made a mistake.
+So if the line you carefully typed disappears a few minutes later, that's usually why. Have a look at Protection history in Windows Security before you assume you did something wrong.
 
 ## Your edit saved but nothing changed
 
-The file is correct, the save worked, and the browser still loads the old site. In rough order of likelihood:
+The file's right, the save worked, and your browser still loads the old site. Here are the likely culprits, most common first.
 
-**The DNS cache is stale.** Run `ipconfig /flushdns`. Chrome keeps a separate cache of its own, cleared at `chrome://net-internals/#dns`. There is a [full guide to flushing DNS](/blog/how-to-flush-dns) covering every browser and operating system.
+The DNS cache is out of date. Run `ipconfig /flushdns`. Chrome keeps its own separate cache too, which you clear at `chrome://net-internals/#dns`. There's a [full guide to flushing DNS](/blog/how-to-flush-dns) covering every browser and operating system.
 
-**Firefox is bypassing it entirely.** With DNS over HTTPS enabled, Firefox resolves names inside the browser over an encrypted connection to a DNS provider, so the request never reaches the Windows resolver and your hosts entry is never consulted. Mozilla has tracked local address overrides under DoH in [bug 1453207](https://bugzilla.mozilla.org/show_bug.cgi?id=1453207) for years. Chrome checks the system resolver for local entries and generally still honours the file, which is why the same test can pass in one browser and fail in another on one machine.
+Firefox is skipping the file altogether. With DNS over HTTPS switched on, Firefox looks names up inside the browser over an encrypted connection to a DNS provider, so the request never reaches Windows and your hosts entry never gets read. Mozilla has been tracking support for local overrides under DoH in [bug 1453207](https://bugzilla.mozilla.org/show_bug.cgi?id=1453207) for years. Chrome checks the system resolver for local entries and usually still honours the file, which is why the same test can work in one browser and fail in another on the same machine.
 
-**The hostname does not match exactly.** You added `example.com` and are testing `www.example.com`, or the other way round. Add both.
+The hostname doesn't match exactly. You added `example.com` but you're testing `www.example.com`, or the other way round. Add both.
 
-**A VPN or proxy is intercepting resolution.** Corporate VPN clients frequently route DNS through their own resolver regardless of local configuration.
+A VPN or proxy is getting in the way. Corporate VPN clients often send DNS through their own resolver no matter what's configured locally.
 
-To confirm what Windows itself thinks, ask it directly rather than trusting a browser:
+To see what Windows itself thinks, ask it directly instead of trusting a browser:
 
 ```
 ping example.com
 nslookup example.com
 ```
 
-`ping` respects the hosts file. `nslookup` deliberately does not, because it queries a DNS server directly. If `ping` shows your new IP and `nslookup` shows the old one, that is correct behaviour and confirms your entry is working.
+`ping` uses the hosts file. `nslookup` deliberately doesn't, because it goes straight to a DNS server. So if `ping` shows your new IP and `nslookup` still shows the old one, everything's working as it should and your entry is being picked up.
 
 ## What the hosts file cannot do
 
-It is a genuinely useful tool with hard limits, and knowing them saves time.
+It's a genuinely useful tool, but it has hard limits, and knowing them up front saves time.
 
-- **No wildcards.** Exact hostnames only. A site with `blog.`, `shop.` and `app.` subdomains needs a line for each, and you have to know the full list in advance.
-- **One machine only.** The entry affects the computer it was saved on. You cannot send it to a client or a colleague, and on a managed work laptop they often cannot apply it at all.
-- **Nothing on phones or tablets.** There is no supported way to edit the hosts file on stock iOS or Android, which rules out testing on the devices where layout problems are most obvious.
-- **No ports or paths.** It maps a hostname to an IP address and nothing else. You cannot redirect a port or a URL path with it.
+- No wildcards. It only matches exact hostnames, so a site with `blog.`, `shop.` and `app.` subdomains needs a line for each, and you have to know the full list before you start.
+- It only works on one machine. The entry affects the computer it was saved on. You can't send it to a client or a colleague, and on a managed work laptop they often won't be allowed to apply it anyway.
+- It won't work on phones or tablets. There's no supported way to edit the hosts file on a stock iPhone or Android device, which rules out testing on the screens where layout problems show up most.
+- No ports or paths. It maps a hostname to an IP address and that's all. You can't use it to redirect a port or a URL path.
 
-I wrote about those limits in more detail in [why the hosts file cannot leave your laptop](/blog/preview-website-new-server-without-hosts-file).
+I've gone into those limits in more detail in [why the hosts file cannot leave your laptop](/blog/preview-website-new-server-without-hosts-file).
 
 ## The macOS and Linux equivalent
 
-Both use `/etc/hosts`, with the same format.
+Both use `/etc/hosts`, in the same format.
 
 ```
 sudo nano /etc/hosts
@@ -176,18 +176,18 @@ sudo dscacheutil -flushcache
 sudo killall -HUP mDNSResponder
 ```
 
-On Linux with systemd, `sudo resolvectl flush-caches`.
+On Linux with systemd, run `sudo resolvectl flush-caches`.
 
 ## Resetting the file
 
-A default Windows hosts file contains only comment lines beginning with `#` and no active entries. If yours has entries you did not add, particularly ones pointing security or banking domains at odd addresses, that is worth investigating rather than ignoring. Microsoft publishes the exact default contents and a reset procedure in [its support documentation](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae).
+A default Windows hosts file has nothing in it but comment lines starting with `#`, and no active entries. If yours has entries you didn't add, especially ones pointing security or banking sites at odd addresses, look into it properly. Microsoft publishes the exact default contents and a reset procedure in [its support documentation](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae).
 
 ## When to reach for something else
 
-Most people editing this file are doing one specific thing: checking that a website works on a new server before pointing DNS at it. The hosts file does that correctly, because your browser still sends the real `Host` header and the real TLS SNI, so the server picks the right virtual host and certificate.
+Most people editing this file are doing one particular job: checking a website works on a new server before pointing DNS at it. The hosts file does that properly, because your browser still sends the real `Host` header and the real TLS SNI, so the server picks the right virtual host and certificate.
 
-It just cannot travel. The moment a client, a colleague or your own phone needs to see the same thing, you are stuck talking someone through editing a protected system file over a call.
+The trouble is it can't travel. As soon as a client, a colleague or your own phone needs to see the same thing, you're stuck talking someone through editing a protected system file over a call.
 
-That is the problem I built [DNS Previewer](https://dnspreviewer.com) to remove. It gives you a link instead of a file edit, works on any device with no configuration, and covers wildcard subdomains that the hosts file cannot express. It is free, and there is an [honest comparison with the paid alternative](/vs-skipdns) including the parts where theirs is better.
+That's the problem I built [DNS Previewer](https://dnspreviewer.com) to get rid of. You get a link instead of a file edit, it works on any device with no setup, and it handles wildcard subdomains that the hosts file can't. It's free, and there's an [honest comparison with the paid alternative](/vs-skipdns) that includes the parts where theirs is better.
 
-If you are here because a DNS change has not taken effect yet, the hosts file is a workaround rather than the answer. [What actually controls that delay](/blog/dns-propagation-time-what-actually-happens) is the TTL on the record, and it is worth understanding before your next migration.
+If you ended up here because a DNS change still hasn't taken effect, editing the hosts file will only paper over it on one machine. [What actually controls that delay](/blog/dns-propagation-time-what-actually-happens) is the TTL on the record, and it's worth understanding before your next migration.
