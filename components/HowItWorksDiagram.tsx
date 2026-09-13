@@ -1,182 +1,176 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
- * Top-of-page diagram for /how-it-works. Two lanes: live visitors still
- * reaching the old server, and the preview reaching the new server under the
- * same domain. Built from HTML rather than an image so the labels stay crisp,
- * reflow on mobile, and remain readable text for search engines and LLMs.
- *
- * The IPs are RFC 5737 documentation addresses, never real servers.
+ * Top-of-page explainer for /how-it-works: the migration steps without DNS
+ * Previewer next to the same migration with it. Built from HTML rather than
+ * an image so it reflows on mobile and stays readable text for search
+ * engines and LLMs.
  */
 export function HowItWorksDiagram() {
   return (
-    <figure className="rounded-2xl sm:rounded-3xl border border-ink-200 bg-white shadow-soft p-4 sm:p-6 lg:p-8">
-      <Lane label="Your visitors, the whole time" tone="muted">
-        <Node tone="muted" icon={<UsersIcon />} title="Visitors" detail="type example.com" />
-        <Flow tone="muted" label="DNS still points to the old server" wide />
-        <Node tone="muted" icon={<ServerIcon />} title="Old server" detail="198.51.100.7" />
-      </Lane>
+    <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
+      <Panel tone="without">
+        <Step n={1} title="Copy your site to the new server">
+          Files, database and SSL certificate.
+        </Step>
+        <Step n={2} title="Switch DNS and hope">
+          There&rsquo;s no easy way to see the new server under your real domain first.
+        </Step>
+        <Step n={3} title="Wait for DNS to update">
+          Often hours, depending on the TTL on your DNS record.
+        </Step>
+        <Step n={4} title="Find the problems live" warn last>
+          Broken pages, SSL errors or a missing database show up in front of real visitors.
+        </Step>
+        <Outcome tone="without">
+          Rolling back means another DNS change, and another wait.
+        </Outcome>
+      </Panel>
 
-      <div className="my-5 sm:my-6 border-t border-dashed border-ink-200" />
-
-      <Lane label="You, before changing anything" tone="brand">
-        <Node tone="brand" icon={<DevicesIcon />} title="You or your client" detail="any browser or phone" />
-        <Flow tone="brand" />
-        <Node tone="brand" icon={<LinkIcon />} title="Preview link" detail="x7k3p.dnspreviewer.com" />
-        <Flow tone="brand" />
-        <Node
-          tone="solid"
-          icon={<ShieldIcon />}
-          title="DNS Previewer"
-          detail={
-            <>
-              Host: example.com
-              <br />
-              SNI: example.com
-            </>
-          }
-        />
-        <Flow tone="brand" />
-        <Node tone="brand" icon={<ServerIcon />} title="New server" detail="203.0.113.42" />
-      </Lane>
-
-      <figcaption className="mt-6 sm:mt-7 text-sm text-ink-700 leading-relaxed lg:text-center lg:max-w-2xl lg:mx-auto">
-        Nothing about your live site changes. Visitors keep reaching the old server, while the
-        preview link shows you the new one under your real domain name. Once it all checks out,
-        you update DNS.
-      </figcaption>
-    </figure>
-  );
-}
-
-type Tone = "muted" | "brand" | "solid";
-
-const COLUMNS =
-  "lg:grid-cols-[minmax(0,1fr)_2.75rem_minmax(0,1fr)_2.75rem_minmax(0,1fr)_2.75rem_minmax(0,1fr)]";
-
-function Lane({ label, tone, children }: { label: string; tone: "muted" | "brand"; children: ReactNode }) {
-  return (
-    <div>
-      <div
-        className={`mb-3 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide ${
-          tone === "brand" ? "text-brand-700" : "text-ink-500"
-        }`}
-      >
-        <span className={`h-2 w-2 rounded-full ${tone === "brand" ? "bg-brand-500" : "bg-ink-300"}`} />
-        {label}
-      </div>
-      <div className={`grid grid-cols-1 ${COLUMNS} lg:items-center`}>{children}</div>
+      <Panel tone="with">
+        <Step n={1} title="Copy your site to the new server" brand>
+          Same as before. Your live site stays exactly where it is.
+        </Step>
+        <Step n={2} title="Generate a preview link" brand>
+          Enter your domain and the new server&rsquo;s IP address on DNS Previewer.
+        </Step>
+        <Step n={3} title="Check it in your browser" brand>
+          The link loads your site from the new server under your real domain. Send it to your
+          client or open it on your phone.
+        </Step>
+        <Step n={4} title="Everything works? Switch DNS" brand done last>
+          You already know the new server is ready, so there&rsquo;s nothing to find out live.
+        </Step>
+        <Outcome tone="with">
+          Visitors go straight from the old site to a working new one.
+          <Link href="/" className="btn-primary mt-4 w-full sm:w-auto">
+            Generate a preview link
+          </Link>
+        </Outcome>
+      </Panel>
     </div>
   );
 }
 
-const NODE_TONES: Record<Tone, { box: string; icon: string; title: string; detail: string }> = {
-  muted: {
-    box: "border-ink-200 bg-ink-50",
-    icon: "bg-white text-ink-500 border border-ink-200",
-    title: "text-ink-700",
-    detail: "text-ink-500",
-  },
-  brand: {
-    box: "border-brand-200 bg-white",
-    icon: "bg-brand-50 text-brand-600 border border-brand-100",
-    title: "text-ink-900",
-    detail: "text-brand-700",
-  },
-  solid: {
-    box: "border-brand-500 bg-brand-500 shadow-glow",
-    icon: "bg-white/15 text-white border border-white/25",
-    title: "text-white",
-    detail: "text-white/90",
-  },
-};
+type PanelTone = "without" | "with";
 
-function Node({ tone, icon, title, detail }: { tone: Tone; icon: ReactNode; title: string; detail: ReactNode }) {
-  const t = NODE_TONES[tone];
+function Panel({ tone, children }: { tone: PanelTone; children: ReactNode }) {
+  const isWith = tone === "with";
   return (
-    <div className={`rounded-xl border px-3 py-3 lg:py-4 ${t.box}`}>
-      <div className="flex items-center gap-3 lg:flex-col lg:gap-2 lg:text-center">
-        <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${t.icon}`}>
-          {icon}
+    <section
+      className={`flex flex-col rounded-2xl sm:rounded-3xl border p-5 sm:p-7 ${
+        isWith ? "border-brand-200 bg-white shadow-glow" : "border-ink-200 bg-ink-50"
+      }`}
+    >
+      <div className="flex items-center gap-2.5">
+        <span
+          className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${
+            isWith ? "bg-brand-500 text-white" : "bg-ink-200 text-ink-700"
+          }`}
+          aria-hidden="true"
+        >
+          {isWith ? <CheckIcon /> : <CrossIcon />}
         </span>
-        <div className="min-w-0">
-          <div className={`font-display text-sm font-semibold ${t.title}`}>{title}</div>
-          <div className={`mt-0.5 font-mono text-[11px] leading-snug break-all ${t.detail}`}>{detail}</div>
-        </div>
+        <h2 className={`heading text-lg sm:text-xl ${isWith ? "text-ink-900" : "text-ink-700"}`}>
+          {isWith ? "With DNS Previewer" : "Without DNS Previewer"}
+        </h2>
       </div>
-    </div>
+      <ol className="mt-6 flex-1">{children}</ol>
+    </section>
   );
 }
 
-function Flow({ tone, label, wide }: { tone: "muted" | "brand"; label?: string; wide?: boolean }) {
+function Step({
+  n,
+  title,
+  children,
+  brand,
+  warn,
+  done,
+  last,
+}: {
+  n: number;
+  title: string;
+  children: ReactNode;
+  brand?: boolean;
+  warn?: boolean;
+  done?: boolean;
+  last?: boolean;
+}) {
+  const marker = warn
+    ? "bg-red-50 text-red-600 border-red-200"
+    : done
+      ? "bg-brand-500 text-white border-brand-500"
+      : brand
+        ? "bg-brand-50 text-brand-700 border-brand-200"
+        : "bg-white text-ink-500 border-ink-200";
+  return (
+    <li className="relative flex gap-4 pb-6 last:pb-0">
+      {!last && (
+        <span
+          className={`absolute left-[15px] top-9 bottom-1 w-0.5 ${brand ? "bg-brand-200" : "bg-ink-200"}`}
+          aria-hidden="true"
+        />
+      )}
+      <span
+        className={`relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border font-display text-sm font-bold ${marker}`}
+      >
+        {warn ? <WarnIcon /> : done ? <CheckIcon /> : n}
+      </span>
+      <div className="pt-1">
+        <h3 className={`font-display font-semibold ${warn ? "text-red-700" : "text-ink-900"}`}>{title}</h3>
+        <p className={`mt-1 text-sm leading-relaxed ${brand ? "text-ink-700" : "text-ink-500"}`}>{children}</p>
+      </div>
+    </li>
+  );
+}
+
+function Outcome({ tone, children }: { tone: PanelTone; children: ReactNode }) {
+  const isWith = tone === "with";
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-1.5 py-1.5 lg:px-1 lg:py-0 ${
-        wide ? "lg:col-span-5 lg:px-3" : ""
-      } ${tone === "brand" ? "text-brand-500" : "text-ink-300"}`}
+      className={`mt-6 rounded-xl px-4 py-3 text-sm font-medium ${
+        isWith ? "bg-brand-50 text-brand-800" : "bg-white text-ink-700 border border-ink-200"
+      }`}
     >
-      {label && <span className="text-center text-xs text-ink-500">{label}</span>}
-      <span className={`flow-line ${tone === "brand" ? "flow-line-moving" : ""}`} aria-hidden="true" />
+      <div className="flex flex-col items-start">{children}</div>
     </div>
   );
 }
 
 const iconProps = {
-  width: 18,
-  height: 18,
+  width: 16,
+  height: 16,
   viewBox: "0 0 24 24",
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 2,
+  strokeWidth: 2.5,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
   "aria-hidden": true,
 };
 
-function UsersIcon() {
+function CheckIcon() {
   return (
     <svg {...iconProps}>
-      <circle cx="9" cy="8" r="3.5" />
-      <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
-      <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.3c1.8.8 3 2.9 3 5.7" />
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
     </svg>
   );
 }
 
-function DevicesIcon() {
+function CrossIcon() {
   return (
     <svg {...iconProps}>
-      <rect x="2" y="4" width="14" height="10" rx="1.5" />
-      <path d="M5 18h8" />
-      <rect x="17" y="8" width="5" height="12" rx="1" />
+      <path d="M6 6l12 12M18 6L6 18" />
     </svg>
   );
 }
 
-function LinkIcon() {
+function WarnIcon() {
   return (
     <svg {...iconProps}>
-      <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1" />
-      <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" />
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg {...iconProps}>
-      <path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6L12 3z" />
-      <path d="M8.5 12h7M13 9.5l2.5 2.5-2.5 2.5" />
-    </svg>
-  );
-}
-
-function ServerIcon() {
-  return (
-    <svg {...iconProps}>
-      <rect x="3" y="3.5" width="18" height="7" rx="1.5" />
-      <rect x="3" y="13.5" width="18" height="7" rx="1.5" />
-      <path d="M7 7h.01M7 17h.01" />
+      <path d="M12 8v5M12 16.5h.01" />
     </svg>
   );
 }
