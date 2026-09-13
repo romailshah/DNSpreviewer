@@ -327,6 +327,25 @@ export default function VsSkipDnsPage() {
               point DNS at it is basic plumbing, and basic plumbing should not
               carry a subscription.
             </p>
+            <p className="mt-4 text-sm text-ink-500 text-center max-w-xl mx-auto">
+              If you are the only person who needs to see the new server, you
+              may not need either tool. Editing your hosts file does the job on
+              one machine, and we have written up{" "}
+              <Link
+                href="/blog/preview-website-new-server-without-hosts-file"
+                className="text-brand-600 hover:underline"
+              >
+                where the hosts file falls short
+              </Link>
+              . For everything else to check before cutover, see the{" "}
+              <Link
+                href="/blog/wordpress-migration-checklist-test-before-dns"
+                className="text-brand-600 hover:underline"
+              >
+                WordPress migration checklist
+              </Link>
+              .
+            </p>
           </div>
         </section>
 

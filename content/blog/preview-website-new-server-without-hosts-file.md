@@ -118,13 +118,13 @@ That one change fixes most of the list above in one go. You can send a link to a
 
 Wildcards stop being a problem too, because the proxy can cover a whole domain and all its subdomains, so you're not listing them out by hand.
 
-[DNS Previewer](/) does this for free, wildcards included. You can also choose whether the connection to your server uses HTTPS, HTTP or falls back automatically, which helps when the new server doesn't have a valid certificate for the domain yet. With a free account you can also put a password on a link, so it isn't open to anyone who gets hold of the URL, and create links that never expire.
+[DNS Previewer](/) does this for free, wildcards included. You can also choose whether the connection to your server uses HTTPS, HTTP or falls back automatically, which helps when the new server doesn't have a valid certificate for the domain yet. With a free account you can also put a password on a link, so it isn't open to anyone who gets hold of the URL, and create links that never expire. If you've come across SkipDNS, the paid tool that does the same job, here's [how DNS Previewer compares with SkipDNS](/vs-skipdns).
 
 ### The honest limitations
 
 A preview link is a proxy, so your traffic passes through a third party. If you work under rules that forbid that, or you're testing something involving genuinely sensitive data, the hosts file keeps everything on your own machine, and that's a real advantage.
 
-One more thing, and it applies to both approaches equally. If your domain normally sits behind a CDN like Cloudflare, pointing either a hosts entry or a preview link at your origin server only tests the origin. The edge isn't involved, so page rules, caching behaviour and edge redirects aren't being tested. Plan a separate check for those once you've cut over.
+One more thing, and it applies to both approaches equally. If your domain normally sits behind a CDN like Cloudflare, pointing either a hosts entry or a preview link at your origin server only tests the origin. The edge isn't involved, so page rules, caching behaviour and edge redirects aren't being tested. Plan a separate check for those once you've cut over. The [WordPress migration checklist](/blog/wordpress-migration-checklist-test-before-dns) covers the CDN and everything else worth checking around the switch.
 
 ## When the hosts file is still the right tool
 

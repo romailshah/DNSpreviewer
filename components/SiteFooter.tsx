@@ -8,8 +8,10 @@ export function SiteFooter() {
           <span>&copy; {new Date().getFullYear()} DNS Previewer</span>
           <span className="chip-free">Free forever</span>
         </div>
-        <nav className="flex items-center gap-5">
+        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <Link href="/how-it-works" className="hover:text-ink-900">How it works</Link>
+          <Link href="/blog" className="hover:text-ink-900">Blog</Link>
+          <Link href="/vs-skipdns" className="hover:text-ink-900">SkipDNS alternative</Link>
           <Link href="/faq" className="hover:text-ink-900">FAQ</Link>
           <Link href="/abuse" className="hover:text-ink-900">Report abuse</Link>
         </nav>

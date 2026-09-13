@@ -84,12 +84,28 @@ export default function HowItWorks() {
         <p className="mt-4 text-sm sm:text-base text-ink-700 leading-relaxed">
           When you migrate a site to a new host, your domain still points to the old server until
           you update DNS. That&rsquo;s a problem: you can&rsquo;t easily test the new host under its
-          real domain, and a botched switchover is visible to every visitor.
+          real domain, and a botched switchover is visible to every visitor. Once you do switch, the
+          old address can hang around in caches for hours, which is covered in{" "}
+          <Link href="/blog/dns-propagation-time-what-actually-happens" className="text-brand-600 hover:underline">
+            how long DNS propagation really takes
+          </Link>
+          .
         </p>
 
         <h2 className="heading mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-ink-900">The standard workarounds, and why they hurt</h2>
         <ul className="mt-3 list-disc pl-5 sm:pl-6 space-y-2 text-sm sm:text-base text-ink-700 leading-relaxed">
-          <li><strong className="text-ink-900">Editing /etc/hosts:</strong> only works on your machine. Can&rsquo;t share with clients or QA.</li>
+          <li>
+            <strong className="text-ink-900">Editing /etc/hosts:</strong> only works on your machine. Can&rsquo;t share with clients or QA.
+            More on{" "}
+            <Link href="/blog/preview-website-new-server-without-hosts-file" className="text-brand-600 hover:underline">
+              where the hosts file falls short
+            </Link>
+            , and{" "}
+            <Link href="/blog/windows-hosts-file-location" className="text-brand-600 hover:underline">
+              where the Windows hosts file lives
+            </Link>{" "}
+            if you still need it.
+          </li>
           <li><strong className="text-ink-900">Using the server&rsquo;s IP directly:</strong> wrong Host header, SSL cert errors, broken vhosts.</li>
           <li><strong className="text-ink-900">Staging subdomain:</strong> often has a different code path than production, so issues slip through.</li>
         </ul>
@@ -133,7 +149,20 @@ export default function HowItWorks() {
           <li>Third-party services (OAuth, payment gateways) may not accept requests that originated from a subdomain they don&rsquo;t recognize.</li>
         </ul>
 
-        <p className="mt-8 sm:mt-10">
+        <p className="mt-8 sm:mt-10 text-sm sm:text-base text-ink-700 leading-relaxed">
+          Moving a WordPress site? The preview covers the &ldquo;does it work under the real
+          domain&rdquo; part. The rest is in the{" "}
+          <Link href="/blog/wordpress-migration-checklist-test-before-dns" className="text-brand-600 hover:underline">
+            WordPress migration checklist
+          </Link>
+          . If you&rsquo;re weighing this up against the paid option, here&rsquo;s an{" "}
+          <Link href="/vs-skipdns" className="text-brand-600 hover:underline">
+            honest comparison with SkipDNS
+          </Link>
+          .
+        </p>
+
+        <p className="mt-6">
           <Link href="/create" className="btn-primary">Try it now</Link>
         </p>
       </main>

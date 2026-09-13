@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import Link from "next/link";
 
 import type { Metadata } from "next";
 
@@ -17,11 +18,26 @@ export const metadata: Metadata = {
   },
 };
 
-const faqs: Array<{ q: string; a: string; group: string }> = [
+// `more` links an answer to the guide that covers it in depth. It's rendered
+// under the answer only, so the FAQPage JSON-LD text stays plain.
+const faqs: Array<{ q: string; a: string; group: string; more?: { href: string; label: string } }> = [
   {
     q: "Is this really free?",
     group: "Cost and limits",
     a: "Yes. Every feature is free, forever. No signup, no watermark, no 'pro' tier behind the most useful features.",
+    more: { href: "/vs-skipdns", label: "How this compares with SkipDNS" },
+  },
+  {
+    q: "Do I need to flush DNS or wait for propagation before a preview works?",
+    group: "Using a preview",
+    a: "No. The preview connects straight to the server address you enter, so your domain's DNS records are never looked up. Caches on your computer, your router and your provider's resolver don't come into it, and the link works as soon as it's created.",
+    more: { href: "/blog/dns-propagation-time-what-actually-happens", label: "What DNS propagation actually is" },
+  },
+  {
+    q: "Can I just edit my hosts file instead?",
+    group: "Using a preview",
+    a: "Yes, if you're the only one who needs to see the new server. A hosts file entry sends the right Host header too. It only works on the machine you edited, though, needs admin rights, has no wildcards, and can't be used on a phone.",
+    more: { href: "/blog/preview-website-new-server-without-hosts-file", label: "Where the hosts file falls short" },
   },
   {
     q: "How long do previews last?",
@@ -122,6 +138,13 @@ export default function FAQPage() {
                       <span className="text-ink-400 group-open:rotate-45 transition-transform text-xl leading-none shrink-0">+</span>
                     </summary>
                     <p className="mt-3 text-sm sm:text-base text-ink-700 leading-relaxed">{f.a}</p>
+                    {f.more && (
+                      <p className="mt-2 text-sm">
+                        <Link href={f.more.href} className="text-brand-600 hover:underline">
+                          {f.more.label}
+                        </Link>
+                      </p>
+                    )}
                   </details>
                 ))}
             </div>

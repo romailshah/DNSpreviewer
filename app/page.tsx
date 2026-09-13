@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
+import { getAllPostMeta } from "@/lib/blog";
 import { ROOT_DOMAIN, SESSION_TTL_MINUTES, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 /**
@@ -86,6 +87,7 @@ export default async function HomePage() {
         <FreeVsPaid />
         <Steps />
         <Features />
+        <Guides />
         <BigCTA />
       </main>
       <SiteFooter />
@@ -304,6 +306,52 @@ function Features() {
             <p className="mt-1.5 text-sm text-ink-700 leading-relaxed">{it.body}</p>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Links every published guide from the homepage. The homepage holds most of
+ * the site's backlinks, so this is the strongest internal link a post can get.
+ * Anchors are the post titles, which carry each post's target query.
+ */
+function Guides() {
+  const posts = getAllPostMeta().slice(0, 6);
+  if (posts.length === 0) return null;
+  return (
+    <section className="bg-white border-y border-ink-200 py-14 sm:py-20">
+      <div className="container-wide">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="heading text-2xl sm:text-3xl md:text-4xl text-ink-900">Migration and DNS guides</h2>
+            <p className="mt-3 text-sm sm:text-base text-ink-700">
+              Written from real migrations, for when something isn&rsquo;t resolving the way it should.
+            </p>
+          </div>
+          <Link href="/blog" className="text-sm font-medium text-brand-600 hover:underline">
+            All guides
+          </Link>
+        </div>
+        <div className="mt-8 sm:mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {posts.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/blog/${p.slug}`}
+              className="card hover:border-brand-200 transition block"
+            >
+              {p.frontmatter.category && (
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">
+                  {p.frontmatter.category}
+                </span>
+              )}
+              <h3 className="mt-2 font-display font-semibold tracking-tight text-ink-900">
+                {p.frontmatter.title}
+              </h3>
+              <p className="mt-1.5 text-sm text-ink-700 leading-relaxed">{p.frontmatter.description}</p>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

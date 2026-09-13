@@ -75,7 +75,7 @@ Most WordPress migration tutorials end with "now test the new server before flip
 
 **Method 1: the `/etc/hosts` trick.** You edit your machine's hosts file to point the domain at the new IP. The site loads in your browser. Done, right?
 
-No. This only works on **your** machine. You can't share the link with the client, their QA team, or anyone else. You can't test from a mobile phone on cellular data. You can't test from the AWS region where most of your real visitors come from. And critically, it doesn't reproduce CDN edge behavior, HTTP/2 upgrade negotiation, or hostname-aware proxy chains, all of which only kick in once real DNS resolves to the new server.
+No. This only works on **your** machine. You can't share the link with the client, their QA team, or anyone else. You can't test from a mobile phone on cellular data. You can't test from the AWS region where most of your real visitors come from. And critically, it doesn't reproduce CDN edge behavior, HTTP/2 upgrade negotiation, or hostname-aware proxy chains, all of which only kick in once real DNS resolves to the new server. I've gone through [where the hosts file falls short](/blog/preview-website-new-server-without-hosts-file) in more detail separately.
 
 **Method 2: hitting the server IP directly.** You navigate to `https://192.0.2.1` and the page loads.
 
@@ -143,7 +143,7 @@ This is the section that would have saved me from the 14-hour outage. It's also 
 
 Not via `/etc/hosts`. Not via the IP directly. Not via a staging subdomain. You need to simulate how your actual domain (`example.com`) will respond when DNS resolves to the new server, including the correct `Host` header, the correct TLS SNI, the correct upstream behavior, from any device, anywhere on the internet.
 
-This is the gap I built [DNS Previewer](https://dnspreviewer.com) to fill. You enter your domain and the new server's IP; it gives you a temporary URL like `xxxxxxxxxx.dnspreviewer.com` that reverse-proxies your target server with the right Host header and TLS SNI for your real domain. You, and your client, can open it on any device and see exactly what real visitors will see post-flip. Skipdns.link sells the same thing starting at $9.9/mo, with the useful features (password protection, no-expiry links, wildcard subdomain support) gated behind $39.9/mo+ tiers. Both work. I built mine free because DNS migration testing shouldn't cost a subscription.
+This is the gap I built [DNS Previewer](https://dnspreviewer.com) to fill. You enter your domain and the new server's IP; it gives you a temporary URL like `xxxxxxxxxx.dnspreviewer.com` that reverse-proxies your target server with the right Host header and TLS SNI for your real domain. You, and your client, can open it on any device and see exactly what real visitors will see post-flip. SkipDNS sells the same thing from $9.9 a month, with plans priced by how many preview links you can keep at once. There's a [full comparison of DNS Previewer and SkipDNS](/vs-skipdns) if you're choosing between them. Both work. I built mine free because DNS migration testing shouldn't cost a subscription.
 
 Use whichever you prefer. Just *don't skip this step*. It's the difference between catching a vhost mismatch on Monday and catching it from a panicked client call at 7am Friday.
 
@@ -173,7 +173,7 @@ Payment gateways, webhook endpoints, API integrations, fraud detection services,
 
 **17. DNS TTL is reduced to 60 seconds at least 24 hours before the flip.**
 
-The current TTL on your A record determines how long DNS caches around the world will hold stale records. If your current TTL is 14400 (4 hours), then for up to 4 hours after your "instant" cutover, some visitors will still hit the old server. Reduce it to 60 seconds well in advance. After the migration is verified stable for 48 hours, raise it back to something sensible (3600).
+The current TTL on your A record determines how long DNS caches around the world will hold stale records. If your current TTL is 14400 (4 hours), then for up to 4 hours after your "instant" cutover, some visitors will still hit the old server. Reduce it to 60 seconds well in advance. After the migration is verified stable for 48 hours, raise it back to something sensible (3600). If you want to know why the old TTL is the number that matters, I've explained [how long DNS propagation really takes](/blog/dns-propagation-time-what-actually-happens).
 
 **18. Have a documented rollback procedure ready.**
 
