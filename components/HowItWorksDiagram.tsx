@@ -35,7 +35,7 @@ export function HowItWorksDiagram() {
           Your visitors spot them before you do.
           <MiniBrowser url="example.com" variant="error" />
         </Step>
-        <div className="mt-6 inline-flex items-center gap-2 self-start rounded-xl bg-red-50 px-3.5 py-2 text-sm font-medium text-red-700">
+        <div className="mt-5 sm:mt-6 inline-flex items-center gap-2 self-start rounded-xl bg-red-50 px-3 py-2 sm:px-3.5 text-[13px] sm:text-sm font-medium text-red-700">
           <WarnIcon />
           Rolling back means another DNS change and another wait
         </div>
@@ -57,7 +57,7 @@ export function HowItWorksDiagram() {
         </Step>
         <Link
           href="/"
-          className="mt-6 inline-flex items-center justify-center gap-2 self-start rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 shadow-soft transition hover:bg-cream"
+          className="mt-5 sm:mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-2 self-start rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 shadow-soft transition hover:bg-cream"
         >
           Generate a preview link
           <ArrowIcon />
@@ -83,7 +83,7 @@ function Panel({
   const isWith = tone === "with";
   return (
     <section
-      className={`relative flex flex-col overflow-hidden rounded-3xl p-6 sm:p-8 ${
+      className={`relative flex flex-col overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-8 ${
         isWith
           ? "bg-gradient-to-br from-brand-500 to-brand-600 text-white shadow-glow"
           : "border border-ink-200 bg-white shadow-soft"
@@ -104,10 +104,10 @@ function Panel({
           {isWith ? <CheckIcon /> : <CrossIcon />}
           {isWith ? "The safe way" : "The usual way"}
         </span>
-        <h2 className={`heading mt-4 text-2xl sm:text-3xl ${isWith ? "text-white" : "text-ink-900"}`}>{title}</h2>
-        <p className={`mt-1.5 ${isWith ? "text-white/85" : "text-ink-500"}`}>{tagline}</p>
+        <h2 className={`heading mt-3 sm:mt-4 text-xl sm:text-3xl ${isWith ? "text-white" : "text-ink-900"}`}>{title}</h2>
+        <p className={`mt-1 text-sm sm:text-base sm:mt-1.5 ${isWith ? "text-white/85" : "text-ink-500"}`}>{tagline}</p>
       </div>
-      <ol className="relative mt-7 flex flex-1 flex-col">{children}</ol>
+      <ol className="relative mt-5 sm:mt-7 flex flex-1 flex-col">{children}</ol>
     </section>
   );
 }
@@ -137,27 +137,27 @@ function Step({
           ? "bg-white/15 text-white border-white/40"
           : "bg-white text-ink-700 border-ink-200";
   return (
-    <li className={`relative flex gap-4 ${last ? "" : "pb-6"}`}>
+    <li className={`relative flex gap-3 sm:gap-4 ${last ? "" : "pb-4 sm:pb-6"}`}>
       {!last && (
         <span
-          className={`absolute left-[17px] top-10 bottom-1 w-0.5 rounded-full ${isWith ? "bg-white/30" : "bg-ink-200"}`}
+          className={`absolute left-[13px] sm:left-[17px] top-8 sm:top-10 bottom-1 w-0.5 rounded-full ${isWith ? "bg-white/30" : "bg-ink-200"}`}
           aria-hidden="true"
         />
       )}
       <span
-        className={`relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border font-display text-sm font-bold ${markerClass}`}
+        className={`relative inline-flex h-7 w-7 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border font-display text-xs sm:text-sm font-bold ${markerClass}`}
       >
         {marker === "warn" ? <WarnIcon /> : marker === "done" ? <CheckIcon /> : n}
       </span>
-      <div className="min-w-0 flex-1 pt-1.5">
+      <div className="min-w-0 flex-1 pt-0.5 sm:pt-1.5">
         <h3
-          className={`font-display text-base font-semibold sm:text-lg ${
+          className={`font-display text-[15px] leading-snug font-semibold sm:text-lg ${
             marker === "warn" ? "text-red-600" : isWith ? "text-white" : "text-ink-900"
           }`}
         >
           {title}
         </h3>
-        <div className={`mt-1 text-sm leading-relaxed ${isWith ? "text-white/85" : "text-ink-500"}`}>{children}</div>
+        <div className={`mt-0.5 sm:mt-1 text-[13px] sm:text-sm leading-relaxed ${isWith ? "text-white/85" : "text-ink-500"}`}>{children}</div>
       </div>
     </li>
   );
@@ -168,7 +168,7 @@ function MiniBrowser({ url, variant }: { url: string; variant: "error" | "ok" })
   const ok = variant === "ok";
   return (
     <div
-      className={`mt-3 overflow-hidden rounded-xl border bg-white ${
+      className={`mt-2.5 sm:mt-3 overflow-hidden rounded-lg sm:rounded-xl border bg-white ${
         ok ? "border-white/60 shadow-soft" : "border-red-200"
       }`}
       aria-hidden="true"
