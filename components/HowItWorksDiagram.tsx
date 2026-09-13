@@ -6,8 +6,17 @@ import type { ReactNode } from "react";
  * Previewer next to the same migration with it. Built from HTML rather than
  * an image so it reflows on mobile and stays readable text for search
  * engines and LLMs. The "with" panel reuses the homepage CTA gradient.
+ *
+ * Used on /how-it-works (panel titles are h2) and on the homepage under its
+ * own section heading (panel titles are h3, CTA scrolls to the hero form).
  */
-export function HowItWorksDiagram() {
+export function HowItWorksDiagram({
+  headingLevel = "h2",
+  ctaHref = "/",
+}: {
+  headingLevel?: "h2" | "h3";
+  ctaHref?: string;
+} = {}) {
   return (
     <div className="relative grid gap-5 lg:grid-cols-2 lg:gap-8">
       <span
@@ -21,6 +30,7 @@ export function HowItWorksDiagram() {
         tone="without"
         title="Without DNS Previewer"
         tagline="Switch first, find out later."
+        headingLevel={headingLevel}
       >
         <Step tone="without" n={1} title="Copy your site to the new server">
           Files, database and SSL certificate.
@@ -41,7 +51,7 @@ export function HowItWorksDiagram() {
         </div>
       </Panel>
 
-      <Panel tone="with" title="With DNS Previewer" tagline="Check first, switch when it works.">
+      <Panel tone="with" title="With DNS Previewer" tagline="Check first, switch when it works." headingLevel={headingLevel}>
         <Step tone="with" n={1} title="Copy your site to the new server">
           Same as before. Your live site stays put.
         </Step>
@@ -56,7 +66,7 @@ export function HowItWorksDiagram() {
           Visitors go straight to a working new site.
         </Step>
         <Link
-          href="/"
+          href={ctaHref}
           className="mt-5 sm:mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-2 self-start rounded-xl bg-white px-6 py-3 font-semibold text-brand-700 shadow-soft transition hover:bg-cream"
         >
           Generate a preview link
@@ -73,14 +83,17 @@ function Panel({
   tone,
   title,
   tagline,
+  headingLevel,
   children,
 }: {
   tone: Tone;
   title: string;
   tagline: string;
+  headingLevel: "h2" | "h3";
   children: ReactNode;
 }) {
   const isWith = tone === "with";
+  const Heading = headingLevel;
   return (
     <section
       className={`relative flex flex-col overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-8 ${
@@ -104,7 +117,9 @@ function Panel({
           {isWith ? <CheckIcon /> : <CrossIcon />}
           {isWith ? "The safe way" : "The usual way"}
         </span>
-        <h2 className={`heading mt-3 sm:mt-4 text-xl sm:text-3xl ${isWith ? "text-white" : "text-ink-900"}`}>{title}</h2>
+        <Heading className={`heading mt-3 sm:mt-4 text-xl sm:text-3xl ${isWith ? "text-white" : "text-ink-900"}`}>
+          {title}
+        </Heading>
         <p className={`mt-1 text-sm sm:text-base sm:mt-1.5 ${isWith ? "text-white/85" : "text-ink-500"}`}>{tagline}</p>
       </div>
       <ol className="relative mt-5 sm:mt-7 flex flex-1 flex-col">{children}</ol>

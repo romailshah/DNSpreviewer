@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
 import { getAllPostMeta } from "@/lib/blog";
+import { HowItWorksDiagram } from "@/components/HowItWorksDiagram";
 import { ROOT_DOMAIN, SESSION_TTL_MINUTES, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 /**
@@ -84,8 +85,8 @@ export default async function HomePage() {
       <SiteHeader />
       <main>
         <Hero isLoggedIn={!!user} rootDomain={ROOT_DOMAIN} />
+        <CheckFirst />
         <FreeVsPaid />
-        <Steps />
         <Features />
         <Guides />
         <BigCTA />
@@ -121,6 +122,7 @@ function Hero({ isLoggedIn, rootDomain }: { isLoggedIn: boolean; rootDomain: str
           no signup wall, no trial countdown.
         </p>
 
+        <div id="preview-form" className="scroll-mt-24" />
         <HeroPreviewForm
           isLoggedIn={isLoggedIn}
           rootDomain={rootDomain}
@@ -241,40 +243,29 @@ function Check() {
   );
 }
 
-function Steps() {
-  const items = [
-    {
-      n: "1",
-      title: "Enter your domain and new server",
-      body: "example.com plus 203.0.113.42. Label it, protect it with a password, pick no-expiry. All optional.",
-    },
-    {
-      n: "2",
-      title: "We generate a private preview URL",
-      body: "Something like x7k3p.dnspreviewer.com. Open it in any browser to hit your new server as if DNS had switched.",
-    },
-    {
-      n: "3",
-      title: "Test, fix, then flip DNS with confidence",
-      body: "Check the homepage, the logins, the forms, the whole thing. When it all works, update your DNS for real.",
-    },
-  ];
+/**
+ * The without/with comparison from /how-it-works. It replaces the old
+ * three-step list, which said the same thing with less clarity.
+ */
+function CheckFirst() {
   return (
     <section className="bg-white border-y border-ink-200 py-14 sm:py-20">
-      <div className="container-wide">
-        <h2 className="heading text-2xl sm:text-3xl md:text-4xl text-center text-ink-900">
-          Three steps. Under a minute.
-        </h2>
-        <div className="mt-10 sm:mt-12 grid md:grid-cols-3 gap-4 sm:gap-6">
-          {items.map((it) => (
-            <div key={it.n} className="card">
-              <div className="h-10 w-10 rounded-xl bg-brand-500 text-white font-display font-bold text-lg inline-flex items-center justify-center shadow-glow">
-                {it.n}
-              </div>
-              <h3 className="mt-5 font-display font-semibold text-lg tracking-tight">{it.title}</h3>
-              <p className="mt-2 text-ink-700 leading-relaxed">{it.body}</p>
-            </div>
-          ))}
+      <div className="mx-auto max-w-5xl px-4 sm:px-5">
+        <div className="text-center">
+          <span className="chip">How it works</span>
+          <h2 className="heading mt-4 text-2xl sm:text-3xl md:text-4xl text-ink-900">
+            Check the new server before your visitors do.
+          </h2>
+          <p className="mt-4 text-sm sm:text-base text-ink-700 max-w-2xl mx-auto">
+            The same migration, with and without a preview link.{" "}
+            <Link href="/how-it-works" className="text-brand-600 hover:underline">
+              See what happens under the hood
+            </Link>
+            .
+          </p>
+        </div>
+        <div className="mt-10 sm:mt-12">
+          <HowItWorksDiagram headingLevel="h3" ctaHref="#preview-form" />
         </div>
       </div>
     </section>
@@ -293,7 +284,8 @@ function Features() {
     { icon: "🚫", title: "No ads, ever", body: "We don't track you, and we don't clutter your preview with ads." },
   ];
   return (
-    <section className="container-wide py-14 sm:py-20">
+    <section className="bg-white border-y border-ink-200 py-14 sm:py-20">
+      <div className="container-wide">
       <div className="text-center">
         <h2 className="heading text-2xl sm:text-3xl md:text-4xl text-ink-900">Every feature you&rsquo;ll need.</h2>
         <p className="mt-3 text-sm sm:text-base text-ink-700">Free. Forever. Really.</p>
@@ -306,6 +298,7 @@ function Features() {
             <p className="mt-1.5 text-sm text-ink-700 leading-relaxed">{it.body}</p>
           </div>
         ))}
+      </div>
       </div>
     </section>
   );
@@ -320,7 +313,7 @@ function Guides() {
   const posts = getAllPostMeta().slice(0, 6);
   if (posts.length === 0) return null;
   return (
-    <section className="bg-white border-y border-ink-200 py-14 sm:py-20">
+    <section className="py-14 sm:py-20">
       <div className="container-wide">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
