@@ -165,3 +165,59 @@ code {
 .blog-content th {
   @apply bg-ink-50 font-semibold;
 }
+
+/* Animated connector for the /how-it-works diagram. Vertical on mobile
+   and tablet, horizontal from lg up. Colour comes from the parent's text colour. */
+.flow-line {
+  position: relative;
+  display: block;
+  width: 2px;
+  height: 1.5rem;
+  background-image: repeating-linear-gradient(to bottom, currentColor 0 6px, transparent 6px 11px);
+  background-size: 2px 11px;
+}
+.flow-line::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid currentColor;
+}
+.flow-line-moving {
+  animation: flow-down 0.9s linear infinite;
+}
+@keyframes flow-down {
+  to { background-position: 0 11px; }
+}
+@keyframes flow-right {
+  to { background-position: 11px 0; }
+}
+@media (min-width: 1024px) {
+  .flow-line {
+    width: calc(100% - 6px);
+    height: 2px;
+    margin-right: 6px;
+    background-image: repeating-linear-gradient(to right, currentColor 0 6px, transparent 6px 11px);
+    background-size: 11px 2px;
+  }
+  .flow-line::after {
+    left: auto;
+    bottom: auto;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 6px solid currentColor;
+    border-right: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .flow-line-moving {
+    animation-name: flow-right;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-line-moving { animation: none; }
+}

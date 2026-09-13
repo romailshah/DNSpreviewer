@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import Link from "next/link";
+import { HowItWorksDiagram } from "@/components/HowItWorksDiagram";
 
 import type { Metadata } from "next";
 
@@ -76,7 +77,8 @@ export default function HowItWorks() {
   return (
     <>
       <SiteHeader />
-      <main className="container-narrow py-8 sm:py-14">
+      <main className="py-8 sm:py-14">
+        <div className="container-narrow">
         <span className="chip">How it works</span>
         <h1 className="heading mt-4 text-2xl sm:text-3xl md:text-4xl text-ink-900">
           How DNS Previewer works
@@ -92,10 +94,17 @@ export default function HowItWorks() {
           .
         </p>
 
+        </div>
+
+        <div className="mx-auto max-w-5xl px-4 sm:px-5 mt-8 sm:mt-10">
+          <HowItWorksDiagram />
+        </div>
+
+        <div className="container-narrow">
         <h2 className="heading mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-ink-900">The standard workarounds, and why they hurt</h2>
         <ul className="mt-3 list-disc pl-5 sm:pl-6 space-y-2 text-sm sm:text-base text-ink-700 leading-relaxed">
           <li>
-            <strong className="text-ink-900">Editing /etc/hosts:</strong> only works on your machine. Can&rsquo;t share with clients or QA.
+            <strong className="text-ink-900">Editing /etc/hosts:</strong>{" "}only works on your machine. Can&rsquo;t share with clients or QA.
             More on{" "}
             <Link href="/blog/preview-website-new-server-without-hosts-file" className="text-brand-600 hover:underline">
               where the hosts file falls short
@@ -165,6 +174,7 @@ export default function HowItWorks() {
         <p className="mt-6">
           <Link href="/create" className="btn-primary">Try it now</Link>
         </p>
+        </div>
       </main>
       <SiteFooter />
       {/* JSON-LD HowTo schema for Google rich results. */}
