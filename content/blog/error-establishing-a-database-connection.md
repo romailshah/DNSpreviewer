@@ -2,7 +2,7 @@
 title: "Error establishing a database connection: how to fix it"
 seoTitle: "Error Establishing a Database Connection in WordPress"
 description: "Error establishing a database connection nearly always means wrong details in wp-config.php or a database server that won't answer. How to tell which, and fix it."
-publishedAt: "2026-09-16"
+publishedAt: "2026-09-15"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."
 category: "WordPress"
