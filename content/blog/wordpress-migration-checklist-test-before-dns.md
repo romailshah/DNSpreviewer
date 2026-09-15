@@ -103,7 +103,7 @@ A common mistake: the new host redirects all HTTP to HTTPS unconditionally, whic
 
 **3. `wp-config.php` database credentials match the new database.**
 
-Obvious, but I've seen this miss when the database was migrated to a new server with different host/port/credentials and `wp-config.php` was copied from the old install without updating. The site appears to load (cached pages from a CDN) until anyone tries to log in.
+Obvious, but I've seen this miss when the database was migrated to a new server with different host/port/credentials and `wp-config.php` was copied from the old install without updating. The site appears to load (cached pages from a CDN) until anyone tries to log in. Miss this one and you get the [error establishing a database connection](/blog/error-establishing-a-database-connection) page instead of a website.
 
 **4. WordPress cron is running via real system cron, not WP-Cron.**
 
