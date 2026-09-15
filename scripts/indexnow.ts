@@ -7,6 +7,9 @@
  *   npm run indexnow            -> submits every URL in the live sitemap
  *   npm run indexnow -- /blog/x -> submits only the paths given
  *
+ * On Windows Git Bash, prefix path arguments with MSYS_NO_PATHCONV=1, or the
+ * shell rewrites a leading slash into a C:/ path before the script sees it.
+ *
  * The key is public by design: IndexNow proves ownership by fetching
  * https://dnspreviewer.com/<key>.txt, which lives in public/.
  */
