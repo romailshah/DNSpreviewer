@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 import "./globals.css";
 
 /**
@@ -110,6 +112,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
         {children}
+
+        {/* Help & feedback button. Suspense is required because it reads
+            the URL's search params (?feedback=problem opens it). */}
+        <Suspense fallback={null}>
+          <FeedbackWidget />
+        </Suspense>
 
         {/* Google Analytics 4 — production only. See GA_MEASUREMENT_ID above. */}
         {showAnalytics && (

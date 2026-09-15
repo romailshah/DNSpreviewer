@@ -15,7 +15,8 @@ export type ActivityKind =
   | "admin.action"
   | "preview.blocked"
   | "backup.succeeded"
-  | "backup.failed";
+  | "backup.failed"
+  | "feedback.received";
 
 export interface Activity {
   id: number;

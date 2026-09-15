@@ -16,6 +16,7 @@ const KIND_META: Record<ActivityKind, { label: string; color: string }> = {
   "preview.blocked": { label: "preview blocked", color: "bg-red-100 text-red-800" },
   "backup.succeeded": { label: "backup", color: "bg-ink-100 text-ink-700" },
   "backup.failed": { label: "backup failed", color: "bg-red-100 text-red-800" },
+  "feedback.received": { label: "feedback", color: "bg-brand-100 text-brand-700" },
 };
 
 export function ActivityRow({ activity, compact }: { activity: Activity; compact?: boolean }) {

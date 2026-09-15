@@ -74,6 +74,21 @@ function migrate(d: DB) {
     CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_log(created_at);
     CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_log(user_id);
     CREATE INDEX IF NOT EXISTS idx_activity_kind ON activity_log(kind);
+
+    CREATE TABLE IF NOT EXISTS feedback (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      kind TEXT NOT NULL,
+      message TEXT NOT NULL,
+      email TEXT,
+      page TEXT,
+      user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+      ip TEXT,
+      user_agent TEXT,
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_feedback_created ON feedback(created_at);
+    CREATE INDEX IF NOT EXISTS idx_feedback_ip_created ON feedback(ip, created_at);
   `);
 
   // Lightweight column additions for installs predating the fields above.

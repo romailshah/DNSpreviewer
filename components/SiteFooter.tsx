@@ -13,6 +13,7 @@ export function SiteFooter() {
           <Link href="/blog" className="hover:text-ink-900">Blog</Link>
           <Link href="/vs-skipdns" className="hover:text-ink-900">SkipDNS alternative</Link>
           <Link href="/faq" className="hover:text-ink-900">FAQ</Link>
+          <Link href="?feedback=idea" scroll={false} className="hover:text-ink-900">Feedback</Link>
           <Link href="/abuse" className="hover:text-ink-900">Report abuse</Link>
         </nav>
       </div>
