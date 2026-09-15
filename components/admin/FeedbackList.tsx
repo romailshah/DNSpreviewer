@@ -1,5 +1,6 @@
 "use client";
 
+import { adminDateTime } from "@/lib/adminTime";
 import { useState } from "react";
 import type { Feedback } from "@/lib/feedback";
 
@@ -41,7 +42,7 @@ export function FeedbackList({ initialItems }: { initialItems: Feedback[] }) {
               {f.status === "new" && (
                 <span className="rounded-full bg-brand-500 px-2 py-0.5 font-semibold text-white">New</span>
               )}
-              <span className="text-ink-500">{new Date(f.createdAt).toLocaleString()}</span>
+              <span className="text-ink-500">{adminDateTime(f.createdAt)}</span>
               {f.page && <span className="font-mono text-ink-500">{f.page}</span>}
             </div>
             <p className="mt-3 whitespace-pre-wrap break-words text-sm text-ink-900">{f.message}</p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { adminDate } from "@/lib/adminTime";
 import { useState } from "react";
 import type { AdminUserRow } from "@/lib/auth";
 
@@ -129,10 +130,10 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUserRow[] }) {
                 </td>
                 <td className="py-3 pr-4 text-right tabular-nums hidden md:table-cell">{u.previewCount}</td>
                 <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
-                  {new Date(u.createdAt).toLocaleDateString()}
+                  {adminDate(u.createdAt)}
                 </td>
                 <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
-                  {u.lastActivityAt ? new Date(u.lastActivityAt).toLocaleDateString() : "—"}
+                  {u.lastActivityAt ? adminDate(u.lastActivityAt) : "—"}
                 </td>
                 <td className="py-3">
                   <div className="flex flex-wrap gap-1">

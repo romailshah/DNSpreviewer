@@ -1,5 +1,6 @@
 "use client";
 
+import { adminDateTime } from "@/lib/adminTime";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
@@ -285,10 +286,10 @@ export function PreviewsTable({
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums hidden sm:table-cell">{p.hitCount}</td>
                   <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
-                    {new Date(p.createdAt).toLocaleString()}
+                    {adminDateTime(p.createdAt)}
                   </td>
                   <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
-                    {p.expiresAt === null ? "—" : new Date(p.expiresAt).toLocaleString()}
+                    {p.expiresAt === null ? "—" : adminDateTime(p.expiresAt)}
                   </td>
                   <td className="py-3">
                     <div className="flex flex-wrap gap-1">

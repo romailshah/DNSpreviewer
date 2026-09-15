@@ -1,3 +1,4 @@
+import { adminDateTime } from "@/lib/adminTime";
 import Link from "next/link";
 import { countAdmins, countUsers } from "@/lib/auth";
 import {
@@ -133,7 +134,7 @@ export default async function AdminOverviewPage() {
                         <span className="text-brand-600">{p.id}</span>.{ROOT_DOMAIN}
                       </span>
                       <span className="text-xs text-ink-500 shrink-0">
-                        {new Date(p.createdAt).toLocaleString()}
+                        {adminDateTime(p.createdAt)}
                       </span>
                     </div>
                     <div className="text-xs text-ink-700 mt-1 truncate">

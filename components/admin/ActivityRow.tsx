@@ -1,3 +1,4 @@
+import { adminDateTime } from "@/lib/adminTime";
 import type { Activity, ActivityKind } from "@/lib/activity";
 
 const KIND_META: Record<ActivityKind, { label: string; color: string }> = {
@@ -51,7 +52,7 @@ export function ActivityRow({ activity, compact }: { activity: Activity; compact
         )}
       </div>
       <div className="shrink-0 text-xs text-ink-500 text-right" title={ts.toISOString()}>
-        {ts.toLocaleString()}
+        {adminDateTime(activity.createdAt)}
       </div>
     </div>
   );
