@@ -50,7 +50,7 @@ export function GET() {
     "",
     ...posts.map((p) => {
       const f = p.frontmatter;
-      return `- [${f.seoTitle ?? f.title}](${SITE_URL}/blog/${p.slug}): ${f.description}`;
+      return `- [${f.seoTitle ?? f.title}](${SITE_URL}/blog/${p.slug}): ${f.summary ?? f.description}`;
     }),
     "",
     "## Optional",

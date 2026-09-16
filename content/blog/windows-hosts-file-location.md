@@ -2,6 +2,7 @@
 title: "Windows hosts file: where it is and how to edit it"
 seoTitle: "Windows Hosts File: Where It Is and How to Edit It"
 description: "The Windows hosts file lives at C:\\Windows\\System32\\drivers\\etc\\hosts. Where to find it, how to edit it, and why Windows keeps blocking the save."
+summary: 'The Windows hosts file lives at C:\Windows\System32\drivers\etc\hosts, has no file extension, and sits in the same place on Windows 11, 10, 8 and 7. To edit it, run Notepad as administrator and paste that path into the Open box. If the save keeps failing, it is usually Notepad writing hosts.txt instead, or Controlled Folder Access blocking the folder.'
 publishedAt: "2026-09-10"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."

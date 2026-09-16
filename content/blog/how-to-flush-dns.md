@@ -2,6 +2,7 @@
 title: "How to flush DNS on Windows, Mac and Linux"
 seoTitle: "How to Flush DNS on Windows, Mac and Linux"
 description: "Flush DNS with ipconfig /flushdns on Windows, one Terminal command on Mac, or resolvectl on Linux. Plus browsers, phones, and when it actually helps."
+summary: "Run ipconfig /flushdns on Windows, sudo dscacheutil -flushcache followed by sudo killall -HUP mDNSResponder on a Mac, or sudo resolvectl flush-caches on Linux. It takes effect immediately and no restart is needed. Chrome and Firefox keep their own separate caches, which is why flushing the operating system alone can look like it did nothing."
 publishedAt: "2026-09-13"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."

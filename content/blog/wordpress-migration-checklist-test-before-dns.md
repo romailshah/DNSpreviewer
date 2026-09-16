@@ -2,6 +2,7 @@
 title: "The WordPress migration checklist I run before flipping DNS"
 seoTitle: "WordPress Migration Checklist: Test Before You Flip DNS"
 description: "An 18 step pre-flight checklist for WordPress migrations, covering the vhost, SSL, email and serialised data failures that only surface after DNS moves."
+summary: "Check the new server under your real domain before you touch DNS, rather than by IP address or on a staging subdomain. The items that catch people out are an SSL certificate that does not cover the domain, wp-config.php still pointing at the old database, a search and replace run in phpMyAdmin instead of WP-CLI, SPF records quietly replaced by the new host, and a TTL that was never lowered in advance."
 publishedAt: "2026-06-02"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for previewing websites on new servers before flipping DNS. He's been migrating WordPress sites since 2017 and writing about his mistakes (publicly) since 2024."

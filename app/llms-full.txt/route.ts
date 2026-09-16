@@ -44,6 +44,7 @@ export function GET() {
       `Published: ${f.publishedAt}${f.updatedAt ? ` (updated ${f.updatedAt})` : ""}`,
       `Author: ${f.author}`,
       "",
+      ...(f.summary ? [`Summary: ${f.summary}`, ""] : []),
       post.content.trim(),
       "",
     );

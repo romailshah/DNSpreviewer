@@ -30,6 +30,13 @@ export interface BlogPostFrontmatter {
   keywords?: string[];
   /** SEO title override — if absent we fall back to `title`. */
   seoTitle?: string;
+  /**
+   * Two or three sentences answering the question the post is about, shown
+   * in a box above the article and repeated in /llms-full.txt and the
+   * Article schema. Written by hand, not lifted from the intro: it is the
+   * passage a search engine or assistant is most likely to quote.
+   */
+  summary?: string;
   /** Optional path override; defaults to filename without .md */
   slug?: string;
   /**

@@ -79,6 +79,7 @@ function articleJsonLd(post: ReturnType<typeof getPostBySlug>) {
       "@id": `${url}#article`,
       headline: f.title,
       description: f.description,
+      ...(f.summary ? { abstract: f.summary } : {}),
       url,
       datePublished: f.publishedAt,
       dateModified: f.updatedAt ?? f.publishedAt,
@@ -175,6 +176,15 @@ export default async function BlogPostPage({ params }: PageProps) {
               <span>{post.readingTimeMinutes} min read</span>
             </div>
           </header>
+
+          {f.summary && (
+            <div className="mb-8 sm:mb-10 rounded-2xl border border-brand-200 bg-brand-50/50 p-5 sm:p-6">
+              <div className="text-[10px] font-bold uppercase tracking-wide text-brand-700">
+                The short answer
+              </div>
+              <p className="mt-2 text-base sm:text-lg text-ink-900 leading-relaxed">{f.summary}</p>
+            </div>
+          )}
 
           <div
             className="blog-content"

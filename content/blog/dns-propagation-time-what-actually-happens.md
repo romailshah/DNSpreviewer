@@ -2,6 +2,7 @@
 title: "DNS propagation: how long it really takes"
 seoTitle: "DNS Propagation: How Long It Really Takes"
 description: "DNS propagation is really just caches expiring on their own clocks. What controls the delay, how long it really takes, and how to check it."
+summary: "Nothing is actually pushed anywhere. Every resolver that already holds your old record keeps serving it until its cached copy expires, and the TTL that was on the record before you changed it decides how long that takes. Most visitors see the change within a few hours, and lowering the TTL a day beforehand brings that down to minutes."
 publishedAt: "2026-06-16"
 updatedAt: "2026-09-09"
 author: "Romail Shah"
