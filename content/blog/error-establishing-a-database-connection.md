@@ -39,7 +39,7 @@ faqs:
 
 Your site was working. Now every page shows "Error establishing a database connection" on a white background, with no menu, no styling and no way into wp-admin. It's alarming out of proportion to what's usually wrong.
 
-Here's the short version. WordPress keeps your posts, pages, settings and users in a MySQL database, and it keeps the login details for that database in a file called `wp-config.php`. This error means WordPress tried to use those details, got nowhere, and gave up. Your files are still there. Your content is almost certainly still there. WordPress just can't reach it.
+Here's what's happening underneath. WordPress keeps your posts, pages, settings and users in a MySQL database, and it keeps the login details for that database in a file called `wp-config.php`. This error means WordPress tried to use those details, got nowhere, and gave up. Your files are still there. Your content is almost certainly still there. WordPress just can't reach it.
 
 Most of the time the fix takes about ten minutes, and it's one of two things: the details in `wp-config.php` are wrong, or the database server isn't answering. Work out which one you've got first, because the fixes have nothing in common.
 
