@@ -100,7 +100,7 @@ If your new host says "SSL is set up" but the cert's Common Name is the server's
 
 **2. Both port 80 (HTTP) and port 443 (HTTPS) are listening and not redirecting incorrectly.**
 
-A common mistake: the new host redirects all HTTP to HTTPS unconditionally, which breaks ACME (Let's Encrypt) renewal challenges on path `/.well-known/acme-challenge/`. Or worse: HTTPS redirects 308 back to HTTP because of a misconfigured load balancer. `curl -v` both ports.
+A common mistake: the new host redirects all HTTP to HTTPS unconditionally, which breaks ACME (Let's Encrypt) renewal challenges on path `/.well-known/acme-challenge/`. Or worse: HTTPS redirects 308 back to HTTP because of a misconfigured load balancer. `curl -v` both ports. If the new server answers with [502 Bad Gateway](/blog/502-bad-gateway), the web server is up but whatever runs your site behind it is not.
 
 **3. `wp-config.php` database credentials match the new database.**
 

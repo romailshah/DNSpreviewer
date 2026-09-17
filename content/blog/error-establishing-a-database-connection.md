@@ -51,7 +51,7 @@ The error page is short, but the wording is a clue. WordPress says the problem "
 - Are you sure you have typed the correct hostname?
 - Are you sure the database server is running?
 
-Those three questions are the whole diagnosis. The first two are your side. The third is your host's.
+Those three questions are the whole diagnosis. The first two are your side. The third is your host's. A server that answers with [502 Bad Gateway](/blog/502-bad-gateway) instead is a different problem, one layer further out.
 
 There's a second message worth knowing about, because it looks similar and means something different. If you see **Cannot select database** instead, the login worked. WordPress reached the server, the username and password were accepted, and then it couldn't open the database you named. That points at a wrong `DB_NAME`, or a database user with no permission on it. It's a much narrower problem, and you can skip most of this article.
 
