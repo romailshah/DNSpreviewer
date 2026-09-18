@@ -229,8 +229,11 @@ export function FeedbackWidget() {
               <CloseIcon />
             </button>
             <div className="relative flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white font-display text-sm font-bold text-brand-600">
-                RS
+              <span
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-brand-600"
+                aria-hidden="true"
+              >
+                {kind === "help" ? <BoxIcon /> : <ChatIcon />}
               </span>
               <div>
                 <p id="feedback-title" className="font-display text-lg font-bold leading-tight">

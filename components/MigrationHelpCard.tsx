@@ -20,10 +20,10 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
         <div className="flex items-center gap-4 sm:flex-col sm:items-center sm:gap-2">
           <span
-            className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg font-bold text-white ring-4 ring-brand-500/30"
+            className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white ring-4 ring-brand-500/30"
             aria-hidden="true"
           >
-            RS
+            <TruckIcon />
           </span>
           <span className="rounded-full bg-brand-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
             Done for you
@@ -58,6 +58,17 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
         </Link>
       </div>
     </aside>
+  );
+}
+
+function TruckIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M2 6.5h11.5v9.5H2z" />
+      <path d="M13.5 10h4.2l3.3 3.3V16h-7.5" />
+      <circle cx="6.5" cy="17.5" r="1.8" />
+      <circle cx="17" cy="17.5" r="1.8" />
+    </svg>
   );
 }
 
