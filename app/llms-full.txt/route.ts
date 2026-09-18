@@ -45,7 +45,7 @@ export function GET() {
       `Author: ${f.author}`,
       "",
       ...(f.summary ? [`Summary: ${f.summary}`, ""] : []),
-      post.content.trim(),
+      post.content.replace(/<!-- hosting-card -->\s*/g, "").trim(),
       "",
     );
 

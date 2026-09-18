@@ -138,6 +138,10 @@ Then there's the version that drives people mad: the error that shows up, disapp
 
 Wrong credentials fail every time, without exception. So an error that appears and clears on its own is a strong signal to stop editing `wp-config.php` and talk to your host, with the times it happened written down.
 
+If it keeps coming back on shared hosting, you're competing with your neighbours for the same connections, and the lasting fix is a plan that gives the site room of its own.
+
+<!-- hosting-card -->
+
 ## Cause 4: the tables are corrupted
 
 Less common, but it does happen after an interrupted migration, a failed import or a server that lost power mid-write.

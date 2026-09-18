@@ -5,6 +5,7 @@ import { HeroPreviewForm } from "@/components/HeroPreviewForm";
 import { currentUser } from "@/lib/auth";
 import { getAllPostMeta } from "@/lib/blog";
 import { HowItWorksDiagram } from "@/components/HowItWorksDiagram";
+import { HostingPick } from "@/components/HostingPick";
 import { ROOT_DOMAIN, SESSION_TTL_MINUTES, TURNSTILE_ENABLED, TURNSTILE_SITE_KEY } from "@/lib/env";
 
 /**
@@ -88,6 +89,9 @@ export default async function HomePage() {
         <CheckFirst />
         <FreeVsPaid />
         <Features />
+        <section className="container-narrow pt-14 sm:pt-20">
+          <HostingPick compact />
+        </section>
         <Guides />
         <BigCTA />
       </main>

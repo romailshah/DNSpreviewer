@@ -14,7 +14,7 @@ const SITE_URL = "https://dnspreviewer.com";
  * should be able to reach it. Login and create are utility pages with no
  * unique searchable content, so they stay blocked.
  */
-const DISALLOW = ["/admin", "/admin/", "/api/", "/dashboard", "/login", "/create", "/s/"];
+const DISALLOW = ["/admin", "/admin/", "/api/", "/dashboard", "/login", "/create", "/s/", "/go/"];
 
 /**
  * Assistant and AI training crawlers, listed explicitly.

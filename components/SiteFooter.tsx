@@ -15,6 +15,7 @@ export function SiteFooter() {
           <Link href="/faq" className="hover:text-ink-900">FAQ</Link>
           <Link href="?feedback=idea" scroll={false} className="hover:text-ink-900">Feedback</Link>
           <Link href="/abuse" className="hover:text-ink-900">Report abuse</Link>
+          <Link href="/affiliate-disclosure" className="hover:text-ink-900">Affiliate disclosure</Link>
         </nav>
       </div>
     </footer>

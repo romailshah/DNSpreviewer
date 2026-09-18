@@ -93,6 +93,10 @@ What you actually need: a way to test how your domain will behave when DNS resol
 
 I run through this every time. It takes 20-30 minutes. I save more time than that not having to fix problems after the fact, by orders of magnitude.
 
+If you haven't picked the new host yet, start there, because every item below depends on it.
+
+<!-- hosting-card -->
+
 ### Section 1: Server preparation
 
 **1. SSL certificate is installed for the actual domain, not just the IP.**

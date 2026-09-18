@@ -126,6 +126,10 @@ server reached pm.max_children setting (%d), consider raising it
 
 Search your PHP-FPM log for that phrase. If it's there, you have your answer. Raising the limit is the obvious move, though each child uses memory, so raising it past what the machine has just trades one failure for a worse one. The other half of the job is making the slow pages faster, usually with caching.
 
+If you're hitting that ceiling at perfectly normal traffic, though, the honest answer is often that the plan is too small for the site, and no amount of tuning changes that.
+
+<!-- hosting-card -->
+
 ## Cause 3: something died mid-request
 
 The `upstream prematurely closed connection` case usually comes down to one of three things.

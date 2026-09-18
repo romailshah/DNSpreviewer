@@ -16,7 +16,8 @@ export type ActivityKind =
   | "preview.blocked"
   | "backup.succeeded"
   | "backup.failed"
-  | "feedback.received";
+  | "feedback.received"
+  | "affiliate.click";
 
 export interface Activity {
   id: number;
@@ -73,6 +74,13 @@ export function recentActivity(limit = 50, offset = 0): Activity[] {
     .prepare("SELECT * FROM activity_log ORDER BY created_at DESC LIMIT ? OFFSET ?")
     .all(limit, offset) as Row[];
   return rows.map(fromRow);
+}
+
+export function countActivitySince(kind: ActivityKind, since: number): number {
+  const r = db()
+    .prepare("SELECT COUNT(*) AS n FROM activity_log WHERE kind = ? AND created_at > ?")
+    .get(kind, since) as { n: number };
+  return r.n;
 }
 
 export function activityCount(): number {

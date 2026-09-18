@@ -10,7 +10,7 @@ import {
   topDomains,
   totalHits,
 } from "@/lib/sessions";
-import { recentActivity } from "@/lib/activity";
+import { countActivitySince, recentActivity } from "@/lib/activity";
 import { ROOT_DOMAIN } from "@/lib/env";
 import { ActivityRow } from "@/components/admin/ActivityRow";
 
@@ -30,6 +30,8 @@ export default async function AdminOverviewPage() {
   };
   const created24h = sessionsCreatedSince(now - day);
   const created7d = sessionsCreatedSince(now - 7 * day);
+  const affiliate7d = countActivitySince("affiliate.click", now - 7 * day);
+  const affiliate24h = countActivitySince("affiliate.click", now - day);
   const topDomainsList = topDomains(8);
   const topIpsList = topCreatorIps(8);
   const recent = recentSessions(8);
@@ -49,6 +51,7 @@ export default async function AdminOverviewPage() {
       <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Anonymous" value={previews.anonymous} sub="previews without login" />
         <StatCard title="Password-protected" value={previews.passwordProtected} sub="locked previews" />
+        <StatCard title="Hostinger clicks" value={affiliate7d} sub={`last 7d · ${affiliate24h} in last 24h`} />
         <StatCard title="No-expiry" value={previews.noExpiry} sub="permanent links" />
         <StatCard title="Disabled" value={previews.disabled} sub="manually turned off" />
       </div>

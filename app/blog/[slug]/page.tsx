@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MigrationHelpCard } from "@/components/MigrationHelpCard";
+import { HostingPick } from "@/components/HostingPick";
 import { getAllPostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 
 interface PageProps {
@@ -187,10 +188,14 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           )}
 
-          <div
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: post.html }}
-          />
+          {/* A post can drop <!-- hosting-card --> into its markdown to place
+              the hosting recommendation at the point where it's relevant. */}
+          {post.html.split("<!-- hosting-card -->").map((part, i) => (
+            <div key={i}>
+              {i > 0 && <HostingPick className="my-8 sm:my-10" />}
+              <div className="blog-content" dangerouslySetInnerHTML={{ __html: part }} />
+            </div>
+          ))}
 
           {/* FAQ section — appended at the end of the article, styled to
               match the homepage /faq pattern. Emits FAQPage JSON-LD via the
