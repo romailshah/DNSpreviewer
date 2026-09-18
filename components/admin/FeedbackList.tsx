@@ -8,6 +8,7 @@ const KIND_META: Record<Feedback["kind"], { label: string; color: string }> = {
   problem: { label: "Problem", color: "bg-red-100 text-red-800" },
   idea: { label: "Idea", color: "bg-violet-100 text-violet-800" },
   question: { label: "Question", color: "bg-sky-100 text-sky-800" },
+  help: { label: "Migration job", color: "bg-emerald-100 text-emerald-800" },
 };
 
 export function FeedbackList({ initialItems }: { initialItems: Feedback[] }) {

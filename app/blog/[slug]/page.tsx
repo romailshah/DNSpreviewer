@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { MigrationHelpCard } from "@/components/MigrationHelpCard";
 import { getAllPostSlugs, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 
 interface PageProps {
@@ -217,6 +218,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             </section>
           )}
         </article>
+
+        {f.hireCta && <MigrationHelpCard className="mt-12 sm:mt-16" />}
 
         {/* Author bio — second (and final) place where DNS Previewer is mentioned */}
         {f.authorBio && (

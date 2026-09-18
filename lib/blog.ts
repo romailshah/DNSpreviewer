@@ -37,6 +37,8 @@ export interface BlogPostFrontmatter {
    * passage a search engine or assistant is most likely to quote.
    */
   summary?: string;
+  /** Show the "I'll migrate it for you" offer after the article. */
+  hireCta?: boolean;
   /** Optional path override; defaults to filename without .md */
   slug?: string;
   /**

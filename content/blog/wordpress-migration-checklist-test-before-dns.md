@@ -7,6 +7,7 @@ publishedAt: "2026-06-02"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for previewing websites on new servers before flipping DNS. He's been migrating WordPress sites since 2017 and writing about his mistakes (publicly) since 2024."
 category: "Migration"
+hireCta: true
 tags: ["wordpress", "dns", "migration", "checklist", "hosting"]
 keywords: ["wordpress migration checklist", "test website before changing DNS", "WordPress migration downtime", "preview website on new server", "wordpress hosting migration", "DNS preview tool"]
 faqs:

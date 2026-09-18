@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { getSessionRaw } from "@/lib/sessions";
 import { ROOT_DOMAIN } from "@/lib/env";
 import { SessionStatus } from "@/components/SessionStatus";
+import { MigrationHelpCard } from "@/components/MigrationHelpCard";
 
 export const dynamic = "force-dynamic";
 
@@ -79,6 +80,8 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             <li>Assets from external CDNs (fonts, analytics) load directly from their origin.</li>
           </ul>
         </div>
+
+        <MigrationHelpCard className="mt-6 sm:mt-8" />
 
         <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-2">
           <Link href="/create" className="btn-ghost">Create another</Link>

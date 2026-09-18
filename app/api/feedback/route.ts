@@ -33,6 +33,13 @@ export async function POST(req: NextRequest) {
 
   const user = await currentUser();
   const { kind, message, email, page } = parsed.data;
+  // A quote request with no way to reply is useless, so insist on an email.
+  if (kind === "help" && !email && !user) {
+    return NextResponse.json(
+      { error: "invalid", message: "Add your email so I can send you the quote." },
+      { status: 400 },
+    );
+  }
   const id = createFeedback({
     kind,
     message,

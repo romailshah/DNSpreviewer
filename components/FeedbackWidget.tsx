@@ -14,7 +14,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
  *   short delay, since that's when people find out whether it worked.
  */
 
-type Kind = "problem" | "idea" | "question";
+type Kind = "problem" | "idea" | "question" | "help";
 
 const KINDS: Array<{ id: Kind; label: string; placeholder: string; icon: ReactNode }> = [
   {
@@ -34,6 +34,13 @@ const KINDS: Array<{ id: Kind; label: string; placeholder: string; icon: ReactNo
     label: "Question",
     placeholder: "Ask away. No question is too small.",
     icon: <QuestionIcon />,
+  },
+  {
+    id: "help",
+    label: "Migrate it for me",
+    placeholder:
+      "What are you moving? The platform, roughly how big the site is, and where it's going from and to. I'll reply with a fixed quote.",
+    icon: <BoxIcon />,
   },
 ];
 
@@ -229,7 +236,11 @@ export function FeedbackWidget() {
                 <p id="feedback-title" className="font-display text-lg font-bold leading-tight">
                   How can I help?
                 </p>
-                <p className="text-sm text-white/85">Romail here. I read every message myself.</p>
+                <p className="text-sm text-white/85">
+                  {kind === "help"
+                    ? "Romail here. I migrate client sites for a living."
+                    : "Romail here. I read every message myself."}
+                </p>
               </div>
             </div>
           </div>
@@ -255,7 +266,7 @@ export function FeedbackWidget() {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-4 px-5 py-5">
-              <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="What's this about?">
+              <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="What's this about?">
                 {KINDS.map((k) => (
                   <button
                     key={k.id}
@@ -300,7 +311,10 @@ export function FeedbackWidget() {
               ) : (
                 <div>
                   <label htmlFor="feedback-email" className="block text-xs font-semibold text-ink-700">
-                    Your email <span className="font-normal text-ink-500">(optional, so I can reply)</span>
+                    Your email{" "}
+                    <span className="font-normal text-ink-500">
+                      {kind === "help" ? "(so I can send the quote)" : "(optional, so I can reply)"}
+                    </span>
                   </label>
                   <input
                     id="feedback-email"
@@ -309,6 +323,7 @@ export function FeedbackWidget() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     autoComplete="email"
+                    required={kind === "help"}
                     className="input mt-1.5 text-sm"
                   />
                 </div>
@@ -392,6 +407,15 @@ function BulbIcon() {
     <svg {...iconProps}>
       <path d="M9 18h6M10 21h4" />
       <path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" />
+    </svg>
+  );
+}
+
+function BoxIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M21 8l-9-5-9 5 9 5 9-5z" />
+      <path d="M3 8v8l9 5 9-5V8M12 13v8" />
     </svg>
   );
 }

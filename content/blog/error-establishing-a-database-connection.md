@@ -7,6 +7,7 @@ publishedAt: "2026-09-15"
 author: "Romail Shah"
 authorBio: "Romail Shah is a full-stack developer and the founder of DNS Previewer, a free tool for checking a website on a new server before you change DNS. He builds and migrates client sites for a living."
 category: "WordPress"
+hireCta: true
 tags: ["wordpress", "troubleshooting", "database", "mysql", "migration", "hosting"]
 keywords:
   [

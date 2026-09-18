@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { db } from "./db";
 
-export const FEEDBACK_KINDS = ["problem", "idea", "question"] as const;
+// "help" is a request to have the migration done for you, i.e. a sales lead.
+export const FEEDBACK_KINDS = ["problem", "idea", "question", "help"] as const;
 export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
 export type FeedbackStatus = "new" | "done";
 
