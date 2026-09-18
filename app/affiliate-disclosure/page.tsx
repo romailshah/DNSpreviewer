@@ -28,8 +28,9 @@ export default function AffiliateDisclosurePage() {
             write. I recommend it because it&rsquo;s what I use for my own client sites.
           </p>
           <p>
-            Affiliate links go through <code>dnspreviewer.com/go/</code> so they can be kept up to date in
-            one place, and they&rsquo;re marked as sponsored for search engines. The preview tool itself
+            The Hostinger link goes through <code>dnspreviewer.com/go/hostinger</code>, which forwards you
+            to Hostinger with my affiliate tracking attached. Routing it this way lets me keep the link up to
+            date in one place, and it&rsquo;s marked as sponsored for search engines. The preview tool itself
             never shows affiliate links or ads inside your preview.
           </p>
           <p>
