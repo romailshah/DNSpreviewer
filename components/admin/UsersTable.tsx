@@ -51,6 +51,33 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUserRow[] }) {
     }
   }
 
+  // Row actions, shared by the desktop Actions column and the phone layout.
+  const userActions = (u: (typeof filtered)[number]) => (
+    <>
+      <button
+        onClick={() => patch(u.id, { role: u.role === "admin" ? "user" : "admin" })}
+        disabled={busy === u.id}
+        className="btn-ghost text-xs py-1 px-2"
+      >
+        {u.role === "admin" ? "Demote" : "Promote"}
+      </button>
+      <button
+        onClick={() => patch(u.id, { disabled: !u.disabled })}
+        disabled={busy === u.id}
+        className="btn-ghost text-xs py-1 px-2"
+      >
+        {u.disabled ? "Enable" : "Disable"}
+      </button>
+      <button
+        onClick={() => remove(u.id, u.email)}
+        disabled={busy === u.id}
+        className="btn-ghost text-xs py-1 px-2 !text-red-700 !border-red-200 hover:!bg-red-50"
+      >
+        Delete
+      </button>
+    </>
+  );
+
   return (
     <div>
       <div className="mb-4">
@@ -72,13 +99,13 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUserRow[] }) {
               <th className="pb-3 pr-4 text-right hidden md:table-cell">Previews</th>
               <th className="pb-3 pr-4 hidden lg:table-cell">Created</th>
               <th className="pb-3 pr-4 hidden lg:table-cell">Last login</th>
-              <th className="pb-3">Actions</th>
+              <th className="pb-3 hidden sm:table-cell">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((u) => (
               <tr key={u.id} className="border-t border-ink-100 align-top">
-                <td className="py-3 pr-4 break-all max-w-[260px] sm:max-w-none">
+                <td className="py-3 pr-0 sm:pr-4 break-all">
                   <div className="font-medium text-ink-900">{u.email}</div>
                   <div className="text-[11px] text-ink-500 font-mono">{u.id}</div>
                   {/* Mobile-only: show role/status/count inline since those columns are hidden */}
@@ -104,6 +131,9 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUserRow[] }) {
                     <span className="text-[11px] text-ink-500">
                       · {u.previewCount} preview{u.previewCount === 1 ? "" : "s"}
                     </span>
+                  </div>
+                  <div className="mt-2.5 grid grid-cols-3 gap-1.5 sm:hidden [&>*]:justify-center [&>*]:!px-1">
+                    {userActions(u)}
                   </div>
                 </td>
                 <td className="py-3 pr-4 hidden sm:table-cell">
@@ -135,30 +165,8 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUserRow[] }) {
                 <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
                   {u.lastActivityAt ? adminDate(u.lastActivityAt) : "—"}
                 </td>
-                <td className="py-3">
-                  <div className="flex flex-wrap gap-1">
-                    <button
-                      onClick={() => patch(u.id, { role: u.role === "admin" ? "user" : "admin" })}
-                      disabled={busy === u.id}
-                      className="btn-ghost text-xs py-1 px-2"
-                    >
-                      {u.role === "admin" ? "Demote" : "Promote"}
-                    </button>
-                    <button
-                      onClick={() => patch(u.id, { disabled: !u.disabled })}
-                      disabled={busy === u.id}
-                      className="btn-ghost text-xs py-1 px-2"
-                    >
-                      {u.disabled ? "Enable" : "Disable"}
-                    </button>
-                    <button
-                      onClick={() => remove(u.id, u.email)}
-                      disabled={busy === u.id}
-                      className="btn-ghost text-xs py-1 px-2 !text-red-700 !border-red-200 hover:!bg-red-50"
-                    >
-                      Delete
-                    </button>
-                  </div>
+                <td className="py-3 hidden sm:table-cell">
+                  <div className="flex flex-wrap gap-1">{userActions(u)}</div>
                 </td>
               </tr>
             ))}

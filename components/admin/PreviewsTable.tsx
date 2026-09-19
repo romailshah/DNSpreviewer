@@ -147,6 +147,38 @@ export function PreviewsTable({
 
   const selectedCount = selected.size;
 
+  // Row actions, shared by the desktop Actions column and the phone layout,
+  // where they sit in a full-width row under the preview instead.
+  const rowActions = (p: (typeof rows)[number]) => (
+    <>
+      <Link href={`/s/${p.id}`} className="btn-ghost text-xs py-1 px-2">
+        Details
+      </Link>
+      <a
+        href={`http${rootDomain === "localhost" ? "" : "s"}://${p.id}.${rootDomain}${rootDomain === "localhost" ? ":3000" : ""}/`}
+        target="_blank"
+        rel="noreferrer"
+        className="btn-ghost text-xs py-1 px-2"
+      >
+        Open
+      </a>
+      <button
+        onClick={() => toggleDisabled(p.id, !p.disabled)}
+        disabled={busy === p.id}
+        className="btn-ghost text-xs py-1 px-2"
+      >
+        {p.disabled ? "Enable" : "Disable"}
+      </button>
+      <button
+        onClick={() => remove(p.id)}
+        disabled={busy === p.id}
+        className="btn-ghost text-xs py-1 px-2 !text-red-700 !border-red-200 hover:!bg-red-50"
+      >
+        Delete
+      </button>
+    </>
+  );
+
   return (
     <div>
       <div className="mb-4 flex items-center gap-2 flex-wrap">
@@ -231,11 +263,11 @@ export function PreviewsTable({
               </th>
               <th className="pb-3 pr-4">Preview</th>
               <th className="pb-3 pr-4 hidden md:table-cell">Owner</th>
-              <th className="pb-3 pr-4">Status</th>
+              <th className="pb-3 pr-4 hidden sm:table-cell">Status</th>
               <th className="pb-3 pr-4 text-right hidden sm:table-cell">Hits</th>
               <th className="pb-3 pr-4 hidden lg:table-cell">Created</th>
               <th className="pb-3 pr-4 hidden lg:table-cell">Expires</th>
-              <th className="pb-3">Actions</th>
+              <th className="pb-3 hidden sm:table-cell">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -255,9 +287,12 @@ export function PreviewsTable({
                       onChange={() => toggleOne(p.id)}
                     />
                   </td>
-                  <td className="py-3 pr-4 max-w-[240px] sm:max-w-none">
+                  <td className="py-3 pr-0 sm:pr-4">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-mono text-xs text-brand-600 break-all">{p.id}</span>
+                      <span className="sm:hidden">
+                        <StatusBadge status={p.disabled ? "disabled" : expired ? "expired" : "active"} />
+                      </span>
                       {p.passwordProtected && <Tag>🔒</Tag>}
                       {p.expiresAt === null && <Tag>♾️</Tag>}
                       {p.siteType === "wildcard" && <Tag>Wildcard</Tag>}
@@ -271,6 +306,9 @@ export function PreviewsTable({
                     <div className="text-[11px] mt-1 text-ink-500 md:hidden break-all">
                       {p.userEmail || `anon ${p.creatorIp}`} · {p.hitCount} hit{p.hitCount === 1 ? "" : "s"}
                     </div>
+                    <div className="mt-2.5 grid grid-cols-4 gap-1.5 sm:hidden [&>*]:justify-center [&>*]:!px-1">
+                      {rowActions(p)}
+                    </div>
                   </td>
                   <td className="py-3 pr-4 text-xs break-all hidden md:table-cell">
                     {p.userEmail ? (
@@ -281,7 +319,7 @@ export function PreviewsTable({
                       </span>
                     )}
                   </td>
-                  <td className="py-3 pr-4">
+                  <td className="py-3 pr-4 hidden sm:table-cell">
                     <StatusBadge status={p.disabled ? "disabled" : expired ? "expired" : "active"} />
                   </td>
                   <td className="py-3 pr-4 text-right tabular-nums hidden sm:table-cell">{p.hitCount}</td>
@@ -291,34 +329,8 @@ export function PreviewsTable({
                   <td className="py-3 pr-4 text-xs text-ink-700 hidden lg:table-cell">
                     {p.expiresAt === null ? "—" : adminDateTime(p.expiresAt)}
                   </td>
-                  <td className="py-3">
-                    <div className="flex flex-wrap gap-1">
-                      <Link href={`/s/${p.id}`} className="btn-ghost text-xs py-1 px-2">
-                        Details
-                      </Link>
-                      <a
-                        href={`http${rootDomain === "localhost" ? "" : "s"}://${p.id}.${rootDomain}${rootDomain === "localhost" ? ":3000" : ""}/`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn-ghost text-xs py-1 px-2"
-                      >
-                        Open
-                      </a>
-                      <button
-                        onClick={() => toggleDisabled(p.id, !p.disabled)}
-                        disabled={busy === p.id}
-                        className="btn-ghost text-xs py-1 px-2"
-                      >
-                        {p.disabled ? "Enable" : "Disable"}
-                      </button>
-                      <button
-                        onClick={() => remove(p.id)}
-                        disabled={busy === p.id}
-                        className="btn-ghost text-xs py-1 px-2 !text-red-700 !border-red-200 hover:!bg-red-50"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                  <td className="py-3 hidden sm:table-cell">
+                    <div className="flex flex-wrap gap-1">{rowActions(p)}</div>
                   </td>
                 </tr>
               );

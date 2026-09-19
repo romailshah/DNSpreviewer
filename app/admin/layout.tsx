@@ -34,7 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
 
-        <nav className="mt-6 flex flex-wrap gap-0.5 sm:gap-1 border-b border-ink-200 -mx-2 sm:mx-0 px-2 sm:px-0 overflow-x-auto">
+        <nav className="mt-6 flex gap-0.5 sm:gap-1 border-b border-ink-200 -mx-4 sm:mx-0 px-2 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <AdminNavLink href="/admin" label="Overview" />
           <AdminNavLink href="/admin/previews" label="Previews" />
           <AdminNavLink href="/admin/users" label="Users" />
@@ -53,7 +53,7 @@ function AdminNavLink({ href, label, badge }: { href: string; label: string; bad
   return (
     <Link
       href={href}
-      className="px-3 sm:px-4 py-2 -mb-px text-xs sm:text-sm font-semibold text-ink-700 border-b-2 border-transparent hover:text-brand-600 hover:border-brand-300 transition-colors whitespace-nowrap"
+      className="shrink-0 inline-flex items-center px-3 sm:px-4 py-2 -mb-px text-xs sm:text-sm font-semibold text-ink-700 border-b-2 border-transparent hover:text-brand-600 hover:border-brand-300 transition-colors whitespace-nowrap"
     >
       {label}
       {badge ? (

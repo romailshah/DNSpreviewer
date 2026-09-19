@@ -43,7 +43,7 @@ export default async function AdminOverviewPage() {
   return (
     <>
       {/* Primary stats */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard title="Users" value={users.total} sub={`${users.admins} admin${users.admins === 1 ? "" : "s"}`} />
         <StatCard title="Active previews" value={previews.active} sub={`of ${previews.total} total`} />
         <StatCard title="Requests served" value={hits.total} sub={`${hits.last24h.toLocaleString()} in last 24h`} />
@@ -51,11 +51,12 @@ export default async function AdminOverviewPage() {
       </div>
 
       {/* Secondary stats */}
-      <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="mt-3 sm:mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard title="Anonymous" value={previews.anonymous} sub="previews without login" />
         <StatCard title="Password-protected" value={previews.passwordProtected} sub="locked previews" />
         <StatCard
           title="Hostinger clicks"
+          wide
           value={affiliate7d}
           sub={`last 7d · ${affiliate24h} in last 24h${affiliateBySource ? ` · ${affiliateBySource}` : ""}`}
         />
@@ -65,7 +66,7 @@ export default async function AdminOverviewPage() {
 
       {/* Tables */}
       <div className="mt-8 grid lg:grid-cols-2 gap-6">
-        <div className="card">
+        <div className="card min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-display font-semibold text-ink-900">Top domains previewed</h2>
             <span className="text-xs text-ink-500">{topDomainsList.length} shown</span>
@@ -96,7 +97,7 @@ export default async function AdminOverviewPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-display font-semibold text-ink-900">Top creator IPs</h2>
             <span className="text-xs text-ink-500">watch for abuse</span>
@@ -127,7 +128,7 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="mt-6 grid lg:grid-cols-2 gap-6">
-        <div className="card">
+        <div className="card min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-display font-semibold text-ink-900">Recent previews</h2>
             <Link href="/admin/previews" className="btn-text">See all →</Link>
@@ -139,15 +140,15 @@ export default async function AdminOverviewPage() {
               <ul className="divide-y divide-ink-100">
                 {recent.map((p) => (
                   <li key={p.id} className="py-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-sm truncate">
+                    <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
+                      <span className="font-mono text-sm truncate min-w-0">
                         <span className="text-brand-600">{p.id}</span>.{ROOT_DOMAIN}
                       </span>
                       <span className="text-xs text-ink-500 shrink-0">
                         {adminDateTime(p.createdAt)}
                       </span>
                     </div>
-                    <div className="text-xs text-ink-700 mt-1 truncate">
+                    <div className="text-xs text-ink-700 mt-1 break-all sm:break-normal sm:truncate">
                       {p.label ? <strong>{p.label} · </strong> : null}
                       <code>{p.domain}</code> → <code>{p.target}</code>{" "}
                       <span className="text-ink-500">
@@ -161,7 +162,7 @@ export default async function AdminOverviewPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-display font-semibold text-ink-900">Recent activity</h2>
             <Link href="/admin/activity" className="btn-text">See all →</Link>
@@ -185,14 +186,14 @@ export default async function AdminOverviewPage() {
   );
 }
 
-function StatCard({ title, value, sub }: { title: string; value: number; sub?: string }) {
+function StatCard({ title, value, sub, wide }: { title: string; value: number; sub?: string; wide?: boolean }) {
   return (
-    <div className="card">
-      <div className="text-xs font-semibold uppercase tracking-wide text-ink-500">{title}</div>
-      <div className="mt-2 font-display text-3xl font-bold text-ink-900 tabular-nums">
+    <div className={`card !p-4 sm:!p-6 min-w-0 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
+      <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-ink-500">{title}</div>
+      <div className="mt-1.5 sm:mt-2 font-display text-2xl sm:text-3xl font-bold text-ink-900 tabular-nums">
         {value.toLocaleString()}
       </div>
-      {sub && <div className="mt-1 text-xs text-ink-500">{sub}</div>}
+      {sub && <div className="mt-1 text-[11px] sm:text-xs text-ink-500 break-words">{sub}</div>}
     </div>
   );
 }

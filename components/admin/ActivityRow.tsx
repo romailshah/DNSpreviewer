@@ -27,7 +27,9 @@ export function ActivityRow({ activity, compact }: { activity: Activity; compact
   const details = activity.details;
 
   return (
-    <div className={compact ? "flex items-start justify-between gap-3" : "flex items-start justify-between gap-3 py-3"}>
+    <div
+      className={`flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3 ${compact ? "" : "py-3"}`}
+    >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span
@@ -42,9 +44,9 @@ export function ActivityRow({ activity, compact }: { activity: Activity; compact
           )}
         </div>
         {details && Object.keys(details).length > 0 && (
-          <div className="mt-1 text-xs text-ink-700 break-all">
+          <div className="mt-1 text-xs text-ink-700 [overflow-wrap:anywhere]">
             {Object.entries(details).map(([k, v]) => (
-              <span key={k} className="mr-3">
+              <span key={k} className="mr-3 inline-block">
                 <span className="text-ink-500">{k}:</span>{" "}
                 <code>{typeof v === "string" ? v : JSON.stringify(v)}</code>
               </span>
@@ -52,7 +54,9 @@ export function ActivityRow({ activity, compact }: { activity: Activity; compact
           </div>
         )}
       </div>
-      <div className="shrink-0 text-xs text-ink-500 text-right" title={ts.toISOString()}>
+      {/* Date sits above the details on phones (order-first) and in its own
+          right-hand column from sm up, so the details get the full width. */}
+      <div className="order-first sm:order-none shrink-0 text-[11px] sm:text-xs text-ink-500 sm:text-right" title={ts.toISOString()}>
         {adminDateTime(activity.createdAt)}
       </div>
     </div>
