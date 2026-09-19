@@ -24,7 +24,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ part
       from = r.pathname;
     } catch {}
   }
-  logActivity("affiliate.click", { ip: getClientIp(req.headers), details: { partner, from } });
+  // Which placement was clicked (top-bar, home-hero, post-card), so the
+  // admin can compare them. Kept short and to a safe character set.
+  const src = (req.nextUrl.searchParams.get("src") ?? "").replace(/[^a-z0-9-]/gi, "").slice(0, 32) || null;
+  logActivity("affiliate.click", { ip: getClientIp(req.headers), details: { partner, src, from } });
 
   const res = NextResponse.redirect(AFFILIATES[partner].url, 302);
   res.headers.set("X-Robots-Tag", "noindex, nofollow");

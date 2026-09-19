@@ -83,6 +83,17 @@ export function countActivitySince(kind: ActivityKind, since: number): number {
   return r.n;
 }
 
+/** Affiliate clicks since a time, grouped by the placement that sent them. */
+export function affiliateClicksBySource(since: number): Array<{ src: string; n: number }> {
+  return db()
+    .prepare(
+      `SELECT COALESCE(json_extract(details, '$.src'), 'untagged') AS src, COUNT(*) AS n
+       FROM activity_log WHERE kind = 'affiliate.click' AND created_at > ?
+       GROUP BY src ORDER BY n DESC`,
+    )
+    .all(since) as Array<{ src: string; n: number }>;
+}
+
 export function activityCount(): number {
   const r = db().prepare("SELECT COUNT(*) AS n FROM activity_log").get() as { n: number };
   return r.n;

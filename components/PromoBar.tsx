@@ -92,7 +92,7 @@ export function PromoBar() {
                 Hostinger&reg; code <span className="font-mono font-bold">ROMAILSHAH</span>
               </span>
               <a
-                href="/go/hostinger"
+                href="/go/hostinger?src=top-bar"
                 target="_blank"
                 rel="sponsored nofollow noopener"
                 className="shrink-0 font-semibold text-brand-400 hover:text-brand-300 underline-offset-2 hover:underline"

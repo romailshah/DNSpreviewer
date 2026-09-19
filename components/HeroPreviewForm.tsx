@@ -178,8 +178,20 @@ export function HeroPreviewForm({
             />
           </FieldSlot>
 
-          <div className="flex items-center justify-center sm:pb-7">
-            <Arrow active={bothValid} />
+          {/* Mirrors FieldSlot's label and hint rows with invisible spacers,
+              so the flex-1 middle is exactly the input's height and the
+              arrow sits on the inputs' centre line at any font size. */}
+          <div className="flex flex-col">
+            <span
+              className="hidden sm:block text-[11px] font-bold uppercase tracking-wide mb-1.5 px-1 invisible"
+              aria-hidden="true"
+            >
+              &nbsp;
+            </span>
+            <div className="flex flex-1 items-center justify-center">
+              <Arrow active={bothValid} />
+            </div>
+            <div className="hidden sm:block mt-1 h-4" aria-hidden="true" />
           </div>
 
           <FieldSlot

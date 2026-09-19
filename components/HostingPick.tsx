@@ -15,7 +15,16 @@ import { CouponCopy } from "@/components/CouponCopy";
  * shows the live one). Links carry rel="sponsored" as Google asks for paid
  * links.
  */
-export function HostingPick({ className = "", compact = false }: { className?: string; compact?: boolean }) {
+export function HostingPick({
+  className = "",
+  compact = false,
+  source = "card",
+}: {
+  className?: string;
+  compact?: boolean;
+  /** Placement tag logged with the click, e.g. "post-card". */
+  source?: string;
+}) {
   const { coupon } = AFFILIATES.hostinger;
   return (
     <aside
@@ -44,7 +53,7 @@ export function HostingPick({ className = "", compact = false }: { className?: s
         <div className="flex flex-col gap-3">
           <CouponCopy code={coupon} />
           <a
-            href="/go/hostinger"
+            href={`/go/hostinger?src=${encodeURIComponent(source)}`}
             target="_blank"
             rel="sponsored nofollow noopener"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-3 font-semibold text-white shadow-glow transition hover:bg-brand-400"

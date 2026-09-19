@@ -192,7 +192,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               the hosting recommendation at the point where it's relevant. */}
           {post.html.split("<!-- hosting-card -->").map((part, i) => (
             <div key={i}>
-              {i > 0 && <HostingPick className="my-8 sm:my-10" />}
+              {i > 0 && <HostingPick className="my-8 sm:my-10" source="post-card" />}
               <div className="blog-content" dangerouslySetInnerHTML={{ __html: part }} />
             </div>
           ))}
