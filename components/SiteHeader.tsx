@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PromoBar } from "@/components/PromoBar";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -33,6 +34,8 @@ export async function SiteHeader() {
   const isAdmin = user?.role === "admin";
 
   return (
+    <>
+      <PromoBar />
     <header className="sticky top-0 z-20 border-b border-ink-200/60 bg-cream/80 backdrop-blur">
       <div className="container-wide flex h-16 items-center justify-between gap-3">
         <Link href="/" className="flex items-center shrink-0" aria-label="DNS Previewer home">
@@ -176,6 +179,7 @@ export async function SiteHeader() {
         </div>
       </div>
     </header>
+    </>
   );
 }
 

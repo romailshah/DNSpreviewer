@@ -178,3 +178,9 @@ code {
 @media (prefers-reduced-motion: reduce) {
   [class*="animate-[fb-"] { animation: none !important; }
 }
+
+/* Promo bar: thin line that fills up before the next message. */
+@keyframes promo-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
