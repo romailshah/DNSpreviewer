@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { currentUser } from "@/lib/auth";
 import { countNewFeedback } from "@/lib/feedback";
+import { NoAnalyticsMarker } from "@/components/admin/NoAnalyticsMarker";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -21,6 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <SiteHeader />
+      <NoAnalyticsMarker />
       <main className="container-wide py-6 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>

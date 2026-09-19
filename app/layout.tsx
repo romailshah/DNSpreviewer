@@ -117,10 +117,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             pushState/replaceState/popstate so the flag is updated for
             client-side navigation too. Because it installs first, gtag's own
             history listener (enhanced measurement page views) runs after the
-            flag has already been set for the new URL. */}
+            flag has already been set for the new URL.
+            A browser that has opened /admin is also marked (localStorage
+            dnsp_noga, see NoAnalyticsMarker) and ignored on every page. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var k='ga-disable-${GA_MEASUREMENT_ID}';function u(){window[k]=location.pathname.indexOf('/admin')===0;}u();['pushState','replaceState'].forEach(function(m){var o=history[m];history[m]=function(){var r=o.apply(this,arguments);u();return r;};});window.addEventListener('popstate',u);})();`,
+            __html: `(function(){var k='ga-disable-${GA_MEASUREMENT_ID}';function owner(){try{return localStorage.getItem('dnsp_noga')==='1';}catch(e){return false;}}function u(){window[k]=owner()||location.pathname.indexOf('/admin')===0;}u();['pushState','replaceState'].forEach(function(m){var o=history[m];history[m]=function(){var r=o.apply(this,arguments);u();return r;};});window.addEventListener('popstate',u);})();`,
           }}
         />
         {children}
