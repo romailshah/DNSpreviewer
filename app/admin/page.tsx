@@ -79,16 +79,26 @@ export default async function AdminOverviewPage() {
                 <thead>
                   <tr className="text-left text-ink-500 text-xs uppercase tracking-wide">
                     <th className="pb-2">Domain</th>
-                    <th className="pb-2 text-right">Previews</th>
-                    <th className="pb-2 text-right">Hits</th>
+                    <th className="pb-2 pl-4 text-right">Previews</th>
+                    <th className="pb-2 pl-4 text-right" title="Every request through the preview: pages, images, CSS and scripts">
+                      Hits
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {topDomainsList.map((d) => (
                     <tr key={d.domain} className="border-t border-ink-100">
-                      <td className="py-2 font-mono">{d.domain}</td>
-                      <td className="py-2 text-right">{d.count}</td>
-                      <td className="py-2 text-right">{d.hits ?? 0}</td>
+                      <td className="py-2 font-mono break-all">
+                        <Link
+                          href={`/admin/previews?q=${encodeURIComponent(d.domain)}`}
+                          className="hover:text-brand-600 hover:underline"
+                          title="Show these previews"
+                        >
+                          {d.domain}
+                        </Link>
+                      </td>
+                      <td className="py-2 pl-4 text-right tabular-nums">{d.count}</td>
+                      <td className="py-2 pl-4 text-right tabular-nums">{(d.hits ?? 0).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>

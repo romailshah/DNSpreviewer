@@ -253,7 +253,7 @@ export function topDomains(limit = 10): Array<{ domain: string; count: number; h
       `SELECT domain, COUNT(*) AS count, SUM(hit_count) AS hits
        FROM preview_sessions
        GROUP BY domain
-       ORDER BY count DESC
+       ORDER BY count DESC, hits DESC, domain ASC
        LIMIT ?`,
     )
     .all(limit) as Array<{ domain: string; count: number; hits: number }>;
