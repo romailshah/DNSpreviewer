@@ -88,8 +88,18 @@ export function PromoBar() {
                 Affiliate
               </span>
               <span className="truncate">
-                <span className="hidden sm:inline">New host? </span>
-                Hostinger&reg; code <span className="font-mono font-bold">ROMAILSHAH</span>
+                {/* Full line where there's room, shorter on tablets and phones. */}
+                <span className="hidden lg:inline">
+                  Moving hosts? We put client sites on Hostinger&reg; hosting. Code{" "}
+                  <span className="font-mono font-bold">ROMAILSHAH</span> gets you extra off at checkout.
+                </span>
+                <span className="hidden sm:inline lg:hidden">
+                  Our pick: Hostinger&reg; hosting, code <span className="font-mono font-bold">ROMAILSHAH</span> for
+                  extra off
+                </span>
+                <span className="sm:hidden">
+                  Hostinger&reg; code <span className="font-mono font-bold">ROMAILSHAH</span>
+                </span>
               </span>
               <a
                 href="/go/hostinger?src=top-bar"
