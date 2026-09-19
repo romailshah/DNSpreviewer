@@ -111,6 +111,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
+        {/* Keep /admin out of Google Analytics. Google's documented opt-out is
+            window['ga-disable-<ID>'] = true, which stops gtag sending anything.
+            This runs during HTML parsing, before gtag.js loads, and wraps
+            pushState/replaceState/popstate so the flag is updated for
+            client-side navigation too. Because it installs first, gtag's own
+            history listener (enhanced measurement page views) runs after the
+            flag has already been set for the new URL. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var k='ga-disable-${GA_MEASUREMENT_ID}';function u(){window[k]=location.pathname.indexOf('/admin')===0;}u();['pushState','replaceState'].forEach(function(m){var o=history[m];history[m]=function(){var r=o.apply(this,arguments);u();return r;};});window.addEventListener('popstate',u);})();`,
+          }}
+        />
         {children}
 
         {/* Help & feedback button. Suspense is required because it reads
