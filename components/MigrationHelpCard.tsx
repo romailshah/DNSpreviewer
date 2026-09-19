@@ -26,11 +26,11 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
             Done for you
           </span>
           <p className="mt-3 font-display text-xl sm:text-2xl font-bold leading-tight">
-            Rather not do the move yourself?
+            Migration not going to plan?
           </p>
           <p className="mt-2 text-sm sm:text-base text-white/80 leading-relaxed">
-            I&rsquo;m Romail. I built DNS Previewer, and I migrate client sites for a living. Tell me what
-            you&rsquo;re moving and I&rsquo;ll reply with a fixed quote, no obligation.
+            Hand it over. I&rsquo;m Romail, I built DNS Previewer, and I migrate client sites for a living.
+            Tell me what you&rsquo;re moving and I&rsquo;ll reply with a fixed quote, no obligation.
           </p>
         </div>
 
