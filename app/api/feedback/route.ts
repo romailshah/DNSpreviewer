@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   // A quote request with no way to reply is useless, so insist on an email.
   if (kind === "help" && !email && !user) {
     return NextResponse.json(
-      { error: "invalid", message: "Add your email so I can send you the quote." },
+      { error: "invalid", message: "Add your email so we can send you the quote." },
       { status: 400 },
     );
   }

@@ -64,7 +64,7 @@ export function upstreamErrorPage(target: string, message: string): string {
      <p style="color:#737373;font-size:13px">${escapeHtml(message)}</p>
      <a class="btn" href="https://${ROOT_DOMAIN}/">Back to DNS Previewer</a>
      <p style="margin:18px 0 0;font-size:13px">Sure the server is up? <a href="https://${ROOT_DOMAIN}/?feedback=problem" style="color:#e65e00;font-weight:600">Tell me what happened</a> and I'll take a look.</p>
-     <p style="margin:8px 0 0;font-size:13px">Rather hand the whole move over? <a href="https://${ROOT_DOMAIN}/?feedback=help" style="color:#e65e00;font-weight:600">I migrate sites for a living</a>.</p>`,
+     <p style="margin:8px 0 0;font-size:13px">Rather hand the whole move over? <a href="https://${ROOT_DOMAIN}/?feedback=help" style="color:#e65e00;font-weight:600">We migrate sites for a living</a>.</p>`,
   );
 }
 

@@ -188,7 +188,7 @@ export function HeroPreviewForm({
             >
               &nbsp;
             </span>
-            <div className="flex flex-1 items-center justify-center">
+            <div className="-my-2 flex flex-1 items-center justify-center sm:my-0">
               <Arrow active={bothValid} />
             </div>
             <div className="hidden sm:block mt-1 h-4" aria-hidden="true" />

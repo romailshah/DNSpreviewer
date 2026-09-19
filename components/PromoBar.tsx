@@ -70,8 +70,8 @@ export function PromoBar() {
                 Done for you
               </span>
               <span className="truncate">
-                <span className="sm:hidden">Migration stuck? I&rsquo;ll do it for you.</span>
-                <span className="hidden sm:inline">Migration not going to plan? I&rsquo;ll move the site for you.</span>
+                <span className="sm:hidden">Migration stuck? We&rsquo;ll do it for you.</span>
+                <span className="hidden sm:inline">Migration not going to plan? We&rsquo;ll move the site for you.</span>
               </span>
               <Link
                 href="?feedback=help"

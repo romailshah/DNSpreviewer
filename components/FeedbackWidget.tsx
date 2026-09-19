@@ -39,7 +39,7 @@ const KINDS: Array<{ id: Kind; label: string; placeholder: string; icon: ReactNo
     id: "help",
     label: "Migrate it for me",
     placeholder:
-      "What are you moving? The platform, roughly how big the site is, and where it's going from and to. I'll reply with a fixed quote.",
+      "What are you moving? The platform, roughly how big the site is, and where it's going from and to. We'll reply with a fixed quote.",
     icon: <BoxIcon />,
   },
 ];
@@ -241,7 +241,7 @@ export function FeedbackWidget() {
                 </p>
                 <p className="text-sm text-white/85">
                   {kind === "help"
-                    ? "Romail here. I migrate client sites for a living."
+                    ? "We move client sites for a living."
                     : "Romail here. I read every message myself."}
                 </p>
               </div>
@@ -257,7 +257,8 @@ export function FeedbackWidget() {
               <p className="mt-1 text-sm text-ink-700">
                 {sentTo ? (
                   <>
-                    I&rsquo;ll reply to <span className="font-medium text-ink-900 break-all">{sentTo}</span>.
+                    {kind === "help" ? "We’ll" : "I’ll"} reply to{" "}
+                    <span className="font-medium text-ink-900 break-all">{sentTo}</span>.
                   </>
                 ) : (
                   "Leave your email next time if you'd like a reply."
@@ -309,14 +310,15 @@ export function FeedbackWidget() {
 
               {userEmail ? (
                 <p className="text-xs text-ink-500">
-                  I&rsquo;ll reply to <span className="font-medium text-ink-700 break-all">{userEmail}</span>
+                  {kind === "help" ? "We’ll" : "I’ll"} reply to{" "}
+                  <span className="font-medium text-ink-700 break-all">{userEmail}</span>
                 </p>
               ) : (
                 <div>
                   <label htmlFor="feedback-email" className="block text-xs font-semibold text-ink-700">
                     Your email{" "}
                     <span className="font-normal text-ink-500">
-                      {kind === "help" ? "(so I can send the quote)" : "(optional, so I can reply)"}
+                      {kind === "help" ? "(so we can send the quote)" : "(optional, so I can reply)"}
                     </span>
                   </label>
                   <input

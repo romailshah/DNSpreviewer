@@ -29,15 +29,15 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
             Migration not going to plan?
           </p>
           <p className="mt-2 text-sm sm:text-base text-white/80 leading-relaxed">
-            Hand it over. I&rsquo;m Romail, I built DNS Previewer, and I migrate client sites for a living.
-            Tell me what you&rsquo;re moving and I&rsquo;ll reply with a fixed quote, no obligation.
+            Hand it over. We&rsquo;re the team behind DNS Previewer, and moving client sites is what we
+            do. Tell us what you&rsquo;re moving and we&rsquo;ll reply with a fixed quote, no obligation.
           </p>
         </div>
 
         <div className="flex flex-col gap-3">
           <ul className="space-y-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/90">
             <li className="flex items-start gap-2">
-              <TickIcon /> Fixed quote before I start
+              <TickIcon /> Fixed quote before we start
             </li>
             <li className="flex items-start gap-2">
               <TickIcon /> Checked on the new server before DNS changes
