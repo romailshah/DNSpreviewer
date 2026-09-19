@@ -17,45 +17,41 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
       <div className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full bg-brand-500/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -right-10 h-52 w-52 rounded-full bg-brand-600/25 blur-3xl" />
 
-      <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
-        <div className="flex items-center gap-4 sm:flex-col sm:items-center sm:gap-2">
-          <span
-            className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white ring-4 ring-brand-500/30"
-            aria-hidden="true"
-          >
+      {/* Same two-column layout as the hosting card: pitch on the left,
+          what you get plus the button on the right. */}
+      <div className="relative grid gap-5 sm:grid-cols-[1fr_15rem] sm:items-center">
+        <div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
             <TruckIcon />
-          </span>
-          <span className="rounded-full bg-brand-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
             Done for you
           </span>
-        </div>
-
-        <div className="flex-1">
-          <p className="font-display text-xl sm:text-2xl font-bold leading-tight">
+          <p className="mt-3 font-display text-xl sm:text-2xl font-bold leading-tight">
             Rather not do the move yourself?
           </p>
           <p className="mt-2 text-sm sm:text-base text-white/80 leading-relaxed">
             I&rsquo;m Romail. I built DNS Previewer, and I migrate client sites for a living. Tell me what
             you&rsquo;re moving and I&rsquo;ll reply with a fixed quote, no obligation.
           </p>
-          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-white/90">
-            <li className="inline-flex items-center gap-1.5">
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <ul className="space-y-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/90">
+            <li className="flex items-start gap-2">
               <TickIcon /> Fixed quote before I start
             </li>
-            <li className="inline-flex items-center gap-1.5">
+            <li className="flex items-start gap-2">
               <TickIcon /> Checked on the new server before DNS changes
             </li>
           </ul>
+          <Link
+            href="?feedback=help"
+            scroll={false}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-3 font-semibold text-white shadow-glow transition hover:bg-brand-400"
+          >
+            Get a quote
+            <ArrowIcon />
+          </Link>
         </div>
-
-        <Link
-          href="?feedback=help"
-          scroll={false}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 py-3 font-semibold text-white shadow-glow transition hover:bg-brand-400"
-        >
-          Get a quote
-          <ArrowIcon />
-        </Link>
       </div>
     </aside>
   );
@@ -63,7 +59,7 @@ export function MigrationHelpCard({ className = "" }: { className?: string }) {
 
 function TruckIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M2 6.5h11.5v9.5H2z" />
       <path d="M13.5 10h4.2l3.3 3.3V16h-7.5" />
       <circle cx="6.5" cy="17.5" r="1.8" />
@@ -74,7 +70,7 @@ function TruckIcon() {
 
 function TickIcon() {
   return (
-    <svg className="shrink-0 text-brand-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg className="mt-0.5 shrink-0 text-brand-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M5 12.5l4.5 4.5L19 7.5" />
     </svg>
   );
