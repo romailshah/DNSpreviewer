@@ -21,13 +21,13 @@ export function HostingInline({ source }: { source: string }) {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9L12 2.5z" />
             </svg>
-            My pick
+            Our pick
           </span>
-          <span className="font-semibold">No new server yet?</span>
+          <span className="font-semibold">Not sure which host to choose?</span>
         </div>
         <p className="flex-1 text-white/75">
-          I use Hostinger&reg; hosting for client sites. Code{" "}
-          <span className="font-mono font-bold text-white">{coupon}</span> takes a bit more off.
+          We put client sites on Hostinger&reg;. Code{" "}
+          <span className="font-mono font-bold text-white">{coupon}</span> for extra off.
         </p>
         <div className="flex w-full shrink-0 flex-col items-center gap-1.5 sm:w-auto sm:flex-row sm:gap-3">
           <a
