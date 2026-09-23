@@ -88,6 +88,8 @@ Three phrases come up again and again, and they mean different things.
 
 `no live upstreams` means nginx has already given up on every backend in the pool after repeated failures.
 
+If the page never gets as far as an error like this and the browser shows [ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error) instead, the handshake failed before your web server could answer at all.
+
 On Apache with mod_proxy, check the site's error log for the proxy's own complaints. Apache also returns 502 when the backend sends a malformed response: the `ProxyBadHeader` directive controls how it handles "syntactically invalid response header lines", and returning 502 is the default behaviour.
 
 ## Cause 1: the process behind the web server isn't running

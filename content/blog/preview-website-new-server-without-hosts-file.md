@@ -120,7 +120,7 @@ That one change fixes most of the list above in one go. You can send a link to a
 
 Wildcards stop being a problem too, because the proxy can cover a whole domain and all its subdomains, so you're not listing them out by hand.
 
-[DNS Previewer](/) does this for free, wildcards included. You can also choose whether the connection to your server uses HTTPS, HTTP or falls back automatically, which helps when the new server doesn't have a valid certificate for the domain yet. With a free account you can also put a password on a link, so it isn't open to anyone who gets hold of the URL, and create links that never expire. If you've come across SkipDNS, the paid tool that does the same job, here's [how DNS Previewer compares with SkipDNS](/vs-skipdns).
+[DNS Previewer](/) does this for free, wildcards included. You can also choose whether the connection to your server uses HTTPS, HTTP or falls back automatically, which helps when the new server doesn't have a valid certificate for the domain yet. With a free account you can also put a password on a link, so it isn't open to anyone who gets hold of the URL, and create links that never expire. That HTTP fallback matters more than it sounds, because a new server without a certificate for your domain yet will otherwise greet you with [ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error). If you've come across SkipDNS, the paid tool that does the same job, here's [how DNS Previewer compares with SkipDNS](/vs-skipdns).
 
 ### The honest limitations
 
