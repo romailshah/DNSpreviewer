@@ -101,7 +101,7 @@ If you haven't picked the new host yet, start there, because every item below de
 
 **1. SSL certificate is installed for the actual domain, not just the IP.**
 
-If your new host says "SSL is set up" but the cert's Common Name is the server's hostname (`web-server-04.somehost.net`) rather than your domain (`example.com`), the cert won't validate when real traffic hits it. Check the issued cert's SAN list. The simplest test: `openssl s_client -connect newserver.ip:443 -servername example.com 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName`.
+If your new host says "SSL is set up" but the cert's Common Name is the server's hostname (`web-server-04.somehost.net`) rather than your domain (`example.com`), the cert won't validate when real traffic hits it. Check the issued cert's SAN list. Get this wrong and visitors see [ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error) rather than your site. The simplest test: `openssl s_client -connect newserver.ip:443 -servername example.com 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName`.
 
 **2. Both port 80 (HTTP) and port 443 (HTTPS) are listening and not redirecting incorrectly.**
 

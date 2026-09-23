@@ -172,7 +172,7 @@ I should be upfront about a conflict of interest here: I built a free tool for t
 Here's the process itself:
 
 - Lower the TTL to 60 seconds at least 24 hours before the migration. It's the most important thing you control, and the only one you can't fix later.
-- Test the new server under your real domain before changing any records, so vhost and certificate problems turn up before your visitors find them.
+- Test the new server under your real domain before changing any records, so vhost and certificate problems turn up before your visitors find them. Certificates are the awkward one here, because most authorities want the hostname pointing at the new machine before they will issue one, which is the [deadlock behind ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error) on a fresh server.
 - Flip the record once the new server responds correctly. The cutover itself should feel boring.
 - Don't rely on a single checker. Test from the client's actual network too, since that's where stale cache problems tend to hide.
 - Raise the TTL back to 3600 or higher after 48 stable hours.
