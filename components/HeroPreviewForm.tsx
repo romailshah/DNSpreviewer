@@ -68,7 +68,7 @@ export function HeroPreviewForm({
   // Advanced
   const [advanced, setAdvanced] = useState(false);
   const [label, setLabel] = useState("");
-  const [protocol, setProtocol] = useState<Protocol>("https");
+  const [protocol, setProtocol] = useState<Protocol>("both");
   const [port, setPort] = useState("");
   const [siteType, setSiteType] = useState<SiteType>("regular");
   const [subdomain, setSubdomain] = useState("");
@@ -385,15 +385,15 @@ export function HeroPreviewForm({
           )}
 
           <div className="grid sm:grid-cols-2 gap-4">
-            <MiniField label="Protocol">
+            <MiniField label="Protocol" hint="Automatic tries HTTPS, then HTTP.">
               <select
                 className="input"
                 value={protocol}
                 onChange={(e) => setProtocol(e.target.value as Protocol)}
               >
-                <option value="https">HTTPS (Flexible SSL)</option>
+                <option value="both">Automatic (recommended)</option>
+                <option value="https">HTTPS only (Flexible SSL)</option>
                 <option value="http">HTTP only</option>
-                <option value="both">Both (auto-fallback)</option>
               </select>
             </MiniField>
             <MiniField label="Port" hint="Defaults to 80 / 443.">

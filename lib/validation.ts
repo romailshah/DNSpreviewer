@@ -22,7 +22,10 @@ export const createSessionSchema = z
         (t) => HOSTNAME_RE.test(t) || isIpLiteral(t),
         "Target must be a public IP address or hostname",
       ),
-    protocol: z.enum(["https", "http", "both"]).default("https"),
+    // "both" is the default: try HTTPS, fall back to HTTP. A new server
+    // usually has no certificate for the domain yet, and picking a protocol
+    // is not something anyone should have to think about.
+    protocol: z.enum(["https", "http", "both"]).default("both"),
     port: z.number().int().min(1).max(65535).optional().nullable(),
     siteType: z.enum(["regular", "wildcard", "subdomain"]).default("regular"),
     subdomain: z

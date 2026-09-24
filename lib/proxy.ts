@@ -15,6 +15,29 @@ const MAX_REWRITE_BYTES = MAX_REWRITE_MB * 1024 * 1024;
  * only listens on the other port. In auto-fallback mode these make us try
  * the other scheme before giving up.
  */
+/**
+ * Which scheme last worked for a preview, so automatic mode doesn't retry a
+ * dead protocol on every asset. In memory only: one machine serves the
+ * proxy, and forgetting simply costs one extra attempt.
+ */
+const SCHEME_MEMORY = new Map<string, { scheme: "https" | "http"; at: number }>();
+const SCHEME_MEMORY_MS = 30 * 60 * 1000;
+
+function rememberedScheme(id: string): "https" | "http" | null {
+  const hit = SCHEME_MEMORY.get(id);
+  if (!hit) return null;
+  if (Date.now() - hit.at > SCHEME_MEMORY_MS) {
+    SCHEME_MEMORY.delete(id);
+    return null;
+  }
+  return hit.scheme;
+}
+
+function rememberScheme(id: string, scheme: "https" | "http"): void {
+  if (SCHEME_MEMORY.size > 500) SCHEME_MEMORY.clear();
+  SCHEME_MEMORY.set(id, { scheme, at: Date.now() });
+}
+
 const WRONG_SCHEME_STATUSES = new Set([403, 421, 495, 496, 497, 502, 503, 525, 526]);
 
 const HOP_BY_HOP = new Set([
@@ -73,12 +96,20 @@ export async function proxy(session: PreviewSession, req: ProxyRequest): Promise
   const baseDomain = effectiveDomain(session.domain, session.siteType, session.subdomain);
   const effectiveHost = req.vhostOverride || baseDomain;
 
-  const protocols: Array<"https" | "http"> =
+  let protocols: Array<"https" | "http"> =
     session.protocol === "https"
       ? ["https"]
       : session.protocol === "http"
         ? ["http"]
         : ["https", "http"];
+
+  // In automatic mode, remember which scheme worked for this preview so the
+  // page's images, CSS and scripts don't each pay for a failed HTTPS attempt
+  // first. The other scheme stays as a fallback in case the server changes.
+  if (protocols.length > 1) {
+    const known = rememberedScheme(session.id);
+    if (known) protocols = [known, known === "https" ? "http" : "https"];
+  }
 
   let lastErr: Error | null = null;
   let firstResponse: Response | null = null;
@@ -98,6 +129,7 @@ export async function proxy(session: PreviewSession, req: ProxyRequest): Promise
         else await res.body?.cancel();
         continue;
       }
+      if (protocols.length > 1) rememberScheme(session.id, scheme);
       return res;
     } catch (e) {
       lastErr = e as Error;

@@ -19,7 +19,7 @@ export function CreateForm({
   const [label, setLabel] = useState("");
   const [domain, setDomain] = useState("");
   const [target, setTarget] = useState("");
-  const [protocol, setProtocol] = useState<Protocol>("https");
+  const [protocol, setProtocol] = useState<Protocol>("both");
   const [port, setPort] = useState("");
   const [siteType, setSiteType] = useState<SiteType>("regular");
   const [subdomain, setSubdomain] = useState("");
@@ -138,16 +138,16 @@ export function CreateForm({
       </Field>
 
       <div className="grid sm:grid-cols-2 gap-5">
-        <Field label="Protocol" id="protocol" hint="How we talk to your server.">
+        <Field label="Protocol" id="protocol" hint="Automatic tries HTTPS, then falls back to HTTP.">
           <select
             id="protocol"
             className="input"
             value={protocol}
             onChange={(e) => setProtocol(e.target.value as Protocol)}
           >
-            <option value="https">HTTPS (Flexible SSL)</option>
-            <option value="http">HTTP Only</option>
-            <option value="both">Both HTTP + HTTPS (auto-fallback)</option>
+            <option value="both">Automatic (recommended)</option>
+            <option value="https">HTTPS only (Flexible SSL)</option>
+            <option value="http">HTTP only</option>
           </select>
         </Field>
 
