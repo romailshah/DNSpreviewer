@@ -8,6 +8,15 @@ import { effectiveDomain } from "./validation";
 
 const MAX_REWRITE_BYTES = MAX_REWRITE_MB * 1024 * 1024;
 
+/**
+ * Statuses that usually mean "you asked on the wrong protocol" rather than
+ * "here is your page": a server with no SSL vhost for this hostname, a
+ * misdirected request, Cloudflare's origin-SSL failures, or a gateway that
+ * only listens on the other port. In auto-fallback mode these make us try
+ * the other scheme before giving up.
+ */
+const WRONG_SCHEME_STATUSES = new Set([403, 421, 495, 496, 497, 502, 503, 525, 526]);
+
 const HOP_BY_HOP = new Set([
   "connection",
   "keep-alive",
@@ -72,13 +81,31 @@ export async function proxy(session: PreviewSession, req: ProxyRequest): Promise
         : ["https", "http"];
 
   let lastErr: Error | null = null;
-  for (const scheme of protocols) {
+  let firstResponse: Response | null = null;
+  for (let i = 0; i < protocols.length; i++) {
+    const scheme = protocols[i];
+    const hasNext = i < protocols.length - 1;
     try {
-      return await proxyOne(session, req, scheme, effectiveHost);
+      const res = await proxyOne(session, req, scheme, effectiveHost);
+      // Auto-fallback used to trigger only when the connection failed, which
+      // missed the common case: a new server that accepts the TLS connection
+      // and then refuses the hostname with 403 or 421 because no SSL vhost
+      // exists for it yet. Those are answers, not failures, so the retry loop
+      // never ran and the visitor got a blank page. In "both" mode, treat
+      // them as a failed attempt and try the other scheme.
+      if (hasNext && WRONG_SCHEME_STATUSES.has(res.status)) {
+        if (!firstResponse) firstResponse = res;
+        else await res.body?.cancel();
+        continue;
+      }
+      return res;
     } catch (e) {
       lastErr = e as Error;
     }
   }
+  // Every scheme was refused. Return the first refusal rather than an error
+  // page, so the visitor still sees what the server actually said.
+  if (firstResponse) return firstResponse;
   throw lastErr ?? new Error("Upstream failed");
 }
 

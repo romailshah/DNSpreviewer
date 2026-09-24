@@ -56,6 +56,29 @@ export function unlockPage(id: string, previewHost: string, wrongPassword: boole
   );
 }
 
+/**
+ * The server answered, but with a status that usually means the hostname
+ * isn't served on this protocol yet (403 with an empty body is the classic
+ * from a new box with no SSL vhost). Without this the visitor just gets a
+ * blank page and no idea why.
+ */
+export function wrongProtocolPage(
+  target: string,
+  status: number,
+  scheme: "http" | "https",
+  otherScheme: "http" | "https",
+): string {
+  return shell(
+    "Server refused this protocol",
+    `<h1>Your server answered ${status}</h1>
+     <p>DNS Previewer reached <code>${escapeHtml(target)}</code> over <code>${scheme.toUpperCase()}</code>, and the server replied <code>${status}</code> with an empty page rather than your site.</p>
+     <p>On a new server that nearly always means the domain isn&#39;t set up for ${scheme.toUpperCase()} yet, which is normal before the certificate exists.</p>
+     <p>Create the preview again with the protocol set to <strong>${otherScheme.toUpperCase()}</strong>, or to <strong>Both</strong>, and it should load.</p>
+     <a class="btn" href="https://${ROOT_DOMAIN}/">Create another preview</a>
+     <p style="margin:18px 0 0;font-size:13px">Still stuck? <a href="https://${ROOT_DOMAIN}/?feedback=problem" style="color:#e65e00;font-weight:600">Tell me what happened</a>.</p>`,
+  );
+}
+
 export function upstreamErrorPage(target: string, message: string): string {
   return shell(
     "Upstream error",

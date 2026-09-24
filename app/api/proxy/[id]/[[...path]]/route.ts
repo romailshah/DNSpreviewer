@@ -5,7 +5,7 @@ import { proxy, type ProxyRequest } from "@/lib/proxy";
 import { getClientIp } from "@/lib/rateLimit";
 import { ROOT_DOMAIN } from "@/lib/env";
 import { comparePassword, unlockToken, verifyUnlockToken } from "@/lib/auth";
-import { expiredPage, unlockPage, upstreamErrorPage } from "@/lib/pages";
+import { expiredPage, unlockPage, upstreamErrorPage, wrongProtocolPage } from "@/lib/pages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -108,11 +108,39 @@ async function innerHandle(req: NextRequest, ctx: Ctx): Promise<Response> {
   };
 
   try {
-    return await proxy(session, proxyReq);
+    const res = await proxy(session, proxyReq);
+    return await explainEmptyRefusal(res, session, req);
   } catch (e) {
     const message = (e as Error).message || "Upstream error";
     return htmlResponse(upstreamErrorPage(session.target, message), 502);
   }
+}
+
+/**
+ * A refusal with no body renders as a blank page, which tells the visitor
+ * nothing. Replace it with a page naming the status and the protocol, but
+ * only for top-level page loads, so assets and API calls still see the real
+ * response.
+ */
+const REFUSAL_STATUSES = new Set([403, 421, 495, 496, 497, 525, 526]);
+
+async function explainEmptyRefusal(
+  res: Response,
+  session: { target: string; protocol: string },
+  req: NextRequest,
+): Promise<Response> {
+  if (!REFUSAL_STATUSES.has(res.status)) return res;
+  if (req.method !== "GET") return res;
+  if (!(req.headers.get("accept") || "").includes("text/html")) return res;
+
+  const body = await res.text();
+  if (body.trim().length > 200) {
+    // The server sent a real error page of its own; show theirs, not ours.
+    return new Response(body, { status: res.status, headers: res.headers });
+  }
+  const scheme = session.protocol === "http" ? "http" : "https";
+  const other = scheme === "https" ? "http" : "https";
+  return htmlResponse(wrongProtocolPage(session.target, res.status, scheme, other), res.status);
 }
 
 async function handleUnlock(
