@@ -48,7 +48,7 @@ There's a quick way to tell whose problem it is. Open two or three other HTTPS s
 
 Chrome keeps a list of network error codes, and this one is [defined as](https://source.chromium.org/chromium/chromium/src/+/main:net/base/net_error_list.h) "An SSL protocol error occurred", numbered -107. On screen it comes out as the site name followed by "sent an invalid response."
 
-There's a close relative worth knowing, because the fix is different. `ERR_SSL_VERSION_OR_CIPHER_MISMATCH` is defined as "The client and server don't support a common SSL protocol version or cipher suite", and its page says the site "uses an unsupported protocol." That one is nearly always an old server offering only old TLS. If that's what you're seeing, skip to cause 2.
+There's a close relative worth knowing, because the fix is different. [`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`](/blog/err-ssl-version-or-cipher-mismatch) is defined as "The client and server don't support a common SSL protocol version or cipher suite", and its page says the site "uses an unsupported protocol." That one is nearly always an old server offering only old TLS. If that's what you're seeing, skip to cause 2.
 
 Other browsers describe the same failure in their own words. Safari says it can't establish a secure connection, Firefox talks about a secure connection failing. It's the same handshake, failing the same way.
 
