@@ -1,7 +1,7 @@
 ---
 title: "ERR_SSL_PROTOCOL_ERROR: what it means and how to fix it"
-seoTitle: "ERR_SSL_PROTOCOL_ERROR: What It Means and How to Fix It"
-description: "ERR_SSL_PROTOCOL_ERROR means the HTTPS handshake failed before any page loaded. What's worth trying as a visitor, and the five causes to check if the site is yours."
+seoTitle: "ERR_SSL_PROTOCOL_ERROR: Causes and How to Fix It"
+description: "ERR_SSL_PROTOCOL_ERROR means the HTTPS handshake failed and no page was sent. What a visitor can try, and the five causes to check."
 summary: "ERR_SSL_PROTOCOL_ERROR means the encrypted connection failed while it was being set up, so no page was ever sent. If one site does it and others are fine, the problem is at that site's end. If it's every site, look at your own clock, your antivirus or your network. When the site is yours, the usual causes are a certificate that doesn't cover the hostname, a server still offering only old TLS versions, or nothing actually serving HTTPS on port 443."
 publishedAt: "2026-09-23"
 author: "Romail Shah"
@@ -110,7 +110,7 @@ Obvious once you see it, invisible until you check. The web server may only be l
 curl -vI https://example.com
 ```
 
-A connection refused means nothing is listening. A timeout usually means a firewall is swallowing the packets. Getting as far as a TLS error means the port is open and the problem is in the handshake itself, which sends you back to causes 1 and 2.
+[A connection refused](/blog/err-connection-refused) means nothing is listening. A timeout usually means a firewall is swallowing the packets. Getting as far as a TLS error means the port is open and the problem is in the handshake itself, which sends you back to causes 1 and 2.
 
 There's a stranger version of this: plain HTTP being served on port 443. The browser starts a TLS handshake, receives what looks like an HTTP response instead, and gives up. That happens when a `listen 443` block is missing the `ssl` flag.
 

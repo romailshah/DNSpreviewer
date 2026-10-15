@@ -1,7 +1,7 @@
 ---
 title: "Error establishing a database connection: how to fix it"
 seoTitle: "Error Establishing a Database Connection in WordPress"
-description: "Error establishing a database connection nearly always means wrong details in wp-config.php or a database server that won't answer. How to tell which, and fix it."
+description: "Nearly always wrong details in wp-config.php, or a database server that will not answer. How to tell which one it is, and how to fix it."
 summary: "It nearly always means the database details in wp-config.php are wrong, or the database server isn't answering. Test those same details outside WordPress, with the mysql command or phpMyAdmin, and you'll know which of the two you have in about thirty seconds. Wrong credentials fail every single time, so an error that comes and goes is usually connection limits instead."
 publishedAt: "2026-09-15"
 author: "Romail Shah"

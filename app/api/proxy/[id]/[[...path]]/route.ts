@@ -5,7 +5,13 @@ import { proxy, type ProxyRequest } from "@/lib/proxy";
 import { getClientIp } from "@/lib/rateLimit";
 import { ROOT_DOMAIN } from "@/lib/env";
 import { comparePassword, unlockToken, verifyUnlockToken } from "@/lib/auth";
-import { expiredPage, unlockPage, upstreamErrorPage, wrongProtocolPage } from "@/lib/pages";
+import {
+  expiredPage,
+  offsiteRedirectPage,
+  unlockPage,
+  upstreamErrorPage,
+  wrongProtocolPage,
+} from "@/lib/pages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -109,11 +115,55 @@ async function innerHandle(req: NextRequest, ctx: Ctx): Promise<Response> {
 
   try {
     const res = await proxy(session, proxyReq);
+    const redirected = explainOffsiteRedirect(res, session, req, previewHost);
+    if (redirected !== res) return redirected;
     return await explainEmptyRefusal(res, session, req);
   } catch (e) {
     const message = (e as Error).message || "Upstream error";
     return htmlResponse(upstreamErrorPage(session.target, message), 502);
   }
+}
+
+/**
+ * A page load that the server redirects to some other host would carry the
+ * visitor out of the preview to the live site. Stop and explain instead, but
+ * only for top-level page loads; redirects within the preview or to our own
+ * domain pass through untouched.
+ */
+const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+
+function explainOffsiteRedirect(
+  res: Response,
+  session: { domain: string; target: string },
+  req: NextRequest,
+  previewHost: string,
+): Response {
+  if (!REDIRECT_STATUSES.has(res.status)) return res;
+  if (req.method !== "GET") return res;
+  if (!(req.headers.get("accept") || "").includes("text/html")) return res;
+
+  const location = res.headers.get("location");
+  if (!location) return res;
+  let url: URL;
+  try {
+    url = new URL(location);
+  } catch {
+    // Relative redirects stay inside the preview.
+    return res;
+  }
+
+  const host = url.hostname.toLowerCase();
+  const root = ROOT_DOMAIN.toLowerCase();
+  if (host === previewHost.split(":")[0].toLowerCase() || host === root || host.endsWith(`.${root}`)) {
+    return res;
+  }
+
+  const domain = session.domain.toLowerCase();
+  const sameSiteOtherHost = host === `www.${domain}` || `www.${host}` === domain;
+  return htmlResponse(
+    offsiteRedirectPage(session.domain, session.target, url.toString(), res.status, sameSiteOtherHost),
+    200,
+  );
 }
 
 /**

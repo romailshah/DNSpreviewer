@@ -1,7 +1,7 @@
 ---
 title: "How to preview a site on a new server without editing the hosts file"
 seoTitle: "Preview a Site on a New Server Without the Hosts File"
-description: "The hosts file works on one machine, with admin rights, and never with wildcards. What it does, where it breaks, and how to test a new server without it."
+description: "The hosts file works on one machine, needs admin rights, and ignores wildcards. Where it breaks, and how to test a new server without it."
 summary: "Editing the hosts file does test the new server properly, because your browser still sends your real domain in the Host header and the TLS handshake. What it cannot do is travel: one machine, admin rights needed, exact hostnames only, and no phones. A preview link does the same job as a URL you can send to a client or open on any device."
 publishedAt: "2026-09-07"
 author: "Romail Shah"

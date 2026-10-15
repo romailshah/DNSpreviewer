@@ -47,6 +47,11 @@ function homepageJsonLd() {
           width: 180,
           height: 180,
         },
+        parentOrganization: {
+          "@type": "Organization",
+          name: "Web & Rank LTD",
+          url: "https://webnrank.com/",
+        },
       },
       {
         "@type": "SoftwareApplication",

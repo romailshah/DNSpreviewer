@@ -10,6 +10,9 @@ const SHELL_CSS = `
   code{background:#fff1e6;color:#b84a00;padding:2px 8px;border-radius:5px;font-size:13px;font-family:ui-monospace,SFMono-Regular,monospace}
   .btn{display:inline-block;background:#ff7200;color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;border:0;cursor:pointer;font-size:15px}
   .btn:hover{background:#e65e00}
+  .btn-ghost{display:inline-block;background:#fff;color:#b84a00;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;border:1px solid #ffd4b0;font-size:15px}
+  .btn-ghost:hover{background:#fff1e6}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .brand{display:flex;align-items:center;gap:10px;margin-bottom:20px;font-weight:700;font-size:16px}
   .brand .logo{width:32px;height:32px;background:#ff7200;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#fff}
   input[type=password]{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;font-size:15px;font-family:inherit;margin-bottom:14px}
@@ -77,6 +80,46 @@ export function wrongProtocolPage(
      <a class="btn" href="https://${ROOT_DOMAIN}/">Create another preview</a>
      <p style="margin:18px 0 0;font-size:13px">Still stuck? <a href="https://${ROOT_DOMAIN}/?feedback=problem" style="color:#e65e00;font-weight:600">Tell me what happened</a>.</p>`,
   );
+}
+
+/**
+ * The server answered a page load with a redirect to some other host. Left
+ * alone, the browser follows it straight out of the preview to the live site,
+ * which looks like the preview "didn't work". Explain what happened instead.
+ */
+export function offsiteRedirectPage(
+  domain: string,
+  target: string,
+  location: string,
+  status: number,
+  sameSiteOtherHost: boolean,
+): string {
+  const d = escapeHtml(domain);
+  const advice = sameSiteOtherHost
+    ? `<p>That&#39;s the same site under a different hostname. A single-domain preview can only follow <code>${d}</code>, so the redirect leads back out to the live server.</p>
+       <p>Create the preview for <strong>that</strong> hostname instead, or set the site type to <strong>Wildcard</strong> so both are covered.</p>`
+    : `<p>That means the server isn&#39;t set up to serve <code>${d}</code> yet. It&#39;s running, but it doesn&#39;t recognise your domain, so it hands visitors off somewhere else.</p>
+       <p>On most platforms the fix is to add <code>${d}</code> to the site in the hosting panel. Until that&#39;s done, no preview tool can show it, because the server will keep redirecting the hostname away.</p>`;
+  return shell(
+    "Server redirected the domain",
+    `<h1>Your server redirected ${d}</h1>
+     <p>DNS Previewer asked <code>${escapeHtml(target)}</code> for <code>${d}</code>, and the server replied <code>${status}</code> pointing at <code>${escapeHtml(hostOf(location))}</code> instead of serving the page.</p>
+     ${advice}
+     <div class="row">
+       <a class="btn" href="https://${ROOT_DOMAIN}/">Create another preview</a>
+       <a class="btn-ghost" href="${escapeHtml(location)}" rel="noopener nofollow noreferrer">Follow it anyway</a>
+     </div>
+     <p style="margin:18px 0 0;font-size:13px">Not what you expected? <a href="https://${ROOT_DOMAIN}/?feedback=problem" style="color:#e65e00;font-weight:600">Tell us what happened</a>.</p>
+     <p style="margin:8px 0 0;font-size:13px">Rather hand the whole move over? <a href="https://${ROOT_DOMAIN}/?feedback=help" style="color:#e65e00;font-weight:600">We migrate sites for a living</a>.</p>`,
+  );
+}
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
 }
 
 export function upstreamErrorPage(target: string, message: string): string {

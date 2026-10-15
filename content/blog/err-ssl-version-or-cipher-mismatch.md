@@ -1,7 +1,7 @@
 ---
 title: "ERR_SSL_VERSION_OR_CIPHER_MISMATCH: what it means and how to fix it"
-seoTitle: "ERR_SSL_VERSION_OR_CIPHER_MISMATCH: Causes and Fixes"
-description: "This error means your browser and the server share no TLS version or cipher they both accept. What a visitor can do, and the five server-side causes worth checking."
+seoTitle: "ERR_SSL_VERSION_OR_CIPHER_MISMATCH: How to Fix It"
+description: "Your browser and the server share no TLS version or cipher they both accept. What a visitor can do, and the five server-side causes."
 summary: "Your browser and the server could not agree on a TLS version or a cipher, so the connection stopped before any page loaded. On the visitor's side there is no way through it, and no Advanced link to click. If the site is yours, the usual causes are a server still offering only TLS 1.0 or 1.1, a hand-written cipher list that excludes everything current browsers accept, or a certificate that does not cover the hostname being asked for."
 publishedAt: "2026-10-03"
 author: "Romail Shah"
@@ -128,7 +128,7 @@ ERR_SSL_VERSION_OR_CIPHER_MISMATCH has a habit of appearing the day a site chang
 
 The first is the config file. Server configs get copied forward for years, and an old `ssl_protocols` or cipher line travels with them onto a machine that would otherwise have been fine. Whoever tested in one browser saw it work, and everyone else got the error.
 
-The second is the certificate. A new server has none for your domain until it's issued, and most authorities want the hostname pointing at the machine before they'll issue one. So the site looks broken over HTTPS until DNS moves, and DNS can't safely move until the site looks right.
+The second is the certificate. A new server has none for your domain until it's issued, and most authorities want the hostname pointing at the machine before they'll issue one. So the site looks broken over HTTPS until DNS moves, and DNS can't safely move until the site looks right. If no TLS is configured on the new box at all, you get [ERR_CONNECTION_REFUSED](/blog/err-connection-refused) on port 443 rather than a mismatch, because nothing is listening there to negotiate with.
 
 The way out is to check the new server under its real domain before changing any records. [DNS Previewer](/) does that free, and you can tell it to reach your server over HTTP while the certificate question is still open, so you can confirm the site itself works and deal with TLS separately. The [WordPress migration checklist](/blog/wordpress-migration-checklist-test-before-dns) has the rest of the pre-flight list, and a [502 Bad Gateway](/blog/502-bad-gateway) is what you'll see instead when TLS is fine but the application behind it isn't.
 

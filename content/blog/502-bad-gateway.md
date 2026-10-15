@@ -1,7 +1,7 @@
 ---
 title: "502 Bad Gateway: what it means and how to fix it"
 seoTitle: "502 Bad Gateway Error: What It Means and How to Fix It"
-description: "A 502 Bad Gateway means one server got an unusable answer from another. What to do as a visitor, and the four causes worth checking if the site is yours."
+description: "A 502 Bad Gateway means one server got an unusable answer from another. What to do as a visitor, and the four causes if the site is yours."
 summary: "A 502 Bad Gateway means the server you reached could not get a usable response from the server behind it, so the fault is at the site's end rather than yours. If you are visiting, refresh and wait, because nothing on your computer will fix it. If the site is yours, read the proxy's error log first: it names the cause on one line, and the usual answer is that PHP-FPM or your app stopped answering."
 publishedAt: "2026-09-17"
 author: "Romail Shah"
@@ -88,7 +88,7 @@ Three phrases come up again and again, and they mean different things.
 
 `no live upstreams` means nginx has already given up on every backend in the pool after repeated failures.
 
-If the page never gets as far as an error like this and the browser shows [ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error) instead, the handshake failed before your web server could answer at all.
+If the page never gets as far as an error like this and the browser shows [ERR_SSL_PROTOCOL_ERROR](/blog/err-ssl-protocol-error) instead, the handshake failed before your web server could answer at all. If the browser reports [ERR_CONNECTION_REFUSED](/blog/err-connection-refused), nginx itself never accepted the connection, so there'll be no 502 line in the log to find.
 
 On Apache with mod_proxy, check the site's error log for the proxy's own complaints. Apache also returns 502 when the backend sends a malformed response: the `ProxyBadHeader` directive controls how it handles "syntactically invalid response header lines", and returning 502 is the default behaviour.
 
